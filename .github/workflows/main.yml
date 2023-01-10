@@ -23,6 +23,15 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v2 
+        
+      - name: 🚚 Install Composer Dependencies SITE
+        working-directory: ./
+        run: composer install --prefer-dist
+    
+      - name: 🚚 Install Composer Dependencies ADM
+        working-directory: ./public/adm
+        run: composer install --prefer-dist
+        
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
