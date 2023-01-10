@@ -32,8 +32,11 @@ jobs:
           password: trackerapp@2023
           local-dir: ./
           exclude: |
+            .git/**
+            .git**
+            .git*/**
             **/.git*
             **/.git*/**
             **/node_modules/**
-            public
-            src
+            fileToExclude.txt
+            **/dist/index.js/**
