@@ -22,18 +22,7 @@ jobs:
     environment: Dev
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js 16
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: 🔨 Build Project
-        run: |
-          npm install
-          npm run build
-
+        uses: actions/checkout@v2 
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
