@@ -28,7 +28,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
           server: tracker.mosframtech.com
-          username: tracker_ci_core
+          username: tracker_ci_core@tracker.mosframtech.com
           password: tracker_ci_core
           local-dir: ./
           exclude: |
