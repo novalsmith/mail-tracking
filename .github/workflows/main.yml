@@ -28,9 +28,9 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
           server: mosframtech.com
-          username: n1574584
-          password: mosframsolusiteknologi@2022
-          local-dir: /tracker_core/
+          username: trackerapp@tracker.mosframtech.com
+          password: trackerapp@2023
+          local-dir: ../tracker_core/
           exclude: |
             .git/**
             .git**
