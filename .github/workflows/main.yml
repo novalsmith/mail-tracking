@@ -30,7 +30,7 @@ jobs:
           server: mosframtech.com
           username: trackerapp@tracker.mosframtech.com
           password: trackerapp@2023
-          local-dir: ./
+          local-dir: ../tracker_core/
           exclude: |
             .git/**
             .git**
@@ -40,3 +40,4 @@ jobs:
             **/node_modules/**
             fileToExclude.txt
             **/dist/index.js/**
+            **/tests/**
