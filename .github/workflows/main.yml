@@ -27,9 +27,9 @@ jobs:
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
-          server: mosframtech.com
-          username: trackerapp@tracker.mosframtech.com
-          password: trackerapp@2023
+          server: tracker.mosframtech.com
+          username: tracker_ci_core
+          password: tracker_ci_core
           local-dir: ./
           exclude: |
             .git/**
