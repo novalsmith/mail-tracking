@@ -38,7 +38,7 @@
           <div class="col-sm-8 col-lg-5">
             <div class="u-shadow-v24 g-bg-white rounded g-py-40 g-px-30">
               <header class="text-center mb-4">
-                <h2 class="h2 g-color-black g-font-weight-600">Mail Tracker Minerba</h2>
+                <h2 class="h2 g-color-black g-font-weight-600">Mail Tracker Minerba 2023</h2>
               </header>
 
               <!-- Form -->
