@@ -37,10 +37,10 @@ jobs:
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: ftp.gkilahairoiayamaru.com
-          username: ftplahairoi_dev@dev.gkilahairoiayamaru.com
-          password: ftplahairoi_dev@2022
-          local-dir: dist/
+          server: ftp.mosframtech.com
+          username: trackerapp@tracker.mosframtech.com
+          password: trackerapp@2023
+          local-dir: /
           exclude: |
             **/.git*
             **/.git*/**
