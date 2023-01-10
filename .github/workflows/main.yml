@@ -30,7 +30,7 @@ jobs:
           server: mosframtech.com
           username: n1574584
           password: mosframsolusiteknologi@2022
-          local-dir: ./tracker_core/
+          local-dir: tracker_core/
           exclude: |
             .git/**
             .git**
