@@ -45,7 +45,7 @@
               <form class="g-py-15">
                 <div class="mb-4">
                   <label class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">NIP:</label>
-                  <input class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15" type="email" placeholder="johndoe@gmail.com">
+                  <input class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15" type="email" placeholder="Enter your NIP here">
                 </div>
 
                 <div class="g-mb-35">
