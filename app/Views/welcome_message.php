@@ -38,13 +38,13 @@
           <div class="col-sm-8 col-lg-5">
             <div class="u-shadow-v24 g-bg-white rounded g-py-40 g-px-30">
               <header class="text-center mb-4">
-                <h2 class="h2 g-color-black g-font-weight-600">Mail Tracker Minerba 2023</h2>
+                <h2 class="h2 g-color-black g-font-weight-600">Mail Tracker Minerba</h2>
               </header>
 
               <!-- Form -->
               <form class="g-py-15">
                 <div class="mb-4">
-                  <label class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">Email:</label>
+                  <label class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">NIP:</label>
                   <input class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15" type="email" placeholder="johndoe@gmail.com">
                 </div>
 
@@ -59,15 +59,6 @@
                   </div>
                   <input class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15 mb-3" type="password" placeholder="Password">
                   <div class="row justify-content-between">
-                    <div class="col-8 align-self-center">
-                      <label class="form-check-inline u-check g-color-gray-dark-v5 g-font-size-12 g-pl-25 mb-0">
-                        <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" type="checkbox">
-                        <div class="u-check-icon-checkbox-v6 g-absolute-centered--y g-left-0">
-                          <i class="fa" data-check-icon="&#xf00c"></i>
-                        </div>
-                        Keep signed in
-                      </label>
-                    </div>
                     <div class="col-4 align-self-center text-right">
                       <button class="btn btn-md u-btn-primary rounded g-py-13 g-px-25" type="button">Login</button>
                     </div>
@@ -77,7 +68,7 @@
               <!-- End Form -->
 
               <footer class="text-center">
-                <p class="g-color-gray-dark-v5 g-font-size-13 mb-0">Don't have an account? <a class="g-font-weight-600" href="page-signup-6.html">signup</a>
+                <p class="g-color-gray-dark-v5 g-font-size-13 mb-0">Don't have an account? <a class="g-font-weight-600" href="page-signup-6.html">Please contact your admin</a>
                 </p>
               </footer>
             </div>
