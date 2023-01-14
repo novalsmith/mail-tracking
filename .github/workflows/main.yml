@@ -16,12 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
-      - name: Archive production artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: dist
-          path: dist 
+        uses: actions/checkout@main  
       
   Dev:
     runs-on: ubuntu-latest
@@ -41,7 +36,7 @@ jobs:
           npm run build
           
       - name: Sync files to hosting Service
-        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
