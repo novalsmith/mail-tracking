@@ -23,50 +23,50 @@ jobs:
           name: dist
           path: dist
 
-  Dev:
-    runs-on: ubuntu-latest
-    environment: Dev
-    steps: 
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Use Node.js 16
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+    Dev:
+      runs-on: ubuntu-latest
+      environment: Dev
+      steps: 
+        - name: Checkout repository
+          uses: actions/checkout@v2
+        
+        - name: Use Node.js 16
+          uses: actions/setup-node@v2
+          with:
+            node-version: '16'
 
-      - name: 🔨 Build Project
-        run: |
-          npm install
-          npm run build
-            
-      - name: Sync files to hosting Service
-        uses: SamKirkland/FTP-Deploy-Action@4.3.1
-        with:
-          server: dev.mail-tracker-minerba.mosframtech.com
-          username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
-          password: ftp-dev-mail-tracking-minerba
-          local-dir: service/
-          exclude: |
-            .git/**
-            .git**
-            .git*/**
-            **/.git*
-            **/.git*/**
-            fileToExclude.txt
-            **/dist/index.js/**
-            **/tests/**
-    
-    - name: Sync files to hosting View
-        uses: SamKirkland/FTP-Deploy-Action@4.3.1
-        with:
-          server: dev.mail-tracker-minerba.mosframtech.com
-          username: n1574584
-          password: mosframsolusiteknologi@2022
-          local-dir: ui/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            public
-            src
+        - name: 🔨 Build Project
+          run: |
+            npm install
+            npm run build
+              
+        - name: Sync files to hosting Service
+          uses: SamKirkland/FTP-Deploy-Action@4.3.1
+          with:
+            server: dev.mail-tracker-minerba.mosframtech.com
+            username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
+            password: ftp-dev-mail-tracking-minerba
+            local-dir: service/
+            exclude: |
+              .git/**
+              .git**
+              .git*/**
+              **/.git*
+              **/.git*/**
+              fileToExclude.txt
+              **/dist/index.js/**
+              **/tests/**
+      
+      - name: Sync files to hosting View
+          uses: SamKirkland/FTP-Deploy-Action@4.3.1
+          with:
+            server: dev.mail-tracker-minerba.mosframtech.com
+            username: n1574584
+            password: mosframsolusiteknologi@2022
+            local-dir: ui/
+            exclude: |
+              **/.git*
+              **/.git*/**
+              **/node_modules/**
+              public
+              src
