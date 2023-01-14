@@ -65,9 +65,6 @@ jobs:
             **/node_modules/**
             fileToExclude.txt
             **/dist/index.js/**
-            **/tests/**
-            **/public/**
-            **/src/**
 
       - name: Sync files to public
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
