@@ -21,7 +21,17 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: dist
-          path: dist
+          path: ui/
+          
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: 🔨 Build Project
+        run: |
+          npm install
+          npm run build
   Dev:
     runs-on: ubuntu-latest
     environment: Dev
@@ -47,16 +57,7 @@ jobs:
             **/dist/index.js/**
             **/tests/**
       
-      - name: Use Node.js 16
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: 🔨 Build Project
-        run: |
-          npm install
-          npm run build
-          
+              
       - name: Sync files to hosting View
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
