@@ -68,4 +68,22 @@ jobs:
             **/tests/**
             **/public/**
             **/src/**
+
+      - name: Sync files to public
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          server: service.dev.mosframtech.com
+          username: dev_public@service.dev.mosframtech.com
+          password: dev_public
+          local-dir: service/public/
+          exclude: |
+            .git/**
+            .git**
+            .git*/**
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            fileToExclude.txt
+            **/dist/index.js/**
+            **/src/**
             
