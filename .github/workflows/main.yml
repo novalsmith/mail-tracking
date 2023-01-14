@@ -21,7 +21,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: dist
-          path: ui/
+          path: dist
   Dev:
     runs-on: ubuntu-latest
     environment: Dev
