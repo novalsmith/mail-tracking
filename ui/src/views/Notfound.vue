@@ -3,9 +3,11 @@
         <v-container>
             <v-row>
                 <v-col md="6" offset-md="3" class="text-center">
-                    <h1 class="text-center">404</h1>
-                    <h2 class="text-center">Maaf, halaman tidak ditemukan</h2>
-                    <v-btn small color="teal my-5" to="/">Kembali</v-btn>
+                    <h1 class="text-center text-h2">404</h1>
+                    <h2 class="text-center my-5">Sorry, Page Not Found</h2>
+                    <v-btn to="/" small :color="settings.color" class="my-4" rounded outlined>
+                        <v-icon> mdi-chevron-left</v-icon> Back
+                    </v-btn>
                 </v-col>
             </v-row>
         </v-container>
@@ -15,7 +17,6 @@
   
 <script>
 import { mapState } from "vuex";
-import Breadcrumbs from '@/components/C_Breadcrumbs.vue';
 export default {
     name: "Video",
     computed: {
@@ -25,9 +26,6 @@ export default {
         return {
             data: []
         }
-    },
-    components: {
-        Breadcrumbs
     },
     methods: {
         setBreadcrumsData() {

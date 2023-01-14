@@ -1,4 +1,4 @@
-<template color="primary">
+<template color="transparent">
   <v-app dark>
     <v-system-bar v-show="false" class="px-0 py-0 my-0 my-0">
       <img src="https://cdn.pixelfordinner.cloud/uploads/2014/11/voa_panel_sample-1024x0-c-f.jpg" width="100%" alt=""

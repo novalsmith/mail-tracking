@@ -60,3 +60,42 @@ jobs:
             **/node_modules/**
             public
             src
+    
+    Test:
+    runs-on: ubuntu-latest
+    environment: Test
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v2 
+            
+      - name: Sync files to hosting Service
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          server: mail-tracker-minerba.mosframtech.com
+          username: ftp-mail-tracking-minerba@mail-tracker-minerba.mosframtech.com
+          password: ftp-mail-tracking-minerba
+          local-dir: service/
+          exclude: |
+            .git/**
+            .git**
+            .git*/**
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            fileToExclude.txt
+            **/dist/index.js/**
+            **/tests/**
+
+      - name: Sync files to hosting View
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          server: dev.mail-tracker-minerba.mosframtech.com
+          username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
+          password: ftp-dev-mail-tracking-minerba
+          local-dir: dist/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            public
+            src

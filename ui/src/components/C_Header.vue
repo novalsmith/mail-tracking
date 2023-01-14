@@ -15,9 +15,6 @@
                         <v-img alt="Vuetify Name" v-if="settings.screenSize.type.isxs" contain
                             :src="require(`../assets/${imageName}`)" width="100%" max-width="60%" />
                         <v-spacer></v-spacer>
-                        <!-- <v-switch inset :color="settings.color" :input-value="darkMode" @change="toggleDarkMode"
-                            class="my-5">
-                        </v-switch> -->
                         <template>
                             <div class="my-5">
                                 <v-btn icon @click="toggleDarkMode">
@@ -30,63 +27,50 @@
                                 </v-btn>
                             </div>
                         </template>
-
-                        <!-- <SearchingBox class="my-2" /> -->
                     </v-row>
                 </div>
                 <div class="d-none d-lg-block">
                     <v-row class="mt-2">
                         <v-col md="4" class="text-left pt-0 pb-0">
-                            <v-btn small :active-class="('white--text ' + settings.color)" v-for="link in menu.topLeft"
-                                :key="link.name" :to="link.path" outlined class="text-right" rounded>
-
-                                <v-icon>{{ link.icon }}</v-icon> {{ link.name }}
-                            </v-btn>
+                            <h3>Mail Tracking Minerba</h3>
                         </v-col>
                         <v-col md="8" class="text-right  pt-0 pb-0">
                             <v-row>
-                                <v-col md="10" class="pr-15">
-                                    <v-btn small v-for="link in menu.topRight" :key="link.icon" :to="link.path" icon
-                                        class="circle mx-2">
-
-                                        <v-icon>{{ link.icon }}</v-icon>
+                                <v-spacer></v-spacer>
+                                <span class="pr-15">123412342 - Noval Nauw</span>
+                                <div class="text-center d-flex align-center justify-space-around pr-10">
+                                    <v-btn small icon @click="toggleDarkMode">
+                                        <v-icon>
+                                            {{
+                                                $vuetify.theme.dark ? 'mdi-white-balance-sunny' :
+                                                    'mdi-moon-waxing-crescent'
+                                            }}
+                                        </v-icon>
                                     </v-btn>
-                                </v-col>
-
-                                <v-col md="1" class="my-1 pb-0">
-                                    <!-- <template>
-                                        <div class="text-center d-flex align-center justify-space-around">
-                                            <v-switch inset :color="settings.color" :input-value="darkMode"
-                                                @change="toggleDarkMode">
-                                            </v-switch>
-                                        </div>
-                                    </template> -->
-                                    <template>
-                                        <div class="text-center d-flex align-center justify-space-around">
-                                            <v-btn small icon @click="toggleDarkMode">
-                                                <v-icon>
-                                                    {{
-                                                        $vuetify.theme.dark ? 'mdi-white-balance-sunny' :
-                                                            'mdi-moon-waxing-crescent'
-                                                    }}
-                                                </v-icon>
-                                            </v-btn>
-                                        </div>
+                                </div>
+                                <v-menu transition="slide-x-transition" bottom right offset-y>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn v-bind="attrs" v-on="on" small icon>
+                                            <v-icon>mdi-cog-outline</v-icon>
+                                        </v-btn>
                                     </template>
-                                </v-col>
-                                <v-col md="1">
-                                    <SearchingBox />
-                                </v-col>
+                                    <v-list>
+                                        <v-list-item to="/profile">
+                                            <v-icon class="pr-3">mdi-account-cog-outline</v-icon>Profile</v-list-item>
+                                        <v-list-item to="/logout"> <v-icon class="pr-3">mdi-logout-variant</v-icon>
+                                            Logout</v-list-item>
+                                    </v-list>
+                                </v-menu>
                             </v-row>
                         </v-col>
-                        <v-col md="3">
+                        <!-- <v-col md="3">
                             <router-link to="/">
                                 <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100"
                                     :src="require(`../assets/${imageName}`)" width="100%" />
                             </router-link>
 
-                        </v-col>
-                        <v-col md="9" class="text-right">
+                        </v-col> -->
+                        <v-col md="12" class="text-right">
                             <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in menu.right"
                                 :active-class="('white--text ' + settings.color)" :key="link.name" :to="link.path" text
                                 class="my-4" :outlined="link.outlined">
@@ -123,8 +107,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import SearchingBox from "@/components/C_Searching.vue";
+import { mapState } from "vuex"; 
 export default {
     name: "Header",
     data() {
@@ -181,8 +164,7 @@ export default {
             return this.darkMode == true ? 'light' : 'dark';
         }
     },
-    components: {
-        SearchingBox
+    components: { 
     },
 }
 </script> 

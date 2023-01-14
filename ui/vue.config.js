@@ -7,12 +7,12 @@ module.exports = {
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {
-      args[0].title = "GKI Lahai-Roi Mefkajim Ayamaru";
+      args[0].title = "Mail Tracking Minerba";
       return args;
     });
   },
   pwa: {
-    name: "GKI Lahai-Roi Mefkajim Ayamaru",
+    name: "Mail Tracking Minerba",
     manifestOptions: {
       "icons": [{
           "src": "./img/icons/android-chrome-192x192.png",

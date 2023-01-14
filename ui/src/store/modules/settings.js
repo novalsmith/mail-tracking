@@ -43,7 +43,7 @@ const {
 
 
 const state = {
-    color: "teal",
+    color: "cyan darken-2",
     isMobileData: null,
     isDarkMode: false,
     outlinedGeneralButton: true,
@@ -93,52 +93,28 @@ const state = {
             icon: "mdi-home-roof"
         }, ],
         right: [{
-                name: "Beranda",
+                name: "Home",
                 path: "/",
                 icon: "mdi-home-roof"
             },
             {
-                name: "Profil",
-                path: "/profil",
-                icon: "mdi-home-city-outline"
+                name: "Transactions",
+                path: "/inboxs",
+                icon: "mdi-phone"
             },
             {
-                name: "Agenda",
-                path: "/agenda",
-                icon: "mdi-calendar-multiselect-outline"
+                name: "Inbox",
+                path: "/inbox",
+                icon: "mdi-phone"
             },
             {
-                name: "Informasi",
-                path: "/informasi",
-                icon: "mdi-newspaper-variant-multiple-outline"
+                name: "Outbox",
+                path: "/outbox",
+                icon: "mdi-phone"
             },
             {
-                name: "Dokumen",
-                path: "/dokumen",
-                icon: "mdi-clipboard-file-outline",
-                outlined: false
-            },
-            {
-                name: "Media",
-                path: "",
-                icon: "mdi-chevron-down",
-                icon2: "mdi-camera",
-                submenu: [{
-                        name: "Foto",
-                        path: "/media/foto",
-                        icon: "mdi-image"
-                    },
-                    {
-                        name: "Video",
-                        path: "/media/video",
-                        icon: "mdi-video"
-                    }
-                ],
-                outlined: false
-            },
-            {
-                name: "Kontak",
-                path: "/kontak",
+                name: "Report",
+                path: "/report",
                 icon: "mdi-phone"
             }
         ]

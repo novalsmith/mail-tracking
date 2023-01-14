@@ -4,13 +4,13 @@
   <div>
     <v-main>
       <v-container>
-        <Carausel />
+        <!-- <Carausel /> -->
         <HomeProfile />
-        <HomeInformations />
-        <HomeAgenda />
+        <!-- <HomeInformations /> -->
+        <!-- <HomeAgenda /> -->
       </v-container>
     </v-main>
-    <Parallax />
+    <!-- <Parallax />
     <v-main class="mt-15">
       <v-container>
      <Poster />
@@ -18,7 +18,7 @@
         <Galery />
         <Videos />    
       </v-container>
-    </v-main>
+    </v-main> -->
   </div>
 
 
@@ -27,27 +27,11 @@
 <script>
 // @ is an alias to /src
 import HomeProfile from '@/components/C_HomeProfile';
-import Carausel from '@/components/C_Carausel';
-import HomeAgenda from '@/components/C_HomeAgenda';
-import HomeInformations from '@/components/C_HomeInformations';
-import HomeDocuments from '@/components/C_HomeDocuments';
-import Poster from '@/components/C_Poster';
-import Parallax from '@/components/C_Parallax';
-import Videos from '@/components/C_HomeVideos';
-import Galery from '@/components/C_Galery';
 import { mapState } from "vuex";
 export default {
   name: 'Home',
   components: {
-    HomeProfile,
-    Carausel,
-    HomeAgenda,
-    HomeInformations,
-    HomeDocuments,
-    Poster,
-    Parallax,
-    Videos,
-    Galery
+    HomeProfile
   },
   data: () => ({
     loading: false

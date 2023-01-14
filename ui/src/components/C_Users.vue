@@ -24,7 +24,6 @@
 <script>
 import axios from 'axios';
 import { mapGetters } from 'vuex';
-import Clogin from '@/components/C_Login.vue'
 export default {
     data() {
         return {

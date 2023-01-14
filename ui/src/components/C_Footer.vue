@@ -1,5 +1,5 @@
 <template>
-  <v-footer padless color="primary">
+  <v-footer padless color="transparent">
     <div v-if="!settings.screenSize.type.islg">
       <!-- <DrawerNavigations @drawerData=drawerData :headerTitle="headerTitleValue" :drawer="drawerVal"/> -->
       <v-navigation-drawer v-model="drawer" fixed left class="rounded-r-lg" style="position: fixed; z-index: 888;">
@@ -62,14 +62,14 @@
       </v-bottom-navigation>
     </div>
     <v-col class="text-center" cols="12">
-      {{ new Date().getFullYear() }} — <strong>GKI Lahai-Roi Mefkajim Ayamaru</strong>
+      {{ new Date().getFullYear() }} — <strong>Mail Tracking Minerba</strong>
+      <div><small>v1.0</small></div>
     </v-col>
   </v-footer>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import DrawerNavigations from '@/components/C_DrawerNavigations.vue';
 
 export default {
   computed: {
@@ -138,9 +138,6 @@ export default {
       this.headerTitleValue = val.headerTitle;
       this.drawerVal = true;
     }
-  },
-  components: {
-    DrawerNavigations
   }
 }
 </script>
