@@ -31,8 +31,8 @@ jobs:
 
       - name: 🔨 Build Project
         run: |
-          npm install -g npm@latest
-          npm run build
+          npm install
+          npm run build --if--present
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
