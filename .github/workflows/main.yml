@@ -41,7 +41,7 @@ jobs:
           npm run build
             
       - name: Sync files to hosting Service
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
@@ -58,7 +58,7 @@ jobs:
             **/tests/**
     
     - name: Sync files to hosting View
-        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: n1574584
