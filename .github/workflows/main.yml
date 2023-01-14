@@ -16,7 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main  
+        uses: actions/checkout@main
+      - name: Archive production artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: dist
+          path: ui/dist
   Dev:
     runs-on: ubuntu-latest
     environment: Dev
@@ -48,7 +53,7 @@ jobs:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
           password: ftp-dev-mail-tracking-minerba
-          local-dir: view/dist/
+          local-dir: ui/dist/
           exclude: |
             **/.git*
             **/.git*/**
