@@ -20,18 +20,20 @@ jobs:
   Dev:
     runs-on: ubuntu-latest
     environment: Dev
+      - name: Development
+        url: dev.mail-tracker-minerba.mosframtech.com
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
 
       - name: 🔨 Build Project
         run: |
-          npm install
+          npm install -g npm@latest
           npm run build
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
