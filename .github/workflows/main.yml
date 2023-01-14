@@ -39,11 +39,9 @@ jobs:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
           password: ftp-dev-mail-tracking-minerba
-          local-dir: dist/
+          local-dir: ui/
           args: deploy
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            public
-            src
