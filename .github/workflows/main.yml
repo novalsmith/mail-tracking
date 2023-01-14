@@ -45,5 +45,5 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            public
-            src
+            **/public/**
+            **/src/**
