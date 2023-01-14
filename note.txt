@@ -1,0 +1,10 @@
+- service
+	# Service api that will be connection all action with Database
+	# Project
+		- Codeigniter 4
+		- Run this command -> php spark serve --port 1412
+- view
+	Is that front end as a user interface which is interactions by screen
+	# Project
+		- Vue 3
+		- Run this command -> npm run serve
