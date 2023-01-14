@@ -22,10 +22,10 @@ jobs:
     environment: Dev
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@main
         with:
           node-version: '16'
 
@@ -40,7 +40,7 @@ jobs:
           server: dev.mail-tracking-minerba
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
           password: ftp-dev-mail-tracking-minerba
-          local-dir: dist/
+          local-dir: ui/
           exclude: |
             **/.git*
             **/.git*/**
