@@ -38,12 +38,12 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
           server: dev.mail-tracker-minerba.mosframtech.com
-          username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
-          password: ftp-dev-mail-tracking-minerba
-          local-dir: ./
+          username: n1574584
+          password: mosframsolusiteknologi@2022
+          local-dir: dist/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/public/**
-            **/src/**
+            public
+            src
