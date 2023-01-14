@@ -20,8 +20,6 @@ jobs:
   Dev:
     runs-on: ubuntu-latest
     environment: Dev
-      name: Development
-      url: dev.mail-tracker-minerba.mosframtech.com
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v3
