@@ -22,28 +22,28 @@ jobs:
     environment: Dev
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
 
       - name: 🔨 Build Project
         run: |
           npm install
-          npm run audit fix
           npm run build
+
       - name: Sync files to hosting
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: dev.mail-tracker-minerba.mosframtech.com
+          server: dev.mail-tracking-minerba
           username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
           password: ftp-dev-mail-tracking-minerba
-          local-dir: ui/
+          local-dir: dist/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/public/**
-            **/src/**
+            public
+            src
