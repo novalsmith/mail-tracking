@@ -30,7 +30,7 @@ jobs:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: dev_core@dev.mail-tracker-minerba.mosframtech.com
           password: dev_core
-          local-dir: service/
+          local-dir: ./
           exclude: |
             .git/**
             .git**
@@ -40,6 +40,9 @@ jobs:
             **/node_modules/**
             fileToExclude.txt
             **/dist/index.js/**
+            **/tests/**
+            **/public/**
+            **/src/**
 
       - name: Sync files to public
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
@@ -58,7 +61,7 @@ jobs:
             fileToExclude.txt
             **/dist/index.js/**
             **/src/**
-            
+
       - name: Use Node.js 16
         uses: actions/setup-node@main
         with:
