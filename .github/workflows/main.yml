@@ -30,7 +30,7 @@ jobs:
           server: dev.mail-tracker-minerba.mosframtech.com
           username: dev_core@dev.mail-tracker-minerba.mosframtech.com
           password: dev_core
-          local-dir: ./
+          local-dir: starter/
           exclude: |
             .git/**
             .git**
@@ -43,6 +43,7 @@ jobs:
             **/tests/**
             **/public/**
             **/src/**
+            **/service/**
 
       - name: Sync files to public
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
@@ -50,7 +51,7 @@ jobs:
           server: service.dev.mosframtech.com
           username: dev_public@service.dev.mosframtech.com
           password: dev_public
-          local-dir: service/public/
+          local-dir: starter/public/
           exclude: |
             .git/**
             .git**
@@ -86,4 +87,5 @@ jobs:
             **/public/**
             **/src/**
             **/service/**
+            **/starter/**
             
