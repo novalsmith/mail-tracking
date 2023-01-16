@@ -45,7 +45,7 @@ jobs:
             **/src/**
             **/service/**
 
-      - name: Sync files to public
+      - name: Sync files to publics
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
           server: service.dev.mosframtech.com
