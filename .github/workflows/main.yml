@@ -24,44 +24,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Sync files to service
-        uses: SamKirkland/FTP-Deploy-Action@4.3.1
-        with:
-          server: service.dev.mosframtech.com
-          username: dev_core@dev.mail-tracker-minerba.mosframtech.com
-          password: dev_core
-          local-dir: starter/
-          exclude: |
-            .git/**
-            .git**
-            .git*/**
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            fileToExclude.txt
-            **/dist/index.js/**
-            **/tests/**
-            **/public/**
-            **/src/**
-            **/service/**
+      # - name: Sync files to service
+      #   uses: SamKirkland/FTP-Deploy-Action@4.3.1
+      #   with:
+      #     server: service.dev.mosframtech.com
+      #     username: dev_core@dev.mail-tracker-minerba.mosframtech.com
+      #     password: dev_core
+      #     local-dir: starter/
+      #     exclude: |
+      #       .git/**
+      #       .git**
+      #       .git*/**
+      #       **/.git*
+      #       **/.git*/**
+      #       **/node_modules/**
+      #       fileToExclude.txt
+      #       **/dist/index.js/**
+      #       **/tests/**
+      #       **/public/**
+      #       **/src/**
+      #       **/service/**
 
-      - name: Sync files to publics
-        uses: SamKirkland/FTP-Deploy-Action@4.3.1
-        with:
-          server: service.dev.mosframtech.com
-          username: dev_public@service.dev.mosframtech.com
-          password: dev_public
-          local-dir: starter/public/
-          exclude: |
-            .git/**
-            .git**
-            .git*/**
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            fileToExclude.txt
-            **/dist/index.js/**
-            **/src/**
+      # - name: Sync files to publics
+      #   uses: SamKirkland/FTP-Deploy-Action@4.3.1
+      #   with:
+      #     server: service.dev.mosframtech.com
+      #     username: dev_public@service.dev.mosframtech.com
+      #     password: dev_public
+      #     local-dir: starter/public/
+      #     exclude: |
+      #       .git/**
+      #       .git**
+      #       .git*/**
+      #       **/.git*
+      #       **/.git*/**
+      #       **/node_modules/**
+      #       fileToExclude.txt
+      #       **/dist/index.js/**
+      #       **/src/**
 
       - name: Use Node.js 16
         uses: actions/setup-node@main

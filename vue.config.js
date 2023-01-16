@@ -3,7 +3,7 @@ module.exports = {
     'vuetify'
   ],
   devServer: {
-    proxy: "http://localhost:9999/"
+    proxy: "https://publish.mosframtech.com/"
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {

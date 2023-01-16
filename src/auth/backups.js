@@ -3,7 +3,7 @@ import axios from 'axios';
 // console.log('form http-component');
 // console.log(localStorage.getItem('token'));
 // if(localStorage.getItem('token')!="")
-axios.defaults.baseURL = 'http://localhost:8080/';
+axios.defaults.baseURL = 'https://dev.mail-tracker-minerba.mosframtech.com/';
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 // export const AxiosAuth = axios.create({
 //   baseURL: `http://localhost:8080/`,
@@ -65,26 +65,30 @@ let refresh = false;
 axios.interceptors.response.use(resp => resp, async error => {
     if (error.response.status === 401 && !refresh) {
 
-        if( error.response.data && error.response.data.error === "Expired token"){
+        if (error.response.data && error.response.data.error === "Expired token") {
             refresh = true;
-            const param = {"isWebAdmin": true }
-            const {status, data} = await axios.post('otentikasi', param, {
+            const param = {
+                "isWebAdmin": true
+            }
+            const {
+                status,
+                data
+            } = await axios.post('otentikasi', param, {
                 withCredentials: true
             });
             console.log(data.access_token);
             if (status === 200) {
-                localStorage.setItem('token', data.access_token); 
+                localStorage.setItem('token', data.access_token);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 console.log(error);
                 return axios(error.config);
             } else {
                 return Promise.reject(error);
-              }
+            }
         }
-    } 
-    else {
+    } else {
         refresh = false;
-        
+
         return Promise.reject(error);
-        }
+    }
 });
