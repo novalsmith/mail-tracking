@@ -79,8 +79,8 @@ class RedirectResponse extends Response
     }
 
     /**
-     * Sets the current $_GET and $_POST arrays in the session.
-     * This also saves the validation errors.
+     * Specifies that the current $_GET and $_POST arrays should be
+     * packaged up with the response.
      *
      * It will then be available via the 'old()' helper function.
      *
@@ -94,17 +94,21 @@ class RedirectResponse extends Response
             'post' => $_POST ?? [],
         ]);
 
+        // @TODO Remove this in the future.
+        //      See https://github.com/codeigniter4/CodeIgniter4/issues/5839#issuecomment-1086624600
         $this->withErrors();
 
         return $this;
     }
 
     /**
-     * Sets validation errors in the session.
+     * Set validation errors in the session.
      *
      * If the validation has any errors, transmit those back
      * so they can be displayed when the validation is handled
      * within a method different than displaying the form.
+     *
+     * @TODO Make this method public when removing $this->withErrors() in withInput().
      *
      * @return $this
      */
@@ -114,7 +118,7 @@ class RedirectResponse extends Response
 
         if ($validation->getErrors()) {
             $session = Services::session();
-            $session->setFlashdata('_ci_validation_errors', $validation->getErrors());
+            $session->setFlashdata('_ci_validation_errors', serialize($validation->getErrors()));
         }
 
         return $this;

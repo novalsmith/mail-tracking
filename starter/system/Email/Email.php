@@ -1539,11 +1539,7 @@ class Email
             $this->setReplyTo($this->headers['From']);
         }
 
-        if (
-            empty($this->recipients) && ! isset($this->headers['To'])
-            && empty($this->BCCArray) && ! isset($this->headers['Bcc'])
-            && ! isset($this->headers['Cc'])
-        ) {
+        if (empty($this->recipients) && ! isset($this->headers['To']) && empty($this->BCCArray) && ! isset($this->headers['Bcc']) && ! isset($this->headers['Cc'])) {
             $this->setErrorMessage(lang('Email.noRecipients'));
 
             return false;
@@ -2156,7 +2152,7 @@ class Email
      */
     protected function setErrorMessage($msg)
     {
-        $this->debugMessage[]    = $msg . '<br>';
+        $this->debugMessage[]    = $msg . '<br />';
         $this->debugMessageRaw[] = $msg;
     }
 

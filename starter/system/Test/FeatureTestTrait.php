@@ -163,7 +163,12 @@ trait FeatureTestTrait
 
         // Initialize the RouteCollection
         if (! $routes = $this->routes) {
-            $routes = Services::routes()->loadRoutes();
+            require APPPATH . 'Config/Routes.php';
+
+            /**
+             * @var RouteCollection $routes
+             */
+            $routes->getRoutes('*');
         }
 
         $routes->setHTTPVerb($method);
