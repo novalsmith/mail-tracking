@@ -7,14 +7,14 @@ use Exception;
 
 class ModelOtentikasi extends Model
 {
-    protected $table = "users";
-    protected $primayKey = "userID";
-    protected $allowedFields = ['email', 'password'];
+    protected $table = "v_access";
+    protected $primayKey = "employeeId";
+    protected $allowedFields = ['employeeId', 'password'];
 
-    function getEmail($email)
+    function getEmployee($employeeId)
     {
-        $builder = $this->table("users");
-        $data = $builder->where("email", $email)->first();
+        $builder = $this->table("v_access");
+        $data = $builder->where("employeeId", $employeeId)->first();
         if (!$data) {
             throw new Exception("Data otentikasi tidak ditemukan");
         }

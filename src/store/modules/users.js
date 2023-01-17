@@ -1,25 +1,23 @@
 // modules/user.js
-const state = {
-    user: null
-  }
-export default { 
+const state = {}
+export default {
     state,
     mutations: {
-        user(state, user){
-        state.user = user;
-    }
-    },
-    actions: {
-        user(context, user){
-        context.commit('user',user);
+        users(state, users) {
+            state.users = users;
         }
     },
-    getters:{
-        user: (state) => {
-        return state.user;
+    actions: {
+        users(context, users) {
+            context.commit('users', users);
+        }
+    },
+    getters: {
+        users: (state) => {
+            return state.users;
         }
     },
     modules: {
-    
+
     }
 }

@@ -10,21 +10,16 @@ class Otentikasi extends BaseController
 	use ResponseTrait;
 	public function index()
 	{
-		$email = "";
+		$nip = "";
 		$password = "";
 
 		$isWebAdmin = $this->request->getVar('isWebAdmin');
-		if($isWebAdmin){
-			$email = "sample@gmail.com";
-			$password = "sample";
-		}else{
-			$validation = \Config\Services::validation();
+		$validation = \Config\Services::validation();
 			$aturan = [
-				'email' => [
-					'rules' => 'required|valid_email',
+				'nip' => [
+					'rules' => 'required',
 					'errors' => [
-						'required' => 'Silakan masukkan email',
-						'valid_email' => 'Silakan masukkan email yang valid'
+						'required' => 'Silakan masukkan nip'
 					]
 				],
 				'password' => [
@@ -40,12 +35,12 @@ class Otentikasi extends BaseController
 				return $this->fail($validation->getErrors());
 			}
 
-			$email = $this->request->getVar('email');
+			$nip = $this->request->getVar('nip');
 			$password = $this->request->getVar('password');
-		}
+		 
 
 		$model = new ModelOtentikasi();
-		$data = $model->getEmail($email);
+		$data = $model->getEmployee($nip);
 		if ($data['password'] != md5($password)) {
 			return $this->fail("Password tidak sesuai");
 		}
@@ -54,7 +49,7 @@ class Otentikasi extends BaseController
 		$response = [
 			'message' => 'Otentikasi berhasil dilakukan',
 			'user' => $data,
-			'access_token' => createJWT($email)
+			'access_token' => createJWT($nip)
 		];
 		return $this->respond($response);
 	}

@@ -4,27 +4,31 @@
       <img src="https://cdn.pixelfordinner.cloud/uploads/2014/11/voa_panel_sample-1024x0-c-f.jpg" width="100%" alt=""
         height="200%">
     </v-system-bar>
-    <div v-if="isActiveWeb">
-      <v-container>
+    <div>
+      <v-container v-if="!isLogined">
+        <C_Login />
+      </v-container>
+      <v-container v-else>
         <C_Header />
+        <router-view />
       </v-container>
 
-      <router-view />
+
       <v-btn v-scroll="onScroll" v-show="fab" fab fixed small bottom right :color="settings.color" @click="toTop"
         class="mb-15">
         <v-icon color="white">mdi-chevron-up</v-icon>
       </v-btn>
 
-      <v-container> 
-          <Footers class="mt-15" /> 
+      <v-container>
+        <Footers class="mt-15" />
       </v-container>
     </div>
-    <div v-else>
+    <!-- <div v-else>
       <v-container class="text-center my-15">
         <h1 class="text-center">Selamat Datang di</h1>
         <img class="text-center" src="./assets/logoLight.png" />
       </v-container>
-    </div>
+    </div> -->
 
   </v-app>
 </template>
@@ -32,13 +36,22 @@
 <script>
 import C_Header from '@/components/C_Header.vue';
 import Footers from '@/components/C_Footer.vue';
+import C_Login from '@/components/C_Login.vue';
 import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState(['settings'])
+    ...mapState(['settings']),
+    isLogined() {
+      var status = false;
+      if (localStorage.getItem('isLogin') == 'true') {
+        status = true;
+      }
+      return status;
+    }
   },
   created() {
+    // this.loginProcess();
     this.setMobileDeviceSettings();
     this.loading = true;
     setTimeout(() => {
@@ -47,10 +60,12 @@ export default {
   },
   components: {
     C_Header,
-    Footers
+    Footers,
+    C_Login
   },
   data() {
     return {
+      isLogin: false,
       isActiveWeb: true,
       fab: false,
       loading: false
@@ -58,6 +73,12 @@ export default {
     };
   },
   methods: {
+    loginProcess() {
+
+      var datas = localStorage.getItem('isLogin') == null ? "false" : localStorage.getItem('isLogin');
+      console.log("your status is = " + datas);
+      this.isLogin = Boolean(datas);
+    },
     onScroll(e) {
       if (typeof window === 'undefined') return;
       const top = window.pageYOffset || e.target.scrollTop || 0;

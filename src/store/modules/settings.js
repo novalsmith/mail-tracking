@@ -138,6 +138,9 @@ const state = {
     screenSize: {
         width,
         type
+    },
+    users: {
+        data: 0
     }
 }
 export default {

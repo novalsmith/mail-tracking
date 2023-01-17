@@ -1,7 +1,7 @@
  
 <template>
     <div>
-        <v-app-bar color="primary" elevation="0" height="auto">
+        <v-app-bar color="transparent" elevation="0" height="auto">
 
             <v-main>
                 <div class="d-lg-none">
@@ -37,7 +37,7 @@
                         <v-col md="8" class="text-right  pt-0 pb-0">
                             <v-row>
                                 <v-spacer></v-spacer>
-                                <span class="pr-15">123412342 - Noval Nauw</span>
+                                <span class="pr-15" v-text="users.name"></span>
                                 <div class="text-center d-flex align-center justify-space-around pr-10">
                                     <v-btn small icon @click="toggleDarkMode">
                                         <v-icon>
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"; 
+import { mapState } from "vuex";
 export default {
     name: "Header",
     data() {
@@ -121,7 +121,8 @@ export default {
                 small: false,
                 rounded: true,
                 color: "grey darken-2"
-            }
+            },
+            users: []
         }
     },
     created() {
@@ -129,6 +130,8 @@ export default {
         this.getMenuData();
         this.isMobileData = this.$store.state.settings["settings"].isMobileData;
         console.log(this.$store.state.settings["settings"].isMobileData);
+        var users = JSON.parse(localStorage.getItem('userData'));
+        this.users = users != undefined &&  users.user ? users.user : []; 
     },
     methods: {
         searching() {
@@ -164,7 +167,7 @@ export default {
             return this.darkMode == true ? 'light' : 'dark';
         }
     },
-    components: { 
+    components: {
     },
 }
 </script> 
