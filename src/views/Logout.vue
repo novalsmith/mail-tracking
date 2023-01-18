@@ -1,8 +1,3 @@
-<template>
-    <div>
-        <h1>Logout</h1>
-    </div>
-</template>
 <script>
 import axios from 'axios';
 import { validationMixin } from 'vuelidate'

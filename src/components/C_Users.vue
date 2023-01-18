@@ -119,7 +119,7 @@ export default {
         },
         async getUsers() {
             try {
-                var response = await axios.get("pegawai");
+                var response = await axios.get("access");
                 // this.userData = response.data;
                 this.$store.dispatch('user', response.data);
             } catch (error) {

@@ -10,7 +10,6 @@ const routes = [{
     name: 'Home',
     component: Home,
     beforeEnter: (to, from, next) => {
-      console.log("masuk1 " + localStorage.getItem('token'));
       if (localStorage.getItem('token') == null) {
         // routerObject.push("/logout");
         next({
@@ -25,9 +24,88 @@ const routes = [{
   {
     path: '/users',
     name: 'Users',
-    component: () => import( /* webpackChunkName: "about" */ '../views/Users.vue'),
+    component: () => import('../views/Users.vue'),
     beforeEnter: (to, from, next) => {
-      console.log("masuk2 " + localStorage.getItem('token'));
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/access',
+    name: 'Access',
+    component: () => import('../views/Access.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/unit',
+    name: 'Unit',
+    component: () => import('../views/Unit.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/employee',
+    name: 'Employee',
+    component: () => import('../views/Employee.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/nadine',
+    name: 'Nadine',
+    component: () => import('../views/Tracking.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/inbox',
+    name: 'Inbox',
+    component: () => import('../views/Inbox.vue'),
+    beforeEnter: (to, from, next) => {
       if (localStorage.getItem('token') == null) {
         // routerObject.push("/logout");
         next({
@@ -42,26 +120,15 @@ const routes = [{
   {
     path: '/logout',
     name: 'Logout',
-    component: () => import( /* webpackChunkName: "about" */ '../views/Logout.vue'),
+    component: () => import('../views/Logout.vue'),
     beforeEnter: (to, from, next) => {
       next();
-      // console.log("masuk3 " + localStorage.getItem('token'));
-      // if (localStorage.getItem('token') != null) {
-      //   // routerObject.push("/logout");
-      //   next({
-      //     path: '/',
-      //     replace: true
-      //   })
-      // }else{
-      //   next();
-      // } 
     }
   },
   {
     path: "/:catchAll(.*)",
-    component: () => import( /* webpackChunkName: "about" */ '../views/Notfound.vue'),
+    component: () => import('../views/Notfound.vue'),
     beforeEnter: (to, from, next) => {
-      console.log("masuk4 " + localStorage.getItem('token'));
       if (localStorage.getItem('token') == null) {
         // routerObject.push("/logout");
         next({

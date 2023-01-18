@@ -19,15 +19,16 @@ function validateJWT($encodedToken)
 
     $modelOtentikasi = new ModelOtentikasi();
     //xxxx.xxxx.xxxx
-    $modelOtentikasi->getEmail($decodedToken->email);
+    $modelOtentikasi->getEmployee($decodedToken->nip,$decodedToken->password);
 }
-function createJWT($email)
+function createJWT($nip,$password)
 {
     $waktuRequest = time();
     $waktuToken = getenv('JWT_TIME_TO_LIVE');
     $waktuExpired = $waktuRequest + $waktuToken;
     $payload = [
-        'email' => $email,
+        'nip' => $nip,
+        'password' => $password,
         'iat' => $waktuRequest,
         'exp' => $waktuExpired
     ];

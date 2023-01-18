@@ -6,14 +6,7 @@
             <v-main>
                 <div class="d-lg-none">
                     <v-row>
-                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.islg" contain
-                            :src="require(`../assets/${imageName}`)" width="100%" max-width="30%" />
-
-                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.ismd" max-width="30%" contain
-                            :src="require(`../assets/${imageName}`)" width="100%" />
-
-                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.isxs" contain
-                            :src="require(`../assets/${imageName}`)" width="100%" max-width="60%" />
+                        <!-- logo here -->
                         <v-spacer></v-spacer>
                         <template>
                             <div class="my-5">
@@ -63,43 +56,24 @@
                                 </v-menu>
                             </v-row>
                         </v-col>
-                        <!-- <v-col md="3">
-                            <router-link to="/">
-                                <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100"
-                                    :src="require(`../assets/${imageName}`)" width="100%" />
-                            </router-link>
-
-                        </v-col> -->
                         <v-col md="12" class="text-right">
-                            <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in menu.right"
+                            <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in renderMenu"
                                 :active-class="('white--text ' + settings.color)" :key="link.name" :to="link.path" text
-                                class="my-4" :outlined="link.outlined">
+                                class="my-4" :outlined="link.outlined" v-show="link.isShow">
 
-                                <v-menu v-if="link.submenu != undefined" open-on-hover bottom offset-y
-                                    transition="slide-x-transition">
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <span v-bind="attrs" v-on="on">
-                                            {{ link.name }} <v-icon>{{ link.icon }}</v-icon>
-                                        </span>
-                                    </template>
-
-                                    <v-list width="150">
-                                        <v-list-item v-for="(item, index) in link.submenu" :key="index" link
-                                            :to="item.path">
-                                            <v-list-item-title>{{ item.name }}</v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
-
-                                <span v-if="link.submenu == undefined && link.name != 'Search'">
+                                <span>
                                     {{ link.name }}
-                                </span>
-                                <span v-if="link.name == 'Search'" @click="searching()">
-                                    <v-icon>{{ link.icon }}</v-icon>
                                 </span>
                             </v-btn>
                         </v-col>
                     </v-row>
+                    <div class="mt-2">
+                        <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2"
+                            v-show="alertSuccessLogin" elevation="2" icon="mdi-information-outline" border="left"
+                            dismissible transition="scale-transition">
+                            Hi <strong>{{ users.name }}</strong> Welcome to Mail Tracking Minerba
+                        </v-alert>
+                    </div>
                 </div>
             </v-main>
         </v-app-bar>
@@ -112,6 +86,7 @@ export default {
     name: "Header",
     data() {
         return {
+            alertSuccessLogin: false,
             isMobileData: false,
             imageName: "",
             darkMode: false,
@@ -127,11 +102,21 @@ export default {
     },
     created() {
         this.renderImg();
-        this.getMenuData();
         this.isMobileData = this.$store.state.settings["settings"].isMobileData;
         console.log(this.$store.state.settings["settings"].isMobileData);
-        var users = JSON.parse(localStorage.getItem('userData'));
-        this.users = users != undefined &&  users.user ? users.user : []; 
+        var listData = JSON.parse(localStorage.getItem('userData'));
+        this.users = listData != undefined && listData.user ? listData.user : [];
+        const lookupData = {
+            lookupData: listData.settings,
+        }
+        this.$store.dispatch('settings', lookupData);
+        this.alertSuccessLogin = localStorage.getItem('alertSuccessLogin');
+        setTimeout(() => {
+            this.alertSuccessLogin = false;
+            localStorage.removeItem('alertSuccessLogin');
+        }, 5000);
+
+
     },
     methods: {
         searching() {
@@ -156,15 +141,66 @@ export default {
             }
 
             this.$vuetify.theme.dark = this.darkMode;
-        },
-        getMenuData() {
-            this.menu = this.$store.state.settings['menu'];
         }
     },
     computed: {
         ...mapState(['settings']),
         switchLabel() {
             return this.darkMode == true ? 'light' : 'dark';
+        },
+        renderMenu() {
+            var level = parseInt(this.users.roleLevel);
+            var menus = [
+                {
+                    name: "Home",
+                    path: "/",
+                    icon: "mdi-home-roof",
+                    isShow: ((level == 99 || level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                },
+                {
+                    name: "Inbox",
+                    path: "/inbox",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                },
+                {
+                    name: "Outbox",
+                    path: "/outbox",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                },
+                {
+                    name: "Nadine",
+                    path: "/nadine",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99 || level == 0) ? true : false)
+                },
+                {
+                    name: "Employee",
+                    path: "/employee",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99) ? true : false)
+                },
+                {
+                    name: "Access",
+                    path: "/access",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99) ? true : false)
+                },
+                {
+                    name: "Unit",
+                    path: "/unit",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99) ? true : false)
+                },
+                {
+                    name: "Report",
+                    path: "/report",
+                    icon: "mdi-phone",
+                    isShow: ((level == 99) ? true : false)
+                },
+            ];
+            return menus;
         }
     },
     components: {

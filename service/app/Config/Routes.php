@@ -31,8 +31,12 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-// $routes->get('/', 'Home::index');
-$routes->resource("pegawai");
+$routes->get('/access', 'Access::index');
+$routes->get('/unit', 'Unit::index');
+$routes->get('/employee', 'Employee::index');
+$routes->get('/tracking', 'Tracking::index');
+$routes->get('/tracking/(:any)', 'Tracking::show/$1');
+// $routes->resource("pegawai");
 
 /*
  * --------------------------------------------------------------------

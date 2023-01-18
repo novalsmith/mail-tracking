@@ -4,12 +4,14 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ModelOtentikasi;
+use App\Models\ModelMasterDataLookup;
 
 class Otentikasi extends BaseController
 {
 	use ResponseTrait;
 	public function index()
 	{
+		helper('jwt');
 		$nip = "";
 		$password = "";
 
@@ -40,16 +42,26 @@ class Otentikasi extends BaseController
 		 
 
 		$model = new ModelOtentikasi();
-		$data = $model->getEmployee($nip);
-		if ($data['password'] != md5($password)) {
-			return $this->fail("Password tidak sesuai");
-		}
+		$modelMasterData = new ModelMasterDataLookup();
+		$data = $model->getEmployee($nip,$password);
+		$dataSettings = $modelMasterData->getMasterDataLookup("LEVEL");
+		// if ($data['password'] != md5($password)) {
+		// 	return $this->fail("Password tidak sesuai");
+		// }
 
-		helper('jwt');
+		$userData['employeeId'] =  $data['employeeId'];
+		$userData['name'] =  $data['name'];
+		$userData['roleLevel'] =  $data['roleLevel'];
+		$userData['roleLevelName'] =  $data['roleLevelName'];
+		$userData['roleCode'] =  $data['roleCode'];
+		$userData['status'] =  $data['status'];
+		$userData['parent'] =  $data['parent'];
+		  
 		$response = [
 			'message' => 'Otentikasi berhasil dilakukan',
-			'user' => $data,
-			'access_token' => createJWT($nip)
+			'user' => $userData, 
+			'settings' => $dataSettings,
+			'access_token' => createJWT($nip,$password)
 		];
 		return $this->respond($response);
 	}

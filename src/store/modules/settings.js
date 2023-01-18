@@ -55,70 +55,32 @@ const state = {
         darkmode: "logoDark.png",
         lightmode: "logoLight.png"
     },
-    menu: {
-        topLeft: [{
-            name: "Jadwal Ibadah",
-            path: "/jadwal",
-            icon: "mdi-book-open-variant",
-            outlined: false
-        }, ],
-        topRight: [{
-                name: "",
-                path: "/facebook",
-                icon: "mdi-facebook",
-                outlined: false
-            },
-            {
-                name: "",
-                path: "/instagram",
-                icon: "mdi-instagram",
-                outlined: false
-            },
-            {
-                name: "",
-                path: "/whatsapp",
-                icon: "mdi-whatsapp",
-                outlined: false
-            },
-            {
-                name: "",
-                path: "/youtube",
-                icon: "mdi-youtube",
-                outlined: false
-            }
-        ],
-        top: [{
-            name: "Beranda",
+    menu: [{
+            name: "Home",
             path: "/",
             icon: "mdi-home-roof"
-        }, ],
-        right: [{
-                name: "Home",
-                path: "/",
-                icon: "mdi-home-roof"
-            },
-            {
-                name: "Transactions",
-                path: "/inboxs",
-                icon: "mdi-phone"
-            },
-            {
-                name: "Inbox",
-                path: "/inbox",
-                icon: "mdi-phone"
-            },
-            {
-                name: "Outbox",
-                path: "/outbox",
-                icon: "mdi-phone"
-            },
-            {
-                name: "Report",
-                path: "/report",
-                icon: "mdi-phone"
-            }
-        ]
-    },
+        },
+        {
+            name: "Transactions",
+            path: "/inboxs",
+            icon: "mdi-phone"
+        },
+        {
+            name: "Inbox",
+            path: "/inbox",
+            icon: "mdi-phone"
+        },
+        {
+            name: "Outbox",
+            path: "/outbox",
+            icon: "mdi-phone"
+        },
+        {
+            name: "Report",
+            path: "/report",
+            icon: "mdi-phone"
+        }
+    ],
     dialogData: {
         isShowDialog: false,
         isScroll: false,
@@ -141,7 +103,8 @@ const state = {
     },
     users: {
         data: 0
-    }
+    },
+    lookupData: {}
 }
 export default {
     state,

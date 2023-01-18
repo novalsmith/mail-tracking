@@ -1,7 +1,7 @@
 <template>
   <v-footer padless color="transparent">
-    <div v-if="!settings.screenSize.type.islg">
-      <!-- <DrawerNavigations @drawerData=drawerData :headerTitle="headerTitleValue" :drawer="drawerVal"/> -->
+    <!-- menus -->
+    <!-- <div v-if="!settings.screenSize.type.islg">
       <v-navigation-drawer v-model="drawer" fixed left class="rounded-r-lg" style="position: fixed; z-index: 888;">
         <v-row class="my-1 mx-1">
           <v-col md="10">
@@ -60,7 +60,7 @@
         </v-btn>
 
       </v-bottom-navigation>
-    </div>
+    </div> -->
     <v-col class="text-center" cols="12">
       {{ new Date().getFullYear() }} — <strong>Mail Tracking Minerba</strong>
       <div><small>v1.0</small></div>

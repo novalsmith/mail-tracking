@@ -6,7 +6,13 @@
             </v-card-title>
 
             <v-card-text class="text--primary">
-
+                <div>
+                    <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2" v-model="alert"
+                        elevation="2" icon="mdi-information-outline" border="left" dismissible
+                        transition="scale-transition">
+                        {{ response.fail }}
+                    </v-alert>
+                </div>
 
                 <v-text-field v-model="nip" :error-messages="nipErrors" label="NIP" required @input="$v.nip.$touch()"
                     @blur="$v.nip.$touch()"></v-text-field>
@@ -49,55 +55,41 @@ export default {
             userData: [],
             token: "",
             show1: false,
-            password: ''
-
+            password: '',
+            alert: false,
+            response: {
+                fail: ""
+            }
         }
     },
     methods: {
         login() {
 
-            try {
+            const param = { "nip": this.nip, "password": this.password }
+            axios.post("otentikasi", param).then(res => {
+                var userDatas = res.data;
 
-                // console.log(process.env.BASE_URL);
-                // await axios.get('http://localhost:1412/pegawai');
-                // const user = JSON.parse(localStorage.getItem('user'));
-                // const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNhbXBsZUBnbWFpLmNvbSIsImlhdCI6MTY2NDY4MDU1NiwiZXhwIjoxNjY0NjgxOTk2fQ.oNFr5l-miXKkX0CAjeM08Kd2qc1Sr0gV7x9Qk18oFgA';  // axios.defaults.baseURL = "http://localhost:8080/";
-                // const response = axios.create({
-                //     baseURL: "http://localhost:8080/pegawai",
-                //     withCredentials: false,
-                //     headers: {
-                //         Accept: 'application/json',
-                //         'Content-Type': 'application/json',
-                //         Authorization: `Bearer ${token}`
-                //     }
-                // });
-                const param = { "nip": this.nip, "password": this.password }
-                axios.post("otentikasi", param).then(res => {
-                    var userDatas = res.data;
+                this.token = res.data.access_token;
+                localStorage.setItem('token', res.data.access_token);
+                localStorage.setItem('darkMode', this.$store.state.settings['isDarkMode']);
+                localStorage.setItem('userData', JSON.stringify(userDatas));
+                localStorage.setItem('isLogin', this.token != "" ? true : false);
+                localStorage.setItem('alertSuccessLogin', true);
 
-                    this.token = res.data.access_token;
-                    localStorage.setItem('token', res.data.access_token);
-                    localStorage.setItem('darkMode', this.$store.state.settings['isDarkMode']);
-                    localStorage.setItem('userData', JSON.stringify(userDatas));
-                    localStorage.setItem('isLogin', this.token != "" ? true : false);
-                    // var listData = this.$store.state.users['userData'];
-                    // listData.data = 12345;
-                    // const userDatas2 = {
-                    //     data: userDatas,
-                    // }
-                    // // console.log(listData);
-                    // this.$store.dispatch('users', userDatas2);
 
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    // this.$router.push('/');
-                    this.$router.push("/").catch(() => { })
-                        .then(() => { this.$router.go() });
+                axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
-                });
+                this.$router.push("/").catch(() => { })
+                    .then(() => { this.$router.go() });
 
-            } catch (error) {
-                console.log(error);
-            }
+            }).catch(error => {
+                this.alert = true;
+                console.log(error.response);
+                this.response.fail = error.response.data.message;
+
+            });
+
+
         },
         submit() {
             this.$v.$touch()

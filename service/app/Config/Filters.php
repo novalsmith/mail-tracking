@@ -63,8 +63,12 @@ class Filters extends BaseConfig
 	public $filters = [
 		'otentikasi' => [
 			'before' => [
-				'pegawai/*',
-				'pegawai'
+				'access/*',
+				'access',
+				'unit/*',
+				'unit',
+				'tracking/*',
+				'tracking'
 			]
 		]
 	];
