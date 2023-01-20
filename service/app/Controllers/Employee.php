@@ -17,13 +17,14 @@ class Employee extends BaseController
 		$data = $this->model->findAll();
 		return $this->respond($data, 200);
 	}
-	public function show($id = null)
+	public function employeeByParent($id = null)
 	{
-		$data = $this->model->where('userID', $id)->findAll();
+		$modelData = new ModelEmployee();
+		$data = $modelData->getEmployeeByParent($id);
 		if ($data) {
 			return $this->respond($data, 200);
 		} else {
-			return $this->failNotFound("Data tidak ditemukan untuk id $id");
+			return $this->failNotFound("Data not found for id $id");
 		}
 	}
 	public function create()

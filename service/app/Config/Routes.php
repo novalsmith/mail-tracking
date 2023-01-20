@@ -34,6 +34,7 @@ $routes->setAutoRoute(true);
 $routes->get('/access', 'Access::index');
 $routes->get('/unit', 'Unit::index');
 $routes->get('/employee', 'Employee::index');
+$routes->get('/employee/(:any)', 'Employee::employeeByParent/$1');
 $routes->get('/tracking', 'Tracking::index');
 $routes->get('/tracking/(:any)', 'Tracking::show/$1');
 // $routes->resource("pegawai");

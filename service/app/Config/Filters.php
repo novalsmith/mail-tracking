@@ -68,7 +68,9 @@ class Filters extends BaseConfig
 				'unit/*',
 				'unit',
 				'tracking/*',
-				'tracking'
+				'tracking',
+				'employee/*',
+				'employee'
 			]
 		]
 	];

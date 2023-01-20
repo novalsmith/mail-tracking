@@ -1,7 +1,7 @@
 <template>
     <form>
         <v-card class="mx-auto my-15" max-width="500" outlined elevation="5">
-            <v-card-title>
+            <v-card-title class="justify-center">
                 Login Mail Tracking Minerba
             </v-card-title>
 
@@ -75,8 +75,6 @@ export default {
                 localStorage.setItem('userData', JSON.stringify(userDatas));
                 localStorage.setItem('isLogin', this.token != "" ? true : false);
                 localStorage.setItem('alertSuccessLogin', true);
-
-
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
                 this.$router.push("/").catch(() => { })

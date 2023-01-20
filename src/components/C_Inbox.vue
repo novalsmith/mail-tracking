@@ -63,10 +63,20 @@
                                     </v-dialog>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-select :items="listType" label="Jenis"></v-select>
+                                    <v-select :items="listType" v-model="selectedType" @change="selectedTypeEvnt"
+                                        label="Jenis"></v-select>
                                 </v-col>
                                 <v-col md="12">
-                                    <v-textarea outlined name="input-7-4" label="Keterangan" value=""></v-textarea>
+
+                                    <div v-if="isReciverShow">
+                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple
+                                            chips></v-combobox>
+                                    </div>
+
+                                    <div>
+                                        <v-textarea outlined name="input-7-4" label="Keterangan" value=""></v-textarea>
+
+                                    </div>
                                 </v-col>
                                 <v-col md="12">
                                     <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
@@ -91,7 +101,7 @@
                                 }} </v-btn> {{
     items.createdBy
 }}</v-list-item-title>
-                                <v-list-item-subtitle>To : {{ items.toName }} - {{ items.createdDate }} - {{
+                                <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }} - {{
                                     items.note
                                 }}</v-list-item-subtitle>
                                 <v-list-item-subtitle>Tanggal : {{ items.createdDate }}</v-list-item-subtitle>
@@ -121,7 +131,8 @@ export default {
     },
     data() {
         return {
-            date: new Date().toISOString().substr(0, 10),
+            // date: new Date().toISOString().substr(0, 10),
+            date: null,
             menuDate: false,
             modalDate: false,
             dialogDetail: false,
@@ -143,6 +154,9 @@ export default {
             },
             listType: ['Arsipkan', 'Teruskan', 'Disposisi'],
             userDefault: "",
+            isReciverShow: false,
+            selectedType: "",
+            listItemsReciver: [],
             headers: [
                 { text: 'No', value: 'trackingid' },
                 { text: 'Agenda', value: 'agendaNumber' },
@@ -164,7 +178,18 @@ export default {
                     var responseAll = await axios.get("tracking");
                     this.allTrackingData = responseAll;
                     var response = await axios.get("tracking/" + userData.user.roleCode);
+
+                    var responsesParent = await axios.get("employee/" + userData.user.parent);
+                    var listParent = [];
+
+                    responsesParent.data.forEach(element => {
+                        if (userData.user.employeeId != element.employeeId) {
+                            listParent.push(element.employeeId + "-" + element.name);
+                        }
+                    });
+                    // console.log(listParent);
                     this.listData = response.data;
+                    this.listItemsReciver = listParent;
 
 
                     this.$store.dispatch('tracking', response.data);
@@ -206,6 +231,14 @@ export default {
             this.dari = ''
             this.password = ''
         },
+        selectedTypeEvnt() {
+            console.log(this.selectedType);
+            if (this.selectedType != 'Arsipkan') {
+                this.isReciverShow = true;
+            } else {
+                this.isReciverShow = false;
+            }
+        }
     },
     created() {
         this.getSettings();

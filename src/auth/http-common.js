@@ -3,7 +3,8 @@ import axios from 'axios';
 // console.log('form http-component');
 // console.log(localStorage.getItem('token'));
 // if(localStorage.getItem('token')!="")
-axios.defaults.baseURL = 'http://localhost:8080/';
+axios.defaults.baseURL = 'https://service.test.mailtrackminerba.com/';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 // export const AxiosAuth = axios.create({
 //   baseURL: `http://localhost:8080/`,

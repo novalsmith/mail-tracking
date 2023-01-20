@@ -17,51 +17,50 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@main  
-  Dev:
+  Test:
     runs-on: ubuntu-latest
-    environment: Dev
+    environment: Test
     steps: 
       - name: Checkout repository
         uses: actions/checkout@main
 
-      # - name: Sync files to service
-      #   uses: SamKirkland/FTP-Deploy-Action@4.3.1
-      #   with:
-      #     server: service.dev.mosframtech.com
-      #     username: dev_core@dev.mail-tracker-minerba.mosframtech.com
-      #     password: dev_core
-      #     local-dir: starter/
-      #     exclude: |
-      #       .git/**
-      #       .git**
-      #       .git*/**
-      #       **/.git*
-      #       **/.git*/**
-      #       **/node_modules/**
-      #       fileToExclude.txt
-      #       **/dist/index.js/**
-      #       **/tests/**
-      #       **/public/**
-      #       **/src/**
-      #       **/service/**
+      - name: Sync files to service
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          server: service.test.mailtrackminerba.com
+          username: core-ftp-service-test-minerba-2023@service.test.mailtrackminerba.com
+          password: core-ftp-service-test-minerba-2023
+          local-dir: service/
+          exclude: |
+            .git/**
+            .git**
+            .git*/**
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            fileToExclude.txt
+            **/dist/index.js/**
+            **/tests/**
+            **/public/**
+            **/src/**
 
-      # - name: Sync files to publics
-      #   uses: SamKirkland/FTP-Deploy-Action@4.3.1
-      #   with:
-      #     server: service.dev.mosframtech.com
-      #     username: dev_public@service.dev.mosframtech.com
-      #     password: dev_public
-      #     local-dir: starter/public/
-      #     exclude: |
-      #       .git/**
-      #       .git**
-      #       .git*/**
-      #       **/.git*
-      #       **/.git*/**
-      #       **/node_modules/**
-      #       fileToExclude.txt
-      #       **/dist/index.js/**
-      #       **/src/**
+      - name: Sync files to publics
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          server: service.test.mailtrackminerba.com
+          username: ftp-service-test-minerba-2023@service.test.mailtrackminerba.com
+          password: ftp-service-test-minerba-2023
+          local-dir: starter/public/
+          exclude: |
+            .git/**
+            .git**
+            .git*/**
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            fileToExclude.txt
+            **/dist/index.js/**
+            **/src/**
 
       - name: Use Node.js 16
         uses: actions/setup-node@main
@@ -76,9 +75,9 @@ jobs:
       - name: Sync files to view
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: dev.mail-tracker-minerba.mosframtech.com
-          username: ftp-dev-mail-tracking-minerba@dev.mail-tracker-minerba.mosframtech.com
-          password: ftp-dev-mail-tracking-minerba
+          server: test.mailtrackminerba.com
+          username: ftp-ui-test-minerba-2023@test.mailtrackminerba.com
+          password: ftp-ui-test-minerba-2023
           local-dir: dist/
           exclude: |
             **/.git*
@@ -87,5 +86,4 @@ jobs:
             **/public/**
             **/src/**
             **/service/**
-            **/starter/**
             
