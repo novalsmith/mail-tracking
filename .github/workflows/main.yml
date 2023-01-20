@@ -50,7 +50,7 @@ jobs:
           server: service.test.mailtrackminerba.com
           username: ftp-service-test-minerba-2023@service.test.mailtrackminerba.com
           password: ftp-service-test-minerba-2023
-          local-dir: starter/public/
+          local-dir: service/public/
           exclude: |
             .git/**
             .git**
