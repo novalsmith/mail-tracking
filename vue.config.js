@@ -3,7 +3,7 @@ module.exports = {
     'vuetify'
   ],
   devServer: {
-    proxy: "http://localhost:1412/"
+    proxy: "https://service.test.mailtrackminerba.com/"
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {
