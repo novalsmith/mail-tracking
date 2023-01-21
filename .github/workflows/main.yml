@@ -48,6 +48,7 @@ jobs:
             **/public/**
             **/src/**
             **/service/**
+            **/vendor/**
 
       - name: Sync files to publics
         uses: SamKirkland/FTP-Deploy-Action@4.3.1

@@ -41,3 +41,10 @@ WHERE `employeeId` = :employeeId:
 11 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
 12 FCPATH\index.php(67): CodeIgniter\CodeIgniter->run()
 13 SYSTEMPATH\Commands\Server\rewrite.php(43): require_once('FCPATH\\index.php')
+CRITICAL - 2023-01-20 19:50:05 --> Class "Kint\Renderer\Renderer" not found
+in SYSTEMPATH\Config\Factories.php on line 129.
+ 1 SYSTEMPATH\Common.php(206): CodeIgniter\Config\Factories::__callStatic('config', [])
+ 2 SYSTEMPATH\CodeIgniter.php(272): config('Config\\Kint')
+ 3 SYSTEMPATH\CodeIgniter.php(237): CodeIgniter\CodeIgniter->configureKint()
+ 4 SYSTEMPATH\CodeIgniter.php(199): CodeIgniter\CodeIgniter->initializeKint()
+ 5 ROOTPATH\spark(83): CodeIgniter\CodeIgniter->initialize()

@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '1a6a6c71b68442782ed094f49b0cef65b5e91cfc',
+        'reference' => 'ccf6a16531f5fa21b0f1e76717c43fcf852930b6',
         'name' => 'codeigniter4/appstarter',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '1a6a6c71b68442782ed094f49b0cef65b5e91cfc',
+            'reference' => 'ccf6a16531f5fa21b0f1e76717c43fcf852930b6',
             'dev_requirement' => false,
         ),
         'codeigniter4/framework' => array(
@@ -53,6 +53,15 @@
             'install_path' => __DIR__ . '/../firebase/php-jwt',
             'aliases' => array(),
             'reference' => 'ea7dda77098b96e666c5ef382452f94841e439cd',
+            'dev_requirement' => false,
+        ),
+        'kint-php/kint' => array(
+            'pretty_version' => '4.2.3',
+            'version' => '4.2.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../kint-php/kint',
+            'aliases' => array(),
+            'reference' => '7601bfd95ccc50a1b903c2764b31d00919e8edd9',
             'dev_requirement' => false,
         ),
         'laminas/laminas-escaper' => array(
