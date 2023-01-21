@@ -63,10 +63,10 @@ export default {
         }
     },
     methods: {
-        login() {
+        async login() {
 
             const param = { "nip": this.nip, "password": this.password }
-            axios.post("otentikasi", param).then(res => {
+            await axios.post("otentikasi", param).then(res => {
                 var userDatas = res.data;
 
                 this.token = res.data.access_token;
