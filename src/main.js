@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import AxiosPlugin from 'vue-axios-cors';
 import axios from "axios";
 import App from './App.vue'
 import './registerServiceWorker'
@@ -17,5 +18,6 @@ new Vue({
   httpClientAxios,
   axios,
   Modal,
+  AxiosPlugin,
   render: h => h(App)
 }).$mount('#app')
