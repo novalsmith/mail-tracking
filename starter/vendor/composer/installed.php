@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '0826960dbf148392cc6b9614bc9ace15d66bfd24',
+        'reference' => '1a6a6c71b68442782ed094f49b0cef65b5e91cfc',
         'name' => 'codeigniter4/appstarter',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '0826960dbf148392cc6b9614bc9ace15d66bfd24',
+            'reference' => '1a6a6c71b68442782ed094f49b0cef65b5e91cfc',
             'dev_requirement' => false,
         ),
         'codeigniter4/framework' => array(

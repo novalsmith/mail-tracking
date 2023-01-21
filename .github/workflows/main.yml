@@ -24,6 +24,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
+      - name: 🔨 Build Composer Project 
+        run: |
+          composer update
+
       - name: Sync files to service
         uses: SamKirkland/FTP-Deploy-Action@4.3.1
         with:
