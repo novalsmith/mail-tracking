@@ -2,7 +2,6 @@ import Vue from 'vue'
 import AxiosPlugin from 'vue-axios-cors';
 import axios from "axios";
 import App from './App.vue'
-import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
