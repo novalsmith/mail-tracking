@@ -71,8 +71,9 @@ jobs:
 
       - name: 🔨 Build Project
         run: |
-          npm install
+          npm install -g serve
           npm run build
+          serve -s
 
       - name: Sync files to view
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
