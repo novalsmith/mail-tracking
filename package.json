@@ -20,7 +20,16 @@
     "vuelidate": "^0.7.7",
     "vuetify": "^2.6.0",
     "vuetify-media-player": "^0.8.1",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-pwa": "^5.0.8",
+    "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-plugin-vuex": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-vuetify": "~2.5.8",
+    "vuetify-loader": "^1.7.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.8",
