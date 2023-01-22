@@ -55,6 +55,7 @@ export default {
     methods: {
         async getData() {
             try {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
                 this.listData = response.data;
                 this.$store.dispatch('employee', response.data);
