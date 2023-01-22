@@ -2,7 +2,7 @@ import {
   register
 } from 'register-service-worker'
 
-register('/service-worker.js', {
+register('./service-worker.js', {
   registrationOptions: {
     scope: './'
   },
