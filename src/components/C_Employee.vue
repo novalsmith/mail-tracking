@@ -55,7 +55,7 @@ export default {
     methods: {
         async getData() {
             try {
-                var response = await axios.get("employee");
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
                 this.listData = response.data;
                 this.$store.dispatch('employee', response.data);
             } catch (error) {

@@ -64,9 +64,9 @@ export default {
     },
     methods: {
         async login() {
-
+            // console.log(axios.defaults.baseURL);
             const param = { "nip": this.nip, "password": this.password }
-            await axios.post("otentikasi", param).then(res => {
+            await axios.post(process.env.VUE_APP_SERVICE_URL + "otentikasi", param).then(res => {
                 var userDatas = res.data;
 
                 this.token = res.data.access_token;

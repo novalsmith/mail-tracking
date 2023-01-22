@@ -175,11 +175,12 @@ export default {
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 console.log(userData.user);
                 if (userData && userData.user) {
-                    var responseAll = await axios.get("tracking");
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
                     this.allTrackingData = responseAll;
-                    var response = await axios.get("tracking/" + userData.user.roleCode);
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/" + userData.user.roleCode);
 
-                    var responsesParent = await axios.get("employee/" + userData.user.parent);
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.parent);
                     var listParent = [];
 
                     responsesParent.data.forEach(element => {

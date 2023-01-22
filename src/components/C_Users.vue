@@ -119,7 +119,7 @@ export default {
         },
         async getUsers() {
             try {
-                var response = await axios.get("access");
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "access");
                 // this.userData = response.data;
                 this.$store.dispatch('user', response.data);
             } catch (error) {

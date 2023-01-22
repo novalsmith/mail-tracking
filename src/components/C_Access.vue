@@ -54,7 +54,7 @@ export default {
     methods: {
         async getUsers() {
             try {
-                var response = await axios.get("access");
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "access");
                 this.listData = response.data;
                 this.$store.dispatch('access', response.data);
             } catch (error) {

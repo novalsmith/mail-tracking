@@ -109,7 +109,7 @@ export default {
     methods: {
         async getUsers() {
             try {
-                var response = await axios.get("tracking");
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
 
                 this.listData = response.data;
                 // var response2 = await axios.get("tracking/SDB.L");

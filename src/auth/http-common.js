@@ -3,15 +3,15 @@ import axios from 'axios';
 // console.log('form http-component');
 // console.log(localStorage.getItem('token'));
 // if(localStorage.getItem('token')!="")
-axios.defaults.baseURL = 'https://test.mailtrackminerba.com/';
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-// export const AxiosAuth = axios.create({
-//   baseURL: `http://localhost:8080/`,
-//   headers: {
-//       Authorization: `Bearer ${localStorage.getItem('token')}`
-//   }
-// })
+// axios.defaults.baseURL = process.env.VUE_APP_SERVICE_URL;
+// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+// axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+axios.create({
+    baseURL: process.env.VUE_APP_SERVICE_URL,
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+});
 
 let refresh = false;
 
@@ -80,7 +80,13 @@ axios.interceptors.response.use(resp => resp, async error => {
             console.log(data.access_token);
             if (status === 200) {
                 localStorage.setItem('token', data.access_token);
-                axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                axios.create({
+                    baseURL: process.env.VUE_APP_SERVICE_URL,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
                 console.log(error);
                 return axios(error.config);
             } else {

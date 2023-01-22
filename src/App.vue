@@ -40,6 +40,7 @@ import C_Login from '@/components/C_Login.vue';
 import { mapState } from "vuex";
 
 export default {
+  name: "app",
   computed: {
     ...mapState(['settings']),
     isLogined() {
@@ -49,6 +50,14 @@ export default {
       }
       return status;
     }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to, from) {
+        document.title = to.meta.title || 'Mail Tracking Minerba';
+      }
+    },
   },
   created() {
     // this.loginProcess();
