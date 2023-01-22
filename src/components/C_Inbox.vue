@@ -196,8 +196,7 @@ export default {
                         });
                     }
 
-                    console.log(response);
-                    this.listData = response != undefined || response.data;
+                    this.listData = response != undefined ? response.data : [];
                     this.listItemsReciver = listParent;
 
                     var lsitInboxData = {
