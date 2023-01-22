@@ -186,7 +186,7 @@ export default {
                     this.allTrackingData = responseAll != undefined ? responseAll : [];
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/" + userData.user.roleCode);
 
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.parent);
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.roleCode);
                     var listParent = [];
                     if (responsesParent != undefined) {
                         responsesParent.data.forEach(element => {
