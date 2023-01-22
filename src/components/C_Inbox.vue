@@ -183,19 +183,21 @@ export default {
                 if (userData && userData.user) {
                     // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                     var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                    this.allTrackingData = responseAll;
+                    this.allTrackingData = responseAll != undefined ? responseAll : [];
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/" + userData.user.roleCode);
 
                     var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.parent);
                     var listParent = [];
+                    if (responsesParent != undefined) {
+                        responsesParent.data.forEach(element => {
+                            if (userData.user.employeeId != element.employeeId) {
+                                listParent.push(element.employeeId + "-" + element.name);
+                            }
+                        });
+                    }
 
-                    responsesParent.data.forEach(element => {
-                        if (userData.user.employeeId != element.employeeId) {
-                            listParent.push(element.employeeId + "-" + element.name);
-                        }
-                    });
-
-                    this.listData = response.data;
+                    console.log(response);
+                    this.listData = response != undefined || response.data;
                     this.listItemsReciver = listParent;
 
                     var lsitInboxData = {
