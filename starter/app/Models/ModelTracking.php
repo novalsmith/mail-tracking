@@ -28,11 +28,7 @@ class ModelTracking extends Model
     {
         $builder = $this->table("v_tracking");
         $builder->where("to", $role);
-       $data =  $builder->get()->getResult();
-
-        if (!$data) {
-            throw new Exception("Tracking data not found");
-        } 
+       $data =  $builder->get()->getResult(); 
         return $data;
     }
 }
