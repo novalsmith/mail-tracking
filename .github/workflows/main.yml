@@ -72,6 +72,7 @@ jobs:
       - name: 🔨 Build Project
         run: |
           npm install
+          npm i --legacy-peer-deps
           npm run build
 
       - name: Sync files to view
