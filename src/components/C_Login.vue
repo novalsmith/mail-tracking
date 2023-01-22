@@ -2,7 +2,11 @@
     <form>
         <v-card class="mx-auto my-15" max-width="500" outlined elevation="5">
             <v-card-title class="justify-center">
-                Login Mail Tracking Minerba
+                <img src="../assets/login.png" alt="" srcset="" width="80">
+            </v-card-title>
+
+            <v-card-title class="justify-center">
+                Login Mail Tracking Minerba 
             </v-card-title>
 
             <v-card-text class="text--primary">
