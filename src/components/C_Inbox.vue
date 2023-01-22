@@ -3,10 +3,10 @@
     <div>
         <v-card>
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2" v-model="alertNotready"
-                    elevation="2" icon="mdi-information-outline" border="left" dismissible
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
+                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
                     transition="scale-transition">
-                    Sorry, this feature is not ready yet - <strong>Under Maintenance!</strong>
+                    {{ responseAlert.message }}
                 </v-alert>
             </v-container>
             <v-card-title>
@@ -15,7 +15,8 @@
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
                     hide-details></v-text-field>
             </v-card-title>
-            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick">
+            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick"
+                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item.trackingid="{ index }">
                     {{ index + 1 }}
                 </template>
@@ -39,9 +40,8 @@
 
                             <v-row>
                                 <v-col md="4">
-                                    <v-text-field :disabled="true" v-model="userDefault" :error-messages="dariErrors"
-                                        label="Dari" required @input="$v.dari.$touch()"
-                                        @blur="$v.dari.$touch()"></v-text-field>
+                                    <v-text-field :disabled="true" v-model="userDefault" label="Dari"
+                                        required></v-text-field>
                                 </v-col>
                                 <v-col md="4">
                                     <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="date" persistent
@@ -124,11 +124,11 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex';
 var maxlength = 18;
 export default {
-    mixins: [validationMixin],
-    validations: {
-        dari: { required, maxLength: maxLength(maxlength) },
-        password: { required, maxLength: maxLength(maxlength) },
-    },
+    // mixins: [validationMixin],
+    // validations: {
+    //     dari: { required, maxLength: maxLength(maxlength) },
+    //     password: { required, maxLength: maxLength(maxlength) },
+    // },
     data() {
         return {
             // date: new Date().toISOString().substr(0, 10),
@@ -136,7 +136,7 @@ export default {
             menuDate: false,
             modalDate: false,
             dialogDetail: false,
-            alertNotready: false,
+            isShowAlert: false,
             search: "",
             listData: [],
             detailDataRow: [],
@@ -157,25 +157,31 @@ export default {
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
+            isLoading: true,
+            responseAlert: {
+                message: "",
+                color: ""
+            },
             headers: [
                 { text: 'No', value: 'trackingid' },
                 { text: 'Agenda', value: 'agendaNumber' },
-                { text: 'Terima', value: 'receiptDate' },
-                { text: 'Tanggal Surat', value: 'realDate' },
+                { text: 'No Surat', value: 'number' },
+                { text: 'Perihal', value: 'note' },
+                { text: 'Tgl Terima', value: 'receiptDate' },
+                { text: 'Tgl Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'typeName' },
                 { text: 'Dari', value: 'fromName' },
-                { text: 'Ket', value: 'descriptionName' }
-            ],
+                { text: 'Jenis', value: 'descriptionName' }
+            ]
         }
     },
     methods: {
         submit() { },
-        async getUsers() {
+        async getInbox() {
             try {
                 var userData = JSON.parse(localStorage.getItem('userData'));
-                console.log(userData.user);
                 if (userData && userData.user) {
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                     var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
                     this.allTrackingData = responseAll;
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/" + userData.user.roleCode);
@@ -188,16 +194,24 @@ export default {
                             listParent.push(element.employeeId + "-" + element.name);
                         }
                     });
-                    // console.log(listParent);
+
                     this.listData = response.data;
                     this.listItemsReciver = listParent;
 
-
-                    this.$store.dispatch('tracking', response.data);
+                    var lsitInboxData = {
+                        allTrackingData: this.allTrackingData,
+                        listParentChild: listParent,
+                        trackingDataByRole: this.listData
+                    };
+                    this.$store.dispatch('inboxs', lsitInboxData);
                 }
+                this.isLoading = false;
 
             } catch (error) {
-                console.log(error);
+                this.isLoading = false;
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
             }
         },
         async getSettings() {
@@ -212,7 +226,6 @@ export default {
             this.detailDataList = filteredList;
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
-            console.log(this.detailDataList);
         },
         rowEditClick(row) {
             // this.notready();
@@ -221,7 +234,7 @@ export default {
             // this.notready();
         },
         notready() {
-            this.alertNotready = true;
+            this.isShowAlert = true;
         },
         submit() {
             this.$v.$touch()
@@ -233,7 +246,6 @@ export default {
             this.password = ''
         },
         selectedTypeEvnt() {
-            console.log(this.selectedType);
             if (this.selectedType != 'Arsipkan') {
                 this.isReciverShow = true;
             } else {
@@ -243,31 +255,31 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getUsers();
+        this.getInbox();
     },
     computed: {
-        ...mapGetters(['tracking', 'settings']),
-        dariErrors() {
-            const errors = []
-            if (!this.$v.dari.$dirty) return errors
-            !this.$v.dari.maxLength && errors.push('dari must be at most ' + maxlength + ' characters long')
-            !this.$v.dari.required && errors.push('dari is required.')
-            return errors
-        },
-        passwordErrors() {
-            const errors = []
-            if (!this.$v.password.$dirty) return errors
-            !this.$v.password.maxLength && errors.push('Password must be at most ' + maxlength + ' characters long')
-            !this.$v.password.required && errors.push('Password is required.')
-            return errors
-        },
-        isValid() {
-            if ((this.dari != '' || this.dari.length > maxLength) && (this.password != '' || this.dari.length > maxLength)) {
-                return false;
-            } else {
-                return true;
-            }
-        }
+        ...mapGetters(['inboxs', 'settings']),
+        // dariErrors() {
+        //     const errors = []
+        //     if (!this.$v.dari.$dirty) return errors
+        //     !this.$v.dari.maxLength && errors.push('dari must be at most ' + maxlength + ' characters long')
+        //     !this.$v.dari.required && errors.push('dari is required.')
+        //     return errors
+        // },
+        // passwordErrors() {
+        //     const errors = []
+        //     if (!this.$v.password.$dirty) return errors
+        //     !this.$v.password.maxLength && errors.push('Password must be at most ' + maxlength + ' characters long')
+        //     !this.$v.password.required && errors.push('Password is required.')
+        //     return errors
+        // },
+        // isValid() {
+        //     if ((this.dari != '' || this.dari.length > maxLength) && (this.password != '' || this.dari.length > maxLength)) {
+        //         return false;
+        //     } else {
+        //         return true;
+        //     }
+        // }
     }
 }
 </script>

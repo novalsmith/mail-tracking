@@ -4,9 +4,17 @@
         <v-app-bar color="transparent" elevation="0" height="auto">
 
             <v-main>
-                <div class="d-lg-none">
+                <div class="d-lg-none mb-10">
                     <v-row>
                         <!-- logo here -->
+                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.islg" contain
+                            src="../assets/login-mail-track.png" width="100%" max-width="30%" />
+
+                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.ismd" max-width="10%" contain
+                            src="../assets/login-mail-track.png" width="100%" />
+
+                        <v-img alt="Vuetify Name" v-if="settings.screenSize.type.isxs" contain
+                            src="../assets/login-mail-track.png" width="100%" max-width="15%" />
                         <v-spacer></v-spacer>
                         <template>
                             <div class="my-5">
@@ -56,7 +64,14 @@
                                 </v-menu>
                             </v-row>
                         </v-col>
-                        <v-col md="12" class="text-right">
+                        <v-col md="3">
+                            <router-link to="/">
+                                <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain
+                                    src="../assets/login-mail-track.png" width="20%" />
+                            </router-link>
+
+                        </v-col>
+                        <v-col md="9" class="text-right">
                             <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in renderMenu"
                                 :active-class="('white--text ' + settings.color)" :key="link.name" :to="link.path" text
                                 class="my-4" :outlined="link.outlined" v-show="link.isShow">

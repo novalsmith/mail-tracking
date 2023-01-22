@@ -3,10 +3,10 @@
     <div>
         <v-card>
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2" v-model="alertNotready"
-                    elevation="2" icon="mdi-information-outline" border="left" dismissible
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
+                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
                     transition="scale-transition">
-                    Sorry, this feature is not ready yet - <strong>Under Maintenance!</strong>
+                    {{ responseAlert.message }}
                 </v-alert>
             </v-container>
             <v-card-title>
@@ -21,7 +21,8 @@
                 <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-download</v-icon>
                     Template</v-btn>
             </v-card-title>
-            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick">
+            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick"
+                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item.trackingid="{ index }">
                     {{ index + 1 }}
                 </template>
@@ -87,11 +88,17 @@ export default {
                 v => !!v || 'File is required',
                 v => (v && v.length > 0) || 'File is required',
             ],
+            isLoading: true,
             alertNotready: false,
             search: "",
             listData: [],
             uploadedValue: [],
             dialogUpload: false,
+            isShowAlert: false,
+            responseAlert: {
+                message: "",
+                color: ""
+            },
             headers: [
                 { text: 'No', value: 'trackingid' },
                 { text: 'Agenda', value: 'agendaNumber' },
@@ -101,30 +108,29 @@ export default {
                 { text: 'Dari', value: 'fromName' },
                 { text: 'Kepada', value: 'toName' },
                 { text: 'Ket', value: 'descriptionName' },
-                // { text: 'Status', value: 'isDone' },
                 { text: 'Actions', value: 'actions', sortable: false }
-            ],
+            ]
         }
     },
     methods: {
-        async getUsers() {
+        async getTracking() {
             try {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-
                 this.listData = response.data;
-                // var response2 = await axios.get("tracking/SDB.L");
-
-
-                this.$store.dispatch('tracking', response.data);
+                this.$store.dispatch('trackings', response.data);
+                this.isLoading = false;
             } catch (error) {
-                console.log(error.response);
-
+                console.log(error);
+                this.isLoading = false;
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
             }
         },
         async getSettings() {
 
-            this.$store.dispatch('settings', this.themeColoring);
+            this.$store.dispatch('trackings', this.themeColoring);
         },
         rowClick(row) {
             this.notready();
@@ -144,10 +150,10 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getUsers();
+        this.getTracking();
     },
     computed: {
-        ...mapGetters(['tracking', 'settings']),
+        ...mapGetters(['trackings', 'settings']),
         uploadErrors() {
             const errors = []
             if (!this.$v.upload.$dirty) return errors

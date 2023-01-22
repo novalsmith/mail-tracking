@@ -1,7 +1,7 @@
 <template>
   <v-footer padless color="transparent">
     <!-- menus -->
-    <!-- <div v-if="!settings.screenSize.type.islg">
+    <div v-if="!settings.screenSize.type.islg">
       <v-navigation-drawer v-model="drawer" fixed left class="rounded-r-lg" style="position: fixed; z-index: 888;">
         <v-row class="my-1 mx-1">
           <v-col md="10">
@@ -18,29 +18,25 @@
         <v-divider></v-divider>
 
         <v-list nav dense class="text-uppercase">
-          <div v-for="(link, i) in menu.right" :key="i">
+          <!-- <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in renderMenu"
+                                :active-class="('white--text ' + settings.color)" :key="link.name" :to="link.path" text
+                                class="my-4" :outlined="link.outlined" v-show="link.isShow">
 
-            <v-list-item v-if="!link.submenu" :to="link.path" :active-class="settings.color + ' white--text'">
+                                <span>
+                                    {{ link.name }}
+                                </span>
+                            </v-btn> -->
+
+          <div v-for="(link, i) in renderMenu" :key="i">
+
+            <v-list-item :to="link.path" :active-class="settings.color + ' white--text'">
 
               <v-list-item-title v-text="link.name" />
             </v-list-item>
-
-            <v-list-group no-action v-else :key="link.name" :prepend-icon="link.icon"
-              :event="(link.name === 'Media' ? '' : 'click')" :value="false"
-              :active-class="(link.name === 'Media' ? 'blue-grey lighten-2' : settings.color)" class="white--text">
-              <template v-slot:activator>
-                <v-list-item-title>{{ link.name }}</v-list-item-title>
-              </template>
-
-              <v-list-item v-for="sublink in link.submenu" :to="sublink.path" :key="sublink.name"
-                :active-class="settings.color">
-                <v-list-item-title>{{ sublink.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list-group>
           </div>
         </v-list>
-      </v-navigation-drawer>  
-       <v-bottom-navigation fixed :color="settings.color" height="60" style="position: fixed; z-index: 999;">
+      </v-navigation-drawer>
+      <v-bottom-navigation fixed :color="settings.color" height="60" style="position: fixed; z-index: 999;">
         <v-btn to="/">
           <span>Home</span>
           <v-icon>mdi-home</v-icon>
@@ -50,17 +46,8 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
 
-        <v-btn to="/informasi">
-          <span>Info</span>
-          <v-icon>mdi-newspaper-variant-multiple</v-icon>
-        </v-btn>
-        <v-btn to="/jadwal">
-          <span>Ibadah</span>
-          <v-icon>mdi-book-open-variant</v-icon>
-        </v-btn>
-
       </v-bottom-navigation>
-    </div> -->
+    </div>
     <v-col class="text-center" cols="12">
       {{ new Date().getFullYear() }} — <strong>Mail Tracking Minerba</strong>
       <div><small>v1.0</small></div>
@@ -72,9 +59,6 @@
 import { mapState } from "vuex";
 
 export default {
-  computed: {
-    ...mapState(['settings'])
-  },
   data: () => ({
     drawer: false,
     group: null,
@@ -83,39 +67,7 @@ export default {
     sound: true,
     widgets: false,
     headerTitleValue: "",
-    items: [
-      {
-        image: 'https://cdn-images-1.medium.com/max/1024/1*9C9hLji68wV373tk8okLYA.jpeg',
-        title: 'TBI’s 5 Best: SF Mocktails to Finish Dry January Strong',
-        category: 'Travel',
-        keyword: 'Drinks',
-
-      },
-      {
-        image: 'https://cdn-images-1.medium.com/max/1024/1*BBNtYUieAqHoXKjiJ2mMjQ.png',
-        title: 'PWAs on iOS 12.2 beta: the good, the bad, and the “not sure yet if good”',
-        category: 'Technology',
-        keyword: 'Phones'
-      },
-      {
-        image: 'https://cdn-images-1.medium.com/max/1024/1*rTEtei1UEmNqbq6evRsExw.jpeg',
-        title: 'How to Get Media Mentions for Your Business',
-        category: 'Media',
-        keyword: 'Social'
-      },
-      {
-        image: 'https://cdn-images-1.medium.com/max/1024/1*FD2nkJewVeQnGf0ommQfrw.jpeg',
-        title: 'The Pitfalls Of Outsourcing Self-Awareness To Artificial Intelligence',
-        category: 'Technology',
-        keyword: 'Military'
-      },
-      {
-        image: 'https://cdn-images-1.medium.com/max/1024/1*eogFpsVgNzXQLCVgFzT_-A.jpeg',
-        title: 'Degrees of Freedom and Sudoko',
-        category: 'Travel',
-        keyword: 'Social',
-      }
-    ],
+    users: [],
     menu: {}
   }),
   watch: {
@@ -126,6 +78,8 @@ export default {
   },
   created() {
     this.getMenuData();
+    var listData = JSON.parse(localStorage.getItem('userData'));
+    this.users = listData != undefined && listData.user ? listData.user : [];
   },
   methods: {
     searchingButton() {
@@ -138,7 +92,76 @@ export default {
       this.headerTitleValue = val.headerTitle;
       this.drawerVal = true;
     }
-  }
+  },
+  computed: {
+    ...mapState(['settings']),
+    renderMenu() {
+      var level = parseInt(this.users.roleLevel);
+      var menus = [
+        {
+          name: "Home",
+          path: "/",
+          icon: "mdi-home-roof",
+          isShow: ((level == 99 || level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+        },
+        {
+          name: "Inbox",
+          path: "/inbox",
+          icon: "mdi-phone",
+          isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+        },
+        {
+          name: "Outbox",
+          path: "/outbox",
+          icon: "mdi-phone",
+          isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+        },
+        {
+          name: "Nadine",
+          path: "/nadine",
+          icon: "mdi-phone",
+          isShow: ((level == 99 || level == 0) ? true : false)
+        },
+        {
+          name: "Employee",
+          path: "/employee",
+          icon: "mdi-phone",
+          isShow: ((level == 99) ? true : false)
+        },
+        {
+          name: "Access",
+          path: "/access",
+          icon: "mdi-phone",
+          isShow: ((level == 99) ? true : false)
+        },
+        {
+          name: "Unit",
+          path: "/unit",
+          icon: "mdi-phone",
+          isShow: ((level == 99) ? true : false)
+        },
+        {
+          name: "Report",
+          path: "/report",
+          icon: "mdi-phone",
+          isShow: ((level == 99) ? true : false)
+        },
+        {
+          name: "Profile",
+          path: "/profile",
+          icon: "mdi-cog-outline",
+          isShow: ((level == 99) ? true : false)
+        },
+        {
+          name: "Logout",
+          path: "/logout",
+          icon: "mdi-logout-variant",
+          isShow: ((level == 99) ? true : false)
+        },
+      ];
+      return menus;
+    }
+  },
 }
 </script>
 <style>

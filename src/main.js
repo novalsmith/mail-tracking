@@ -7,7 +7,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import httpClientAxios from './auth/http-common'
 import Modal from './components/C_GeneralDialog.vue'
-// import './registerServiceWorker'
+import './registerServiceWorker'
 
 Vue.config.productionTip = false
 
@@ -17,33 +17,13 @@ Vue.config.productionTip = false
 // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
 // axios.interceptors.response.use(resp => resp, async error => {
-//   if (error.response.status === 401 && !refresh) {
+//   console.log("masuk sini");
+//   console.log(error.response.status);
+//   if (error.response.status === 401) {
 
 //     if (error.response.data && error.response.data.error === "Expired token") {
-//       refresh = true;
-//       const param = {
-//         "isWebAdmin": true
-//       }
-//       const {
-//         status,
-//         data
-//       } = await axios.post('otentikasi', param, {
-//         withCredentials: true
-//       });
-//       console.log(data.access_token);
-//       if (status === 200) {
-//         localStorage.setItem('token', data.access_token);
-//         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-//         console.log(error);
-//         return axios(error.config);
-//       } else {
-//         return Promise.reject(error);
-//       }
+//       router.push('/logout')
 //     }
-//   } else {
-//     refresh = false;
-
-//     return Promise.reject(error);
 //   }
 // });
 

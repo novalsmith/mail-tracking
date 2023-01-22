@@ -16,7 +16,8 @@
             <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-plus</v-icon>
                 Add</v-btn>
         </v-card-title>
-        <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick">
+        <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick" :loading="isLoading"
+            :loading-text="isLoading ? 'Loading... Please wait' : ''">
             <template v-slot:item.clasificationId="{ index }">
                 {{ index + 1 }}
             </template>
@@ -40,6 +41,7 @@ export default {
         return {
             alertNotready: false,
             search: "",
+            isLoading: true,
             listData: [],
             headers: [
                 { text: 'No', value: 'clasificationId' },
@@ -54,13 +56,14 @@ export default {
     methods: {
         async getUsers() {
             try {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unit");
                 this.listData = response.data;
                 this.$store.dispatch('unit', response.data);
+                this.isLoading = false;
             } catch (error) {
                 console.log(error.response);
-
+                this.isLoading = false;
             }
         },
         async getSettings() {

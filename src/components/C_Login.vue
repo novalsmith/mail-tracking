@@ -1,12 +1,15 @@
 <template>
     <form>
         <v-card class="mx-auto my-15" max-width="500" outlined elevation="5">
-            <v-card-title class="justify-center">
-                <img src="../assets/login.png" alt="" srcset="" width="80">
-            </v-card-title>
+         
 
             <v-card-title class="justify-center">
-                Login Mail Tracking Minerba 
+                <v-spacer></v-spacer>
+                <img src="../assets/login-mail-track.png" alt="" srcset="" width="20%">
+                <div class="mx-2">
+                    Login <br>Mail Tracking Minerba
+                </div>
+                <v-spacer></v-spacer>
             </v-card-title>
 
             <v-card-text class="text--primary">
