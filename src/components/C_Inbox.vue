@@ -18,7 +18,7 @@
             <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
                 :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
-                    <tr class="rowColor" @click="rowClick">
+                    <tr class="rowColor" @click="rowClick(item)">
                         <td>{{ index + 1}}</td>
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.number }}</td>
@@ -38,7 +38,9 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Agenda - {{ detailDataRow.agendaNumber }}</v-toolbar-title>
+                    <v-toolbar-title>Agenda - {{ detailDataRow.agendaNumber }} - Perihal - {{
+                        detailDataRow.note
+                    }}</v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
@@ -132,6 +134,8 @@ import axios from 'axios';
 import { validationMixin } from 'vuelidate'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex';
+import moment from 'moment';
+
 var maxlength = 18;
 export default {
     // mixins: [validationMixin],
@@ -238,6 +242,11 @@ export default {
                 .map((e) => { return e });
 
             this.detailDataRow = row;
+            // console.log(row); 
+            // var dateChanges = new Date(row.receiptDate); 
+            this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
+            // console.log(resDate);
+            // this.date = new Date(row.receiptDate);
             this.detailDataList = filteredList;
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
