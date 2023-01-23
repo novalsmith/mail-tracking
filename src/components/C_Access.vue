@@ -16,10 +16,17 @@
             <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-plus</v-icon>
                 Add</v-btn>
         </v-card-title>
-        <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick" :loading="isLoading"
+        <v-data-table multi-sort :headerProps="headerprops" class="row-pointer" :headers="headers" :items="listData"
+            :search="search" @click:row="rowClick" :loading="isLoading"
             :loading-text="isLoading ? 'Loading... Please wait' : ''">
-            <template v-slot:item.accessid="{ index }">
-                {{ index + 1 }}
+            <template v-slot:item="{ item, index }">
+                <tr class="rowColor">
+                    <td>{{ index + 1}}</td>
+                    <td>{{ item.employeeId }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.statusName }}</td>
+                    <td>{{ item.roleLevelName }}</td>
+                </tr>
             </template>
             <template v-slot:item.actions="{ item }">
                 <v-icon small class="mr-2" @click="rowEditClick(item)">
@@ -48,9 +55,11 @@ export default {
                 { text: 'NIP', value: 'employeeId' },
                 { text: 'Nama', value: 'name' },
                 { text: 'Status', value: 'statusName' },
-                { text: 'Role', value: 'roleLevelName' },
-                { text: 'Actions', value: 'actions', sortable: false }
+                { text: 'Role', value: 'roleLevelName' }
             ],
+            headerprops: {
+                "sort-icon": "mdi-arrow-up"
+            }
         }
     },
     methods: {
@@ -93,3 +102,14 @@ export default {
     }
 }
 </script>
+
+<style lang="css" scoped>
+.rowColor:hover {
+    /* `!important` is necessary here because Vuetify overrides this
+    - background cyan darken-2
+    */
+    background: #0097A7 !important;
+    color: white;
+    cursor: pointer;
+}
+</style>

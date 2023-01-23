@@ -15,10 +15,21 @@
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
                     hide-details></v-text-field>
             </v-card-title>
-            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
-                <template v-slot:item.trackingid="{ index }">
-                    {{ index + 1 }}
+            <v-data-table multi-sort :headerProps="headerprops" class="row-pointer" :headers="headers" :items="listData"
+                :search="search" @click:row="rowClick" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''">
+                <template v-slot:item="{ item, index }">
+                    <tr class="rowColor">
+                        <td>{{ index + 1}}</td>
+                        <td>{{ item.agendaNumber }}</td>
+                        <td>{{ item.number }}</td>
+                        <td>{{ item.note }}</td>
+                        <td>{{ item.receiptDate }}</td>
+                        <td>{{ item.realDate }}</td>
+                        <td>{{ item.typeName }}</td>
+                        <td>{{ item.fromName }}</td>
+                        <td>{{ item.descriptionName }}</td>
+                    </tr>
                 </template>
             </v-data-table>
         </v-card>
@@ -172,7 +183,10 @@ export default {
                 { text: 'Sifat Surat', value: 'typeName' },
                 { text: 'Dari', value: 'fromName' },
                 { text: 'Jenis', value: 'descriptionName' }
-            ]
+            ],
+            headerprops: {
+                "sort-icon": "mdi-arrow-up"
+            }
         }
     },
     methods: {
@@ -283,4 +297,15 @@ export default {
         // }
     }
 }
-</script>
+</script> 
+
+<style lang="css" scoped>
+.rowColor:hover {
+    /* `!important` is necessary here because Vuetify overrides this
+    - background cyan darken-2
+    */
+    background: #0097A7 !important;
+    color: white;
+    cursor: pointer;
+}
+</style>

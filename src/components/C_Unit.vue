@@ -16,18 +16,17 @@
             <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-plus</v-icon>
                 Add</v-btn>
         </v-card-title>
-        <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick" :loading="isLoading"
-            :loading-text="isLoading ? 'Loading... Please wait' : ''">
-            <template v-slot:item.clasificationId="{ index }">
-                {{ index + 1 }}
-            </template>
-            <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-2" @click="rowEditClick(item)">
-                    mdi-pencil
-                </v-icon>
-                <v-icon small @click="rowDeleteClick(item)">
-                    mdi-delete
-                </v-icon>
+        <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
+            @click:row="rowClick" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
+            <template v-slot:item="{ item, index }">
+                <tr class="rowColor">
+                    <td>{{ index + 1}}</td>
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.unitCodeOrg }}</td>
+                    <td>{{ item.oraganizationUnit }}</td>
+                    <td>{{ item.statusName }}</td>
+
+                </tr>
             </template>
         </v-data-table>
     </v-card>
@@ -48,9 +47,11 @@ export default {
                 { text: 'Kode', value: 'code' },
                 { text: 'Unit', value: 'unitCodeOrg' },
                 { text: 'Nama', value: 'oraganizationUnit' },
-                { text: 'Status', value: 'statusName' },
-                { text: 'Actions', value: 'actions', sortable: false }
+                { text: 'Status', value: 'statusName' }
             ],
+            headerprops: {
+                "sort-icon": "mdi-arrow-up"
+            }
         }
     },
     methods: {
@@ -93,3 +94,14 @@ export default {
     }
 }
 </script>
+
+<style lang="css" scoped>
+.rowColor:hover {
+    /* `!important` is necessary here because Vuetify overrides this
+    - background cyan darken-2
+    */
+    background: #0097A7 !important;
+    color: white;
+    cursor: pointer;
+}
+</style>

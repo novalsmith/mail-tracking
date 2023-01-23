@@ -21,18 +21,21 @@
                 <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-download</v-icon>
                     Template</v-btn>
             </v-card-title>
-            <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
-                <template v-slot:item.trackingid="{ index }">
-                    {{ index + 1 }}
-                </template>
-                <template v-slot:item.actions="{ item }">
-                    <v-icon small class="mr-2" @click="rowEditClick(item)">
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon small @click="rowDeleteClick(item)">
-                        mdi-delete
-                    </v-icon>
+            <v-data-table multi-sort :headerProps="headerprops" class="row-pointer" :headers="headers" :items="listData"
+                :search="search" @click:row="rowClick" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''">
+                <template v-slot:item="{ item, index }">
+                    <tr class="rowColor">
+                        <td>{{ index + 1}}</td>
+                        <td>{{ item.agendaNumber }}</td>
+                        <td>{{ item.receiptDate }}</td>
+                        <td>{{ item.realDate }}</td>
+                        <td>{{ item.typeName }}</td>
+                        <td>{{ item.fromName }}</td>
+                        <td>{{ item.toName }}</td>
+                        <td>{{ item.descriptionName }}</td>
+
+                    </tr>
                 </template>
             </v-data-table>
         </v-card>
@@ -107,9 +110,11 @@ export default {
                 { text: 'Sifat Surat', value: 'typeName' },
                 { text: 'Dari', value: 'fromName' },
                 { text: 'Kepada', value: 'toName' },
-                { text: 'Ket', value: 'descriptionName' },
-                { text: 'Actions', value: 'actions', sortable: false }
-            ]
+                { text: 'Ket', value: 'descriptionName' }
+            ],
+            headerprops: {
+                "sort-icon": "mdi-arrow-up"
+            }
         }
     },
     methods: {
@@ -170,3 +175,14 @@ export default {
     }
 }
 </script>
+
+<style lang="css" scoped>
+.rowColor:hover {
+    /* `!important` is necessary here because Vuetify overrides this
+    - background cyan darken-2
+    */
+    background: #0097A7 !important;
+    color: white;
+    cursor: pointer;
+}
+</style>

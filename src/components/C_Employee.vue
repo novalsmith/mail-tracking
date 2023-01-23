@@ -16,18 +16,18 @@
             <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-plus</v-icon>
                 Add</v-btn>
         </v-card-title>
-        <v-data-table :headers="headers" :items="listData" :search="search" @click:row="rowClick" :loading="isLoading"
-            :loading-text="isLoading ? 'Loading... Please wait' : ''">
-            <template v-slot:item.num="{ index }">
-                {{ index + 1 }}
-            </template>
-            <template v-slot:item.actions="{ item }">
-                <v-icon small class="mr-2" @click="rowEditClick(item)">
-                    mdi-pencil
-                </v-icon>
-                <v-icon small @click="rowDeleteClick(item)">
-                    mdi-delete
-                </v-icon>
+        <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
+            @click:row="rowClick" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
+
+            <template v-slot:item="{ item, index }">
+                <tr class="rowColor">
+                    <td>{{ index + 1}}</td>
+                    <td>{{ item.employeeId }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.placement }}</td>
+                    <td>{{ item.position }}</td>
+                    <td>{{ item.unitRoleName }}</td>
+                </tr>
             </template>
         </v-data-table>
     </v-card>
@@ -49,9 +49,11 @@ export default {
                 { text: 'Nama', value: 'name' },
                 { text: 'Penempatan', value: 'placement' },
                 { text: 'Jabatan', value: 'position' },
-                { text: 'Unit', value: 'unitRoleName' },
-                { text: 'Actions', value: 'actions', sortable: false }
+                { text: 'Unit', value: 'unitRoleName' }
             ],
+            headerprops: {
+                "sort-icon": "mdi-arrow-up"
+            }
         }
     },
     methods: {
@@ -83,6 +85,11 @@ export default {
         },
         notready() {
             this.alertNotready = true;
+        },
+        rowClass(item) {
+            console.log(item);
+            const rowClass = 'rowClass'
+            return rowClass;
         }
     },
     created() {
@@ -90,7 +97,19 @@ export default {
         this.getData();
     },
     computed: {
-        ...mapGetters(['user', 'settings'])
+        ...mapGetters(['user', 'settings']),
+
     }
 }
 </script>
+
+<style lang="css">
+.rowColor:hover {
+    /* `!important` is necessary here because Vuetify overrides this
+    - background cyan darken-2
+    */
+    background: #0097A7 !important;
+    color: white;
+    cursor: pointer;
+}
+</style>

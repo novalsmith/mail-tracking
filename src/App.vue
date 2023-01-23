@@ -114,7 +114,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="css" scoped>
 .on-hover {
   transition: all 0.5s ease;
 }
