@@ -15,9 +15,8 @@
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
                     hide-details></v-text-field>
             </v-card-title>
-            <v-data-table multi-sort :headerProps="headerprops" class="row-pointer" :headers="headers" :items="listData"
-                :search="search" @click:row="rowClick" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''">
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
+                @click:row="rowClick" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
                     <tr class="rowColor">
                         <td>{{ index + 1}}</td>

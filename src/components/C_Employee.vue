@@ -25,10 +25,12 @@
                     <td>{{ item.employeeId }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.position }}</td>
-                    <td>{{ item.unitRoleName }}</td>
                     <td>{{ item.es2 }}</td>
                     <td>{{ item.es3 }}</td>
                     <td>{{ item.es4 }}</td>
+                    <td>{{ item.unitCode }}</td>
+                    <td>{{ item.roleCode }}</td>
+                    <td>{{ item.roleName }}</td>
                 </tr>
             </template>
         </v-data-table>
@@ -50,10 +52,12 @@ export default {
                 { text: 'NIP', value: 'employeeId' },
                 { text: 'Nama', value: 'name' },
                 { text: 'Jabatan', value: 'position' },
-                { text: 'Unit', value: 'unitRoleName' },
                 { text: 'ES II', value: 'es2' },
                 { text: 'ES III', value: 'es3' },
-                { text: 'ES IV', value: 'es4' }
+                { text: 'ES IV', value: 'es4' },
+                { text: 'Kode Unit Organisasi', value: 'unitCode' },
+                { text: 'Kode', value: 'roleCode' },
+                { text: 'Role', value: 'roleName' },
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
