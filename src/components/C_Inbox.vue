@@ -16,9 +16,9 @@
                     hide-details></v-text-field>
             </v-card-title>
             <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
-                @click:row="rowClick" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
+                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
-                    <tr class="rowColor">
+                    <tr class="rowColor" @click="rowClick">
                         <td>{{ index + 1}}</td>
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.number }}</td>
@@ -57,7 +57,7 @@
                                     <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="date" persistent
                                         width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field v-model="date" label="Picker in dialog"
+                                            <v-text-field v-model="date" label="Tanggal Tindak Lanjut"
                                                 prepend-icon="mdi-calendar" readonly v-bind="attrs"
                                                 v-on="on"></v-text-field>
                                         </template>
@@ -74,7 +74,7 @@
                                 </v-col>
                                 <v-col md="4">
                                     <v-select :items="listType" v-model="selectedType" @change="selectedTypeEvnt"
-                                        label="Jenis"></v-select>
+                                        label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
@@ -233,9 +233,10 @@ export default {
             this.$store.dispatch('settings', this.themeColoring);
         },
         rowClick(row) {
+            this.dialogDetail = true;
             const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
-            this.dialogDetail = true;
+
             this.detailDataRow = row;
             this.detailDataList = filteredList;
             var listData = JSON.parse(localStorage.getItem('userData'));
