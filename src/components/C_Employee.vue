@@ -24,9 +24,11 @@
                     <td>{{ index + 1}}</td>
                     <td>{{ item.employeeId }}</td>
                     <td>{{ item.name }}</td>
-                    <td>{{ item.placement }}</td>
                     <td>{{ item.position }}</td>
                     <td>{{ item.unitRoleName }}</td>
+                    <td>{{ item.es2 }}</td>
+                    <td>{{ item.es3 }}</td>
+                    <td>{{ item.es4 }}</td>
                 </tr>
             </template>
         </v-data-table>
@@ -47,9 +49,11 @@ export default {
                 { text: 'No', value: 'num' },
                 { text: 'NIP', value: 'employeeId' },
                 { text: 'Nama', value: 'name' },
-                { text: 'Penempatan', value: 'placement' },
                 { text: 'Jabatan', value: 'position' },
-                { text: 'Unit', value: 'unitRoleName' }
+                { text: 'Unit', value: 'unitRoleName' },
+                { text: 'ES II', value: 'es2' },
+                { text: 'ES III', value: 'es3' },
+                { text: 'ES IV', value: 'es4' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
