@@ -118,6 +118,21 @@ const routes = [{
     }
   },
   {
+    path: '/outbox',
+    name: 'Outbox',
+    component: () => import('../views/Outbox.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
     path: '/logout',
     name: 'Logout',
     component: () => import('../views/Logout.vue'),
