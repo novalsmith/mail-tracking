@@ -22,12 +22,12 @@
                         <td>{{ index + 1}}</td>
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.number }}</td>
-                        <td>{{ item.note }}</td>
                         <td>{{ item.receiptDate }}</td>
                         <td>{{ item.realDate }}</td>
                         <td>{{ item.typeName }}</td>
                         <td>{{ item.fromName }}</td>
-                        <td>{{ item.descriptionName }}</td>
+                        <td>{{ item.toName }}</td>
+                        <td>{{ item.note }}</td>
                     </tr>
                 </template>
             </v-data-table>
@@ -178,14 +178,14 @@ export default {
             },
             headers: [
                 { text: 'No', value: 'trackingid' },
-                { text: 'Agenda', value: 'agendaNumber' },
-                { text: 'No Surat', value: 'number' },
-                { text: 'Perihal', value: 'note' },
-                { text: 'Tgl Terima', value: 'receiptDate' },
-                { text: 'Tgl Surat', value: 'realDate' },
+                { text: 'No. Agenda', value: 'agendaNumber' },
+                { text: 'Tgl. Penerimaan', value: 'receiptDate' },
+                { text: 'No. Surat', value: 'number' },
+                { text: 'Tgl. Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'typeName' },
                 { text: 'Dari', value: 'fromName' },
-                { text: 'Jenis', value: 'descriptionName' }
+                { text: 'Kepada', value: 'toName' },
+                { text: 'Keterangan', value: 'note' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"

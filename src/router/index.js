@@ -37,22 +37,22 @@ const routes = [{
       }
     }
   },
-  {
-    path: '/access',
-    name: 'Access',
-    component: () => import('../views/Access.vue'),
-    beforeEnter: (to, from, next) => {
-      if (localStorage.getItem('token') == null) {
-        // routerObject.push("/logout");
-        next({
-          path: '/logout',
-          replace: true
-        })
-      } else {
-        next();
-      }
-    }
-  },
+  // {
+  //   path: '/access',
+  //   name: 'Access',
+  //   component: () => import('../views/Access.vue'),
+  //   beforeEnter: (to, from, next) => {
+  //     if (localStorage.getItem('token') == null) {
+  //       // routerObject.push("/logout");
+  //       next({
+  //         path: '/logout',
+  //         replace: true
+  //       })
+  //     } else {
+  //       next();
+  //     }
+  //   }
+  // },
   {
     path: '/unit',
     name: 'Unit',

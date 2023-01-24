@@ -196,12 +196,12 @@ export default {
                     icon: "mdi-phone",
                     isShow: ((level == 99) ? true : false)
                 },
-                {
-                    name: "Access",
-                    path: "/access",
-                    icon: "mdi-phone",
-                    isShow: ((level == 99) ? true : false)
-                },
+                // {
+                //     name: "Access",
+                //     path: "/access",
+                //     icon: "mdi-phone",
+                //     isShow: ((level == 99) ? true : false)
+                // },
                 {
                     name: "Unit",
                     path: "/unit",
