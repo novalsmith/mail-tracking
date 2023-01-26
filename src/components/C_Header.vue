@@ -191,6 +191,12 @@ export default {
                     isShow: ((level == 0) ? true : false)
                 },
                 {
+                    name: "Draft",
+                    path: "/draft",
+                    icon: "mdi-phone",
+                    isShow: ((level == 0 || level == 2) ? true : false)
+                },
+                {
                     name: "Employee",
                     path: "/employee",
                     icon: "mdi-phone",

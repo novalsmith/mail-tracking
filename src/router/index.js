@@ -102,6 +102,38 @@ const routes = [{
     }
   },
   {
+    path: '/draft',
+    name: 'Draft',
+    component: () => import('../views/Draft.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
+    path: '/report',
+    name: 'Report',
+    component: () => import('../views/Report.vue'),
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
     path: '/inbox',
     name: 'Inbox',
     component: () => import('../views/Inbox.vue'),
