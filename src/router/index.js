@@ -102,8 +102,8 @@ const routes = [{
     }
   },
   {
-    path: '/draft',
-    name: 'Draft',
+    path: '/unknown',
+    name: 'Unknown',
     component: () => import('../views/Draft.vue'),
     beforeEnter: (to, from, next) => {
       if (localStorage.getItem('token') == null) {

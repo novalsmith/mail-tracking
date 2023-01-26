@@ -1,15 +1,15 @@
 <template>
-    <C_Draft />
+    <C_Unknown />
 </template>
 
 <script>
-import C_Draft from '../components/C_Draft'
+import C_Unknown from '../components/C_Unknown'
 
 export default {
-    name: 'Draft',
+    name: 'Unknown',
 
     components: {
-        C_Draft,
+        C_Unknown,
     },
 }
 </script>
