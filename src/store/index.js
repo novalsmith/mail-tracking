@@ -7,23 +7,10 @@ import inboxs from './modules/inbox'
 import trackings from './modules/tracking'
 import access from './modules/access'
 import unit from './modules/unit'
-
-
+import lookup from './modules/lookup'
 
 Vue.use(Vuex)
-
-
-// export default createStore({
-//   modules: {
-//     users,
-//     settings
-//   },
-// })
-// const state = {
-//   user: null
-// }
 export default new Vuex.Store({
-  // state,
   modules: {
     employees,
     settings,
@@ -31,6 +18,7 @@ export default new Vuex.Store({
     inboxs,
     trackings,
     access,
-    unit
+    unit,
+    lookup
   }
-})
+});

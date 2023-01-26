@@ -30,10 +30,10 @@
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.receiptDate }}</td>
                         <td>{{ item.realDate }}</td>
-                        <td>{{ item.typeName }}</td>
-                        <td>{{ item.fromName }}</td>
-                        <td>{{ item.toName }}</td>
-                        <td>{{ item.descriptionName }}</td>
+                        <td>{{ item.type }}</td>
+                        <td>{{ item.from }}</td>
+                        <td>{{ item.to }}</td>
+                        <td>{{ item.note }}</td>
 
                     </tr>
                 </template>
@@ -107,10 +107,10 @@ export default {
                 { text: 'Agenda', value: 'agendaNumber' },
                 { text: 'Terima', value: 'receiptDate' },
                 { text: 'Tanggal Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'typeName' },
-                { text: 'Dari', value: 'fromName' },
-                { text: 'Kepada', value: 'toName' },
-                { text: 'Ket', value: 'descriptionName' }
+                { text: 'Sifat Surat', value: 'type' },
+                { text: 'Dari', value: 'from' },
+                { text: 'Kepada', value: 'to' },
+                { text: 'Ket', value: 'note' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"

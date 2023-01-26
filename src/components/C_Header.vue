@@ -170,49 +170,49 @@ export default {
                     name: "Home",
                     path: "/",
                     icon: "mdi-home-roof",
-                    isShow: ((level == 99 || level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                    isShow: ((level == 0 || level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
                 },
                 {
                     name: "Inbox",
                     path: "/inbox",
                     icon: "mdi-phone",
-                    isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                    isShow: ((level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
                 },
                 {
                     name: "Outbox",
                     path: "/outbox",
                     icon: "mdi-phone",
-                    isShow: ((level == 99 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
+                    isShow: ((level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
                 },
                 {
                     name: "Nadine",
                     path: "/nadine",
                     icon: "mdi-phone",
-                    isShow: ((level == 99 || level == 0) ? true : false)
+                    isShow: ((level == 0) ? true : false)
                 },
                 {
                     name: "Employee",
                     path: "/employee",
                     icon: "mdi-phone",
-                    isShow: ((level == 99) ? true : false)
+                    isShow: ((level == 0) ? true : false)
                 },
                 // {
                 //     name: "Access",
                 //     path: "/access",
                 //     icon: "mdi-phone",
-                //     isShow: ((level == 99) ? true : false)
+                //     isShow: ((level == 0) ? true : false)
                 // },
                 {
                     name: "Unit",
                     path: "/unit",
                     icon: "mdi-phone",
-                    isShow: ((level == 99) ? true : false)
+                    isShow: ((level == 0) ? true : false)
                 },
                 {
                     name: "Report",
                     path: "/report",
                     icon: "mdi-phone",
-                    isShow: ((level == 99) ? true : false)
+                    isShow: ((level == 0) ? true : false)
                 },
             ];
             return menus;

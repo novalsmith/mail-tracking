@@ -61,10 +61,12 @@
                                     <v-text-field label="Ubah Password"></v-text-field>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-select :items="roleList" item-text="name" label="Role"></v-select>
+                                    <v-select :items="listLevelLookup" v-model="selectedRoleValue" item-text="name"
+                                        item-value="code" label="Role"></v-select>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-select :items="statusList" item-text="name" label="Status"></v-select>
+                                    <v-select :items="statusList" v-model="selectedStatusValue" item-text="name"
+                                        item-value="code" label="Status"></v-select>
                                 </v-col>
                                 <v-col md="12">
                                     <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
@@ -126,13 +128,16 @@ export default {
             search: "",
             isLoading: true,
             listData: [],
+            listLevelLookup: [],
+            selectedRoleValue: "",
+            selectedStatusValue: "",
             statusList: [
                 {
-                    code: "1",
+                    code: "ACTIVE",
                     name: "Aktif"
                 },
                 {
-                    code: "0",
+                    code: "INACTIVE",
                     name: "Tidak Aktif"
                 }
             ],
@@ -174,6 +179,13 @@ export default {
             try {
                 // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
+                // var responseLookup = await axios.get(process.env.VUE_APP_SERVICE_URL + "lookup/LEVEL");
+                var lookupData = JSON.parse(localStorage.getItem('lookups'));
+                // mapping header
+                var responseLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
+
+                this.listLevelLookup = responseLookup.data;
+                // console.log(responseLookup);
                 this.listData = response.data;
                 this.$store.dispatch('employee', response.data);
                 this.isLoading = false;
@@ -187,9 +199,12 @@ export default {
             this.$store.dispatch('settings', this.themeColoring);
         },
         rowClick(row) {
-            console.log(row);
             this.dialogDetail = true;
             this.detailDataRow = row;
+            this.selectedRoleValue = row.level;
+            this.selectedStatusValue = row.status;
+            console.log(this.detailDataRow);
+            console.log(this.listLevelLookup);
         },
         rowEditClick(row) {
             console.log(row);

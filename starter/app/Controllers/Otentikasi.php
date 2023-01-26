@@ -43,8 +43,7 @@ class Otentikasi extends BaseController
 
 		$model = new ModelOtentikasi();
 		$modelMasterData = new ModelMasterDataLookup();
-		$data = $model->getEmployee($nip,$password);
-		$dataSettings = $modelMasterData->getMasterDataLookup("LEVEL");
+		$data = $model->getEmployee($nip,$password); 
 		// if ($data['password'] != md5($password)) {
 		// 	return $this->fail("Password tidak sesuai");
 		// }
@@ -59,8 +58,7 @@ class Otentikasi extends BaseController
 		  
 		$response = [
 			'message' => 'Otentikasi berhasil dilakukan',
-			'user' => $userData, 
-			'settings' => $dataSettings,
+			'user' => $userData,  
 			'access_token' => createJWT($nip,$password)
 		];
 		return $this->respond($response);

@@ -1,8 +1,7 @@
 <template>
     <form>
         <v-card class="mx-auto my-15" max-width="500" outlined elevation="5">
-         
-
+            <v-progress-linear v-show="isCompletedLoad" indeterminate color="cyan darken-2"></v-progress-linear>
             <v-card-title class="justify-center">
                 <v-spacer></v-spacer>
                 <img src="../assets/login-mail-track.png" alt="" srcset="" width="20%">
@@ -31,7 +30,7 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-btn :disabled="isValid" text class="mr-4 white--text" color="cyan darken-2" @click="login">
+                <v-btn :disabled="isValid || isCompletedLoad" text class="mr-4 white--text" color="cyan darken-2" @click="login">
                     <v-icon>mdi-lock-outline</v-icon> Login
                 </v-btn>
                 <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
@@ -57,6 +56,7 @@ export default {
     },
     data() {
         return {
+            isCompletedLoad: false,
             nip: '',
             select: null,
             userData: [],
@@ -72,8 +72,9 @@ export default {
     methods: {
         async login() {
             // console.log(axios.defaults.baseURL);
+            this.isCompletedLoad = true;
             const param = { "nip": this.nip, "password": this.password }
-            await axios.post(process.env.VUE_APP_SERVICE_URL + "otentikasi", param).then(res => {
+            await axios.post(process.env.VUE_APP_SERVICE_URL + "otentikasi", param).then(async res => {
                 var userDatas = res.data;
 
                 this.token = res.data.access_token;
@@ -84,17 +85,31 @@ export default {
                 localStorage.setItem('alertSuccessLogin', true);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
-                this.$router.push("/").catch(() => { })
-                    .then(() => { this.$router.go() });
+                if (this.token != "") {
+                    var paramLookup = { "params": ['STATUS', 'TYPE', 'HEADER', 'DESC', 'ACCESS', 'LEVEL'] };
+                    await axios.post(process.env.VUE_APP_SERVICE_URL + "lookup/detail", paramLookup).then(res => {
+                        var resulttData = res != undefined ? res : [];
+                        if (resulttData) {
+                            localStorage.setItem('lookups', JSON.stringify(resulttData.data));
+                            this.$router.push("/").catch(() => { })
+                                .then(() => { this.$router.go() });
+                        }
+
+                    }).catch(error => {
+                        this.alert = true;
+                        console.log(error);
+                        this.response.fail = error.response.message;
+
+                    });
+                }
 
             }).catch(error => {
                 this.alert = true;
                 console.log(error.response);
-                this.response.fail = error.response.data.message;
+                this.response.fail = error.response.message;
 
             });
-
-
+            this.isCompletedLoad = false;
         },
         submit() {
             this.$v.$touch()
@@ -107,7 +122,7 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['users', 'settings']),
+        ...mapGetters(['users', 'settings', 'lookups']),
         nipErrors() {
             const errors = []
             if (!this.$v.nip.$dirty) return errors

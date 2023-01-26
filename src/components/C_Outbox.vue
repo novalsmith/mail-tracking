@@ -1,7 +1,107 @@
  
 <template>
-    <div>
-        <v-card>
+    <v-container>
+        <div>
+            <h2>Outbox</h2>
+        </div>
+        <v-divider></v-divider>
+        <v-card class="my-5">
+            <v-card-title>Filter
+                <v-spacer></v-spacer>
+                <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
+                    v-if="isAdvanceSearch">
+                    <v-icon>mdi-arrow-down-thin</v-icon>
+                    Advance Search
+                </v-btn>
+                <v-btn v-else class="mr-4 white--text" color="blue-grey" text small dark @click="advanceSearch(true)">
+                    <v-icon>mdi-arrow-up-thin</v-icon>
+                    Advance Search
+                </v-btn>
+            </v-card-title>
+
+            <v-form>
+                <v-container>
+                    <v-row>
+
+                        <v-col cols="12" md="4">
+                            <v-select clearable :items="latterType" item-text="name" item-value="code"
+                                v-model="filter.sifatSurat" dense outlined label="Sifat Surat" multiple chips>
+                                <template v-slot:prepend-item>
+                                    <v-list-item ripple @mousedown.prevent @click="toggle">
+                                        <v-list-item-action>
+                                            <v-icon
+                                                :color="filter.sifatSurat.length > 0 ? 'cyan darken-2' : 'cyan darken-2'">
+                                                {{ icon }}
+                                            </v-icon>
+                                        </v-list-item-action>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                Select All
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                    <v-divider class="mt-2"></v-divider>
+                                </template>
+                            </v-select>
+                        </v-col>
+
+                        <v-col cols="12" md="4">
+                            <v-text-field dense outlined clearable v-model="filter.noAgenda" label="Nomor Agenda"
+                                required></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                            <v-text-field dense label="Nomor Surat" v-model="filter.noSurat" outlined clearable
+                                required></v-text-field>
+                        </v-col>
+                        <!-- show if is advanced search -->
+                        <v-container v-if="isAdvanceSearch">
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field dense label="Dari" v-model="filter.dari" outlined clearable
+                                        required></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-combobox :items="listItemsReciver" v-model="filter.kepada" dense outlined
+                                        label="Kepada" multiple chips></v-combobox>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-combobox :items="listItemsReciver" v-model="filter.keterangan" dense outlined
+                                        label="Keterangan" multiple chips></v-combobox>
+                                </v-col>
+
+                                <v-col cols="12" md="3">
+                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
+                                        label="Tgl. Penerimaan - Start" required></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="3">
+                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
+                                        label="Tgl. Penerimaan - End" required></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="3">
+                                    <v-text-field dense outlined clearable v-model="filter.tglSuratStart"
+                                        label="Tgl. Surat - Start"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                    <v-text-field dense outlined clearable v-model="filter.tglSuratEnd"
+                                        label="Tgl. Surat - End"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                        <!-- show if is advanced search -->
+                    </v-row>
+                </v-container>
+            </v-form>
+            <v-card-actions>
+                <v-btn color="cyan darken-2" dark @click="searching">
+                    <v-icon>mdi-magnify</v-icon> Search
+                </v-btn>
+                <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
+                    <v-icon>mdi-cached</v-icon> Clear
+                </v-btn>
+            </v-card-actions>
+
             <v-container>
                 <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
                     v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
@@ -9,14 +109,10 @@
                     {{ responseAlert.message }}
                 </v-alert>
             </v-container>
-            <v-card-title>
-                Outbox
-                <v-spacer></v-spacer>
-                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
-                    hide-details></v-text-field>
-            </v-card-title>
-            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
+
+            <v-data-table v-show="isShowTable" multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
+                :items="listData" :search="search" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
                     <tr class="rowColor" @click="rowClick(item)">
                         <td>{{ index + 1}}</td>
@@ -32,6 +128,9 @@
                 </template>
             </v-data-table>
         </v-card>
+
+
+
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar color="cyan darken-2" class="white--text">
@@ -126,7 +225,7 @@
 
             </v-card>
         </v-dialog>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -145,7 +244,8 @@ export default {
     // },
     data() {
         return {
-            // date: new Date().toISOString().substr(0, 10),
+            isAdvanceSearch: false,
+            isShowTable: false,
             date: null,
             menuDate: false,
             modalDate: false,
@@ -171,10 +271,22 @@ export default {
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
-            isLoading: false,
+            isLoading: true,
             responseAlert: {
                 message: "",
                 color: ""
+            },
+            filter: {
+                sifatSurat: [],
+                noAgenda: "",
+                noSurat: "",
+                dari: "",
+                kepada: [],
+                keterangan: [],
+                tglTerimaStart: "",
+                tglTerimaEnd: "",
+                tglSuratStart: "",
+                tglSuratEnd: ""
             },
             headers: [
                 { text: 'No', value: 'trackingid' },
@@ -190,19 +302,15 @@ export default {
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
             }
+
         }
     },
     methods: {
         submit() { },
-        async getInbox() {
+        async getEmployeeParentChild() {
             try {
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 if (userData && userData.user) {
-                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                    this.allTrackingData = responseAll != undefined ? responseAll : [];
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/" + userData.user.roleCode);
-
                     var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.roleCode);
                     var listParent = [];
                     if (responsesParent != undefined) {
@@ -212,16 +320,37 @@ export default {
                             }
                         });
                     }
+                    this.listItemsReciver = listParent;
+                    this.isLoading = false;
+                }
+            } catch (error) {
+                this.isLoading = false;
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
+            }
+
+        },
+        async getInbox() {
+            try {
+                var userData = JSON.parse(localStorage.getItem('userData'));
+                if (userData && userData.user) {
+                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
+                    this.allTrackingData = responseAll != undefined ? responseAll : [];
+                    var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + url);
+
 
                     this.listData = response != undefined ? response.data : [];
-                    this.listItemsReciver = listParent;
 
-                    var lsitInboxData = {
-                        allTrackingData: this.allTrackingData,
-                        listParentChild: listParent,
-                        trackingDataByRole: this.listData
-                    };
-                    this.$store.dispatch('inboxs', lsitInboxData);
+
+                    // var lsitInboxData = {
+                    //     allTrackingData: this.allTrackingData,
+                    //     listParentChild: listParent,
+                    //     trackingDataByRole: []
+                    // };
+                    // this.$store.dispatch('inboxs', lsitInboxData);
                 }
                 this.isLoading = false;
 
@@ -251,23 +380,41 @@ export default {
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
         },
-        rowEditClick(row) {
-            // this.notready();
-        },
-        rowDeleteClick(row) {
-            // this.notready();
-        },
-        notready() {
-            this.isShowAlert = true;
+        searching() {
+            this.isShowTable = true;
+            var mappArraySifatSurat = [];
+            this.filter.sifatSurat.forEach(element => {
+                mappArraySifatSurat.push(element);
+            });
+            var mappArrayKepada = [];
+            this.filter.kepada.forEach(element => {
+                mappArrayKepada.push(element);
+            });
+
+            var mappArrayKet = [];
+            this.filter.keterangan.forEach(element => {
+                mappArrayKet.push(element);
+            });
+            var remappingParam = {
+                isAdvancedSearch: this.isAdvanceSearch,
+                sifatSurat: mappArraySifatSurat,
+                noSurat: this.filter.noSurat,
+                noAgenda: this.filter.noAgenda,
+                dari: this.filter.dari,
+                kepada: mappArrayKepada,
+                keterangan: mappArrayKet,
+                tglTerimaStart: this.tglTerimaStart,
+                tglTerimaEnd: this.tglTerimaEnd,
+                tglSuratStart: this.tglSuratStart,
+                tglSuratEnd: this.tglSuratEnd
+            }
+            console.log(remappingParam);
         },
         submit() {
             this.$v.$touch()
         },
         clear() {
-            this.$v.$reset()
-            this.name = ''
-            this.dari = ''
-            this.password = ''
+            this.isShowTable = false;
         },
         selectedTypeEvnt() {
             if (this.selectedType != 'Arsipkan') {
@@ -275,35 +422,43 @@ export default {
             } else {
                 this.isReciverShow = false;
             }
-        }
+        },
+        advanceSearch(value) {
+            console.log(value);
+            this.isAdvanceSearch = value;
+        },
+        toggle() {
+            this.$nextTick(() => {
+                if (this.likesAllFruit) {
+                    this.filter.sifatSurat = []
+                } else {
+                    this.filter.sifatSurat = this.$store.state.lookup.lookups['type'];
+                }
+            })
+        },
     },
     created() {
         this.getSettings();
-        // this.getInbox();
+        this.getInbox();
+        this.getEmployeeParentChild();
     },
     computed: {
-        ...mapGetters(['inboxs', 'settings']),
-        // dariErrors() {
-        //     const errors = []
-        //     if (!this.$v.dari.$dirty) return errors
-        //     !this.$v.dari.maxLength && errors.push('dari must be at most ' + maxlength + ' characters long')
-        //     !this.$v.dari.required && errors.push('dari is required.')
-        //     return errors
-        // },
-        // passwordErrors() {
-        //     const errors = []
-        //     if (!this.$v.password.$dirty) return errors
-        //     !this.$v.password.maxLength && errors.push('Password must be at most ' + maxlength + ' characters long')
-        //     !this.$v.password.required && errors.push('Password is required.')
-        //     return errors
-        // },
-        // isValid() {
-        //     if ((this.dari != '' || this.dari.length > maxLength) && (this.password != '' || this.dari.length > maxLength)) {
-        //         return false;
-        //     } else {
-        //         return true;
-        //     }
-        // }
+        ...mapGetters(['inboxs', 'settings', 'lookups']),
+        latterType() {
+            return this.$store.state.lookup.lookups['type'];
+        },
+        likesAllFruit() {
+            return this.filter.sifatSurat.length === this.$store.state.lookup.lookups['type'].length
+        },
+        icon() {
+            if (this.likesAllFruit) return 'mdi-close-box'
+            if (this.likesSomeFruit) return 'mdi-minus-box'
+            return 'mdi-checkbox-blank-outline'
+        },
+        likesSomeFruit() {
+            return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
+        },
+
     }
 }
 </script> 

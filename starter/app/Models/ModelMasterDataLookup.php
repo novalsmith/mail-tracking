@@ -14,7 +14,7 @@ class ModelMasterDataLookup extends Model
     function getMasterDataLookup($type)
     {
         $builder = $this->table("v_masterdatalookup");
-         $builder->where("type", $type);
+         $builder->whereIn("type", $type);
         $data =  $builder->get()->getResult();
         
         if (!$data) {

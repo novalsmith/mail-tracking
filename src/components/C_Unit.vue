@@ -24,6 +24,7 @@
                     <td>{{ item.code }}</td>
                     <td>{{ item.unitCodeOrg }}</td>
                     <td>{{ item.oraganizationUnit }}</td>
+                    <td>{{ item.positions }}</td>
                     <td>{{ item.statusName }}</td>
 
                 </tr>
@@ -47,6 +48,7 @@ export default {
                 { text: 'Kode', value: 'code' },
                 { text: 'Unit', value: 'unitCodeOrg' },
                 { text: 'Nama', value: 'oraganizationUnit' },
+                { text: "Jabatan", value: 'positions' },
                 { text: 'Status', value: 'statusName' }
             ],
             headerprops: {

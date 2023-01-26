@@ -5,7 +5,7 @@
         height="200%">
     </v-system-bar>
     <div>
-      <v-container v-if="!isLogined">
+      <v-container v-if="!initDataAfterLogin">
         <C_Login />
       </v-container>
       <v-container v-else>
@@ -23,12 +23,6 @@
         <Footers class="mt-15" />
       </v-container>
     </div>
-    <!-- <div v-else>
-      <v-container class="text-center my-15">
-        <h1 class="text-center">Selamat Datang di</h1>
-        <img class="text-center" src="./assets/logoLight.png" />
-      </v-container>
-    </div> -->
 
   </v-app>
 </template>
@@ -41,53 +35,15 @@ import { mapState } from "vuex";
 
 export default {
   name: "app",
-  computed: {
-    ...mapState(['settings']),
-    isLogined() {
-      var status = false;
-      if (localStorage.getItem('isLogin') == 'true') {
-        status = true;
-      }
-      return status;
-    }
-  },
-  watch: {
-    $route: {
-      immediate: true,
-      handler(to, from) {
-        document.title = to.meta.title || 'Mail Tracking Minerba';
-      }
-    },
-  },
-  created() {
-    // this.loginProcess();
-    this.setMobileDeviceSettings();
-    this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
-  },
-  components: {
-    C_Header,
-    Footers,
-    C_Login
-  },
   data() {
     return {
       isLogin: false,
       isActiveWeb: true,
       fab: false,
       loading: false
-      // itemsMenu: []
     };
   },
   methods: {
-    loginProcess() {
-
-      var datas = localStorage.getItem('isLogin') == null ? "false" : localStorage.getItem('isLogin');
-      console.log("your status is = " + datas);
-      this.isLogin = Boolean(datas);
-    },
     onScroll(e) {
       if (typeof window === 'undefined') return;
       const top = window.pageYOffset || e.target.scrollTop || 0;
@@ -110,7 +66,56 @@ export default {
       }
       this.$store.dispatch('settings', datas);
     }
-  }
+  },
+
+  computed: {
+    ...mapState(['settings', 'lookups']),
+    initDataAfterLogin() {
+      var status = false;
+      if (localStorage.getItem('isLogin') == 'true') {
+        var lookupData = JSON.parse(localStorage.getItem('lookups'));
+        // mapping header
+        var headerLookup = lookupData.filter(val => val.type == "HEADER").map(result => { return result; });
+        // mapping status
+        var statusLookup = lookupData.filter(val => val.type == "STATUS").map(result => { return result; });
+        // mapping type
+        var typeLookup = lookupData.filter(val => val.type == "TYPE").map(result => { return result; });
+        // mapping type
+        var accessLookup = lookupData.filter(val => val.type == "ACCESS").map(result => { return result; });
+        // mapping level
+        var levelLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
+          // mapping desc
+          var descLookup = lookupData.filter(val => val.type == "DESC").map(result => { return result; });
+         var mapping = {
+          header: headerLookup,
+          status: statusLookup,
+          type: typeLookup,
+          access: accessLookup,
+          level: levelLookup,
+          desc: descLookup
+        };
+        this.$store.dispatch('lookups', mapping);
+        status = true;
+      }
+      return status;
+    }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to, from) {
+        document.title = to.meta.title || 'Mail Tracking Minerba';
+      }
+    },
+  },
+  created() {
+    this.setMobileDeviceSettings();
+  },
+  components: {
+    C_Header,
+    Footers,
+    C_Login
+  },
 }
 </script>
 

@@ -25,6 +25,7 @@ export default {
                 localStorage.removeItem('token');
                 localStorage.removeItem('isLogin');
                 localStorage.removeItem('userData');
+                localStorage.removeItem('lookups');
                 this.$router.push("/").catch(() => { })
                     .then(() => { this.$router.go() });
 
