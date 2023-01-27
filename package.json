@@ -20,6 +20,7 @@
     "vue-axios": "^3.5.2",
     "vue-axios-cors": "^1.0.1",
     "vue-lazytube": "^1.1.1",
+    "vue-papa-parse": "^3.1.0",
     "vue-router": "^3.2.0",
     "vue-template-compiler": "2.6.11",
     "vuelidate": "^0.7.7",

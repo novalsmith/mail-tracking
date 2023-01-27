@@ -37,6 +37,7 @@ $routes->get('/employee', 'Employee::index');
 $routes->get('/employee/(:any)', 'Employee::employeeByParent/$1');
 $routes->get('/tracking', 'Tracking::index');
 $routes->get('/tracking/(:any)', 'Tracking::show/$1');
+$routes->post('/upload', 'Tracking::importCsvToDb');
 $routes->get('/lookup', 'Lookup::index');
 $routes->post('/lookup/detail', 'Lookup::show');
 // $routes->resource("pegawai");

@@ -8,7 +8,9 @@ class ModelTracking extends Model
 {
     protected $table = "v_tracking";
     protected $primaryKey = "trackingid";
-    protected $allowedFields = ['trackingid','to'];
+    protected $allowedFields = [
+        'trackingid','agendaNumber','receiptDate','number',
+    'realDate','type','note','from','to','description'];
 
     // protected $validationRules = [
     //     'name' => 'required',

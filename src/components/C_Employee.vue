@@ -29,8 +29,7 @@
                         <td>{{ item.position }}</td>
                         <td>{{ item.es2 }}</td>
                         <td>{{ item.es3 }}</td>
-                        <td>{{ item.es4 }}</td>
-                        <td>{{ item.unitCode }}</td>
+                        <td>{{ item.es4 }}</td> 
                         <td>{{ item.roleCode }}</td>
                         <td>{{ item.roleName }}</td>
                         <td>{{ item.level }}</td>
@@ -163,8 +162,7 @@ export default {
                 { text: 'Jabatan', value: 'position' },
                 { text: 'ES II', value: 'es2' },
                 { text: 'ES III', value: 'es3' },
-                { text: 'ES IV', value: 'es4' },
-                { text: 'Kode Unit Organisasi', value: 'unitCode' },
+                { text: 'ES IV', value: 'es4' }, 
                 { text: 'Kode', value: 'roleCode' },
                 { text: 'Role', value: 'roleName' },
                 { text: 'Level', value: 'level' }

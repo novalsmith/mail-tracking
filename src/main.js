@@ -7,6 +7,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import httpClientAxios from './auth/http-common'
 import Modal from './components/C_GeneralDialog.vue'
+import VuePapaParse from 'vue-papa-parse'
 import './registerServiceWorker'
 
 Vue.config.productionTip = false
@@ -35,5 +36,6 @@ new Vue({
   httpClientAxios,
   Modal,
   AxiosPlugin,
+  VuePapaParse,
   render: h => h(App)
 }).$mount('#app')
