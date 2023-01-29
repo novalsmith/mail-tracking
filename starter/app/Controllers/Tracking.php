@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ModelTracking;
+use App\Models\ModelUnit;
 
 class Tracking extends BaseController
 {
@@ -29,10 +30,10 @@ class Tracking extends BaseController
 		}
 	}
 
-	public function importCsvToDb()
+	public function importCsvToDbBackup()
     {
        
-            if($file = $this->request->getFile('fileUpload')) {
+            if($file = $this->request->getFile('TrackingFileUpload')) {
             if ($file->isValid() && ! $file->hasMoved()) {
                 $newName = $file->getRandomName();
                 $file->move('../public/csvfile', $newName);
@@ -40,13 +41,13 @@ class Tracking extends BaseController
                 $i = 0;
                 $numberOfFields = 2;
                 $csvArr = array();
+				$resultData = array();
                 
-                while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+                while (($filedata = fgetcsv($file, 400, ";")) !== FALSE) {
                     $num = count($filedata);
                     if($i > 0 && $num == $numberOfFields){ 
-                      print_r($filedata);
-						// $csvArr[$i]['agendaNumber'] = $filedata[0];
-                        // $csvArr[$i]['receiptDate'] = $filedata[1];
+                        $csvArr[$i]['agendaNumber'] = $filedata[0];
+                        $csvArr[$i]['receiptDate'] = $filedata[1];
                         // $csvArr[$i]['number'] = $filedata[2];
                         // $csvArr[$i]['realDate'] = $filedata[3];
 						// $csvArr[$i]['type'] = $filedata[4];
@@ -54,21 +55,16 @@ class Tracking extends BaseController
 						// $csvArr[$i]['from'] = $filedata[6];
 						// $csvArr[$i]['to'] = $filedata[7];
 						// $csvArr[$i]['description'] = $filedata[8];
+						
                     }
                     $i++;
+					$resultData[] =   $csvArr;
                 }
                 fclose($file);
                 $count = 0;
+			
 			 
-				$listdata = [];
-                // foreach($csvArr as $userdata){
-					 
-
-				// 	$listdata['list'] =  $userdata['agendaNumber'];
-                // }
-				
-
-				// return $this->respond(json_encode($listdata['list'], JSON_INVALID_UTF8_SUBSTITUTE), 200);
+			 	return $this->respond($resultData, 200);
 				
                 // session()->setFlashdata('message', $count.' rows successfully added.');
                 // session()->setFlashdata('alert-class', 'alert-success');
@@ -81,7 +77,161 @@ class Tracking extends BaseController
 		}
 			
     }
+	public function importCsvToDb()
+    {
+		$modelUnit = new ModelUnit();
+		$file_excel = $this->request->getFile('TrackingFileUpload');
+		$ext = $file_excel->getClientExtension();
+		if($ext == 'xls') {
+			$render = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+		} else if($ext == 'xlsx') {
+			$render = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+		}else{
+			$dataError = [
+				"message" => "Sorry the file type .$ext is not supported, please use .xls or .xlxs"
+			];
+			return $this->respond($dataError,404);
+			// return $this->respond("Please use .xls or .xlxs",500);
+		}
+		$spreadsheet = $render->load($file_excel);
 
+		$data = $spreadsheet->getActiveSheet()->toArray();
+		$resultExcelData = [];
+		// Define how many rows we want to read for each "chunk"
+		$chunkSize = 100;
+		$startRow = 1;
+		$totalData = count($data);
+		foreach($data as $x => $row) {
+			if ($x == 0) {
+				continue;
+			}
+			
+			// $Nis = $row[0];
+			// $NamaSiswa = $row[1];
+			// $Alamat = $row[2];
+
+			// $db = \Config\Database::connect();
+
+			// $cekNis = $db->table('siswa')->getWhere(['Nis'=>$Nis])->getResult();
+
+			// if(count($cekNis) > 0) {
+			// 	session()->setFlashdata('message','<b style="color:red">Data Gagal di Import NIS ada yang sama</b>');
+			// } else {
+			$agendaNumber =  $row[0];
+			$receiptDate =  $row[1];
+			$number =  $row[2];
+			$realDate =  $row[3];
+			$type =  $row[4];
+			$note =  $row[5];
+			$from =  $row[6];
+			$to =  $row[7];
+			$status =  "success";
+			$message = "";
+
+
+			// validation mandatory
+			if (empty($agendaNumber)) {
+				$message = "Nomor Agenda tidak boleh kosong";
+			}
+			if (empty($receiptDate)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Tanggal Terima tidak boleh kosong";
+			}
+			if (empty($number)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Nomor Surat tidak boleh kosong";
+			}
+			if (empty($realDate)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Tanggal Surat tidak boleh kosong";
+			}
+			if (empty($type)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Sifat Surat tidak boleh kosong";
+			}else{
+				$typeMsg = array("segera", "sangatsegera", "biasa");
+
+				if(!in_array(strtolower(str_replace(' ', '', $type)), $typeMsg)){
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Kesalahan penamaan Sifat Surat $type";
+				}
+			} 
+
+			if (empty($note)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Isi Ringkasan/Catatan/Perihal tidak boleh kosong";
+			}
+
+			if (empty($from)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Dari/Pengirim tidak boleh kosong";
+			}
+			else{
+				$unitData = $modelUnit->getUnitByPrefixNameFrom($from);
+				if(empty($unitData)){
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Dari/Pengirim tidak memiliki Unit (Uknown)";
+				}
+			}
+
+			if (empty($to)) {
+				if(!empty($message)){
+					$message .= ", ";
+				}
+				$message .= "Kepada/Penerima tidak boleh kosong";
+			}
+			else{
+				$unitData = $modelUnit->getUnitByPrefixNameTo($to);
+				if(empty($unitData)){
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Kepada/Penerima tidak memiliki Unit (Uknown)";
+				}
+			}
+			
+
+			if(!empty($message)){
+				$status = "error";
+			}
+			$simpandata = [
+				'indexNumber' => rand(5,10),
+				'agendaNumber' =>  $agendaNumber , 
+				'receiptDate' => $receiptDate, 
+				'number' => $number, 
+				'type'=> $type,
+				'realDate'=> $realDate,
+				'type'=> $type,
+				'note'=> $note,
+				'from'=> $from,
+				'to'=> $to,
+				'status' => $status,
+				"message" => $message
+			];
+
+			// $db->table('siswa')->insert($simpandata);
+			// session()->setFlashdata('message','Berhasil import excel');
+			$resultExcelData[] = $simpandata; 
+		}
+		return $this->respond($resultExcelData, 200);
+
+    }
 	public function create()
 	{
 		$data = $this->request->getPost();

@@ -8,7 +8,7 @@
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
-                <v-btn @click="dialogUpload = true" text small color="cyan darken-2 mr-2" class="white--text">
+                <v-btn @click="dialogReview = true" text small color="cyan darken-2 mr-2" class="white--text">
                     <v-icon>mdi-upload</v-icon>
                     Upload</v-btn>
                 <v-btn text small color="cyan darken-2" class="white--text">
@@ -17,11 +17,11 @@
                 <v-divider vertical class="mx-2"></v-divider>
                 <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
                     v-if="isAdvanceSearch">
-                    <v-icon>mdi-arrow-down-thin</v-icon>
-                    Advance Search
+                    <v-icon>mdi-arrow-up-thin</v-icon>
+                    Simple Search
                 </v-btn>
                 <v-btn v-else class="white--text" color="blue-grey" text small dark @click="advanceSearch(true)">
-                    <v-icon>mdi-arrow-up-thin</v-icon>
+                    <v-icon>mdi-arrow-down-thin</v-icon>
                     Advance Search
                 </v-btn>
             </v-card-title>
@@ -121,7 +121,7 @@
                 :items="listData" :search="search" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
-                    <tr class="rowColor" @click="rowClick(item)">
+                    <tr class="rowColor">
                         <td>{{ index + 1}}</td>
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.receiptDate }}</td>
@@ -135,135 +135,122 @@
             </v-data-table>
         </v-card>
 
-
-
-        <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-dialog v-model="dialogReview" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar color="cyan darken-2" class="white--text">
-                    <v-btn icon dark @click="dialogDetail = false">
+                    <v-btn icon dark @click="dialogReview = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Agenda - {{ detailDataRow.agendaNumber }} - Perihal - {{
-                        detailDataRow.note
-                    }}</v-toolbar-title>
+                    <v-toolbar-title>Upload and Review</v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
                 <v-container>
-                    <v-main class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Transaksi Surat</h3>
-                        <form class="my-10">
-
-
+                    <v-main>
+                        <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Upload</h3>
+                        <form class="my-5">
                             <v-row>
                                 <v-col md="4">
-                                    <v-text-field :disabled="true" v-model="userDefault" label="Dari"
-                                        required></v-text-field>
+                                    <v-file-input label="Browse File" v-model="uploadedValue"
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        @change="handleFilesUpload" outlined chips truncate-length="50" dense
+                                        prepend-icon="mdi-paperclip"></v-file-input>
                                 </v-col>
-                                <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="date" persistent
-                                        width="290px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field v-model="date" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                v-on="on"></v-text-field>
-                                        </template>
-                                        <v-date-picker v-model="date" type="date" scrollable>
-                                            <v-spacer></v-spacer>
-                                            <v-btn text color="primary" @click="modalDate = false">
-                                                Cancel
-                                            </v-btn>
-                                            <v-btn text color="primary" @click="$refs.dialog.save(date)">
-                                                OK
-                                            </v-btn>
-                                        </v-date-picker>
-                                    </v-dialog>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-select :items="listType" v-model="selectedType" @change="selectedTypeEvnt"
-                                        label="Tindak Lanjut"></v-select>
-                                </v-col>
-                                <v-col md="12">
-
-                                    <div v-if="isReciverShow">
-                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple
-                                            chips></v-combobox>
-                                    </div>
-
-                                    <div>
-                                        <v-textarea outlined name="input-7-4" label="Keterangan" value=""></v-textarea>
-
-                                    </div>
-                                </v-col>
-                                <v-col md="12">
-                                    <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
-                                        <v-icon>mdi-check</v-icon> Submit
+                                <v-col md="6">
+                                    <v-btn :disabled="!!uploadedValue && !isShowAlertReview ? false : true"
+                                        color="cyan darken-2" class="white--text" @click="processUpload">
+                                        <v-icon>mdi-cloud-arrow-up-outline</v-icon> Submit
                                     </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
+                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clearUploadValue">
                                         <v-icon>mdi-cached</v-icon> Clear
                                     </v-btn>
                                 </v-col>
-                            </v-row>
+                                <v-col md="12" v-if="isShowAlertReview">
+                                    <v-alert text dense close-icon="mdi-close-circle-outline"
+                                        :color="responseAlertReview.color" elevation="2" icon="mdi-information-outline"
+                                        border="left" dismissible transition="scale-transition">
+                                        {{ responseAlertReview.message }}
+                                    </v-alert>
 
+                                </v-col>
+                            </v-row>
                         </form>
                     </v-main>
                     <v-divider></v-divider>
-                    <v-list three-line subheader class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
+                    <v-card-title>
+                        Filter
+                        <v-spacer></v-spacer>
+                        <div class="font-weight-normal">
+                            <v-chip class="mx-3" outlined> <v-icon color="blue-grey"
+                                    class="mr-1">mdi-progress-upload</v-icon>
+                                {{ responseSummaryDataReview.totalUploadedData }} Total Data</v-chip>
 
-                        <v-list-item v-for="items in detailDataList">
-                            <v-list-item-content v-if="items.createdDate != null">
-                                <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined fab>{{
-                                    items.sequence
-                                }} </v-btn> {{
-    items.createdBy
-}}</v-list-item-title>
-                                <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }} - {{
-                                    items.note
-                                }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Tanggal : {{ items.createdDate }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Keterangan: {{ items.note }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
+                            <v-chip class="mx-3" outlined> <v-icon color="red"
+                                    class="mr-1">mdi-close-circle-outline</v-icon>
+                                {{ responseSummaryDataReview.totalErrors }} Errors</v-chip>
 
-                    </v-list>
+                            <v-chip class="mx-3" outlined> <v-icon color="cyan darken-2"
+                                    class="mr-1">mdi-check-circle-outline</v-icon>
+                                {{ responseSummaryDataReview.totalSuccess }} Ready to save</v-chip>
+
+                        </div>
+                        <v-spacer></v-spacer>
+                        <v-text-field v-model="searchReview" outlined dense append-icon="mdi-magnify" label="Search"
+                            hide-details></v-text-field>
+                    </v-card-title>
+                    <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headersReview"
+                        :items="!!uploadedValue ? listDataReview : []" :search="searchReview" :loading="isLoadingReview"
+                        :loading-text="isLoadingReview ? 'Loading... Please wait' : ''" show-expand
+                        :single-expand="singleExpand" :expanded.sync="expanded" class="elevation-1" :footer-props="{
+                            showFirstLastPage: true,
+                            firstIcon: 'mdi-arrow-collapse-left',
+                            lastIcon: 'mdi-arrow-collapse-right',
+                            prevIcon: 'mdi-minus',
+                            nextIcon: 'mdi-plus'
+                        }">
+                        <template v-slot:item.num="{ index, item }">
+                            {{ index+ 1 }}
+                        </template>
+                        <template v-slot:item.status="{ index, item }">
+                            <span v-if="item.status == 'error'"><v-icon color="red">mdi-close-circle-outline</v-icon>
+                                Error</span>
+                            <span v-if="item.status == 'success'"><v-icon
+                                    color="cyan darken-2">mdi-check-circle-outline</v-icon> Ready to save</span>
+                        </template>
+                        <template v-slot:item.data-table-expand="{ item, expand, isExpanded }">
+                            <td v-if="item.status == 'error'" class="text-start">
+                                <v-btn icon @click="expand(!isExpanded)" class="v-data-table__expand-icon"
+                                    :class="{ 'v-data-table__expand-icon--active': isExpanded }">
+                                    <v-icon>mdi-chevron-down</v-icon>
+                                </v-btn>
+                            </td>
+                        </template>
+                        <template v-slot:expanded-item="{ item, headers }">
+                            <td :colspan="headers.length">
+                                <p class="red--text">{{ item.message }}</p>
+                            </td>
+                        </template>
+
+                        <template v-slot:item.from="{ item }">
+                            <v-chip small class="my-2">
+                                {{ item.from }}
+                            </v-chip>
+                        </template>
+
+                        <template v-slot:item.to="{ item }">
+                            <div v-if="item.to != ''">
+                                <v-chip small v-for="values in splitString(item.to)" class="my-2">
+                                    {{ values }}
+                                </v-chip>
+                            </div>
+
+                        </template>
+
+                    </v-data-table>
                 </v-container>
 
             </v-card>
         </v-dialog>
-        <v-row justify="center">
-            <v-dialog v-model="dialogUpload" persistent max-width="600px">
-                <v-card>
-                    <v-card-title>
-                        <span class="text-h5">Upload Surat NADINE</span>
-                    </v-card-title>
-                    <v-card-text>
-
-                        <form class="mt-5">
-                            <v-file-input label="Browse File" :rules="rules" v-model="uploadedValue"
-                                @change="handleFilesUpload" outlined chips truncate-length="50"
-                                prepend-icon="mdi-paperclip"></v-file-input>
-
-                            <!-- <v-file-input multiple :rules="rules" accept="image/png, image/jpeg, image/bmp"
-                                placeholder="Pick an avatar" prepend-icon="mdi-camera" label="Avatar"></v-file-input> -->
-
-                        </form>
-                        <v-btn color="cyan darken-2" class="white--text" @click="processUpload">
-                            <v-icon>mdi-cloud-arrow-up-outline</v-icon> Submit
-                        </v-btn>
-
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-
-                        <v-btn color="cyan darken-2" text @click="dialogUpload = false">
-                            Close
-                        </v-btn>
-
-                    </v-card-actions>
-                </v-card>
-            </v-dialog>
-        </v-row>
     </v-container>
 </template>
 
@@ -291,6 +278,23 @@ export default {
                 v => !!v || 'File is required',
                 v => (v && v.length > 0) || 'File is required',
             ],
+            listResponseStatus: [
+                {
+                    id: "all",
+                    name: "All"
+                },
+                {
+                    id: "error",
+                    name: "Error"
+                },
+                {
+                    id: "success",
+                    name: "Success"
+                }
+            ],
+            listDataReview: [],
+            isLoadingReview: false,
+            dialogReview: false,
             isAdvanceSearch: false,
             isShowTable: false,
             date: null,
@@ -298,7 +302,9 @@ export default {
             modalDate: false,
             dialogDetail: false,
             isShowAlert: false,
+            isShowAlertReview: false,
             search: "",
+            searchReview: "",
             listData: [],
             detailDataRow: [],
             detailDataList: [],
@@ -323,6 +329,15 @@ export default {
                 message: "",
                 color: ""
             },
+            responseAlertReview: {
+                message: "",
+                color: ""
+            },
+            responseSummaryDataReview: {
+                totalErrors: 0,
+                totalSuccess: 0,
+                totalUploadedData: 0
+            },
             filter: {
                 sifatSurat: [],
                 noAgenda: "",
@@ -340,7 +355,7 @@ export default {
             alertNotready: false,
             search: "",
             listData: [],
-            uploadedValue: [],
+            uploadedValue: null,
             dialogUpload: false,
             isShowAlert: false,
             responseAlert: {
@@ -360,10 +375,23 @@ export default {
                 { text: 'Kepada', value: 'to' },
                 { text: 'Ket', value: 'note' }
             ],
+            headersReview: [
+                { text: 'No', value: 'num' },
+                { text: 'Agenda', value: 'agendaNumber', width: '10%' },
+                { text: 'No Surat', value: 'number', width: '10%' },
+                { text: 'Terima', value: 'receiptDate', width: '10%' },
+                { text: 'Tanggal Surat', value: 'realDate', width: '10%' },
+                { text: 'Sifat Surat', value: 'type', width: '10%' },
+                { text: 'Dari', value: 'from', width: '10%' },
+                { text: 'Kepada', value: 'to', width: '20%' },
+                { text: 'Status', value: 'status', width: '10%' },
+                { text: 'Detail', value: 'data-table-expand' }
+            ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
-            }
-
+            },
+            expanded: [],
+            singleExpand: false,
         }
     },
     methods: {
@@ -397,7 +425,11 @@ export default {
                 // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
                 this.listData = response.data;
-                this.$store.dispatch('trackings', response.data);
+                const state = {
+                    tracking: response.data,
+                    tempTracking: []
+                }
+                this.$store.dispatch('trackings', state);
                 this.isLoading = false;
             } catch (error) {
                 console.log(error);
@@ -481,7 +513,7 @@ export default {
         },
         toggle() {
             this.$nextTick(() => {
-                if (this.likesAllFruit) {
+                if (this.listSelectionType) {
                     this.filter.sifatSurat = []
                 } else {
                     this.filter.sifatSurat = this.$store.state.lookup.lookups['type'];
@@ -490,57 +522,103 @@ export default {
         },
         processUpload() {
             console.log(this.uploadedValue);
-            // this.parseFile();
-            /* return first object in FileList */
-            // var file = event.target.files[0];
-            // this.$papa.parse(this.uploadedValue, {
-            //     header: true,
-            //     complete: function (results) {
-            //         this.files = results.data;
-            //         console.log(this.files);
-            //     }
-            // });
         },
-        handleFilesUpload() {
-            var file = event.target.files[0].name;
-            console.log(file);
+        clearUploadValue() {
+            this.uploadedValue = null;
+            this.isShowAlertReview = false;
+            this.responseSummaryDataReview.totalErrors = 0;
+            this.responseSummaryDataReview.totalSuccess = 0;
+            this.responseSummaryDataReview.totalUploadedData = 0;
+        },
+        async handleFilesUpload() {
+            try {
+                var file = event.target.files[0].name;
+                console.log(file);
 
-            let formData = new FormData();
-            formData.append('fileUpload', this.uploadedValue);
-            axios.post(process.env.VUE_APP_SERVICE_URL + 'upload',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
+                let formData = new FormData();
+                formData.append('TrackingFileUpload', this.uploadedValue);
+                this.dialogReview = true;
+                this.isLoadingReview = true;
+                this.listDataReview = [];
+                var listData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'upload',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
                     }
+                );
+
+                this.listDataReview = !!listData ? listData.data : [];
+                const state = {
+                    tracking: [],
+                    tempTracking: !!listData ? listData.data : []
                 }
-            ).then(function (data) {
-                console.log(data);
-            })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                this.$store.dispatch('trackings', state);
+                this.isLoadingReview = false;
+                this.listDataReview.forEach((item, i) => {
+                    item.indexNumber = i + 1;
+                })
+            } catch (error) {
+                console.log(error.response.status);
+                this.isShowAlertReview = true;
+                this.responseAlertReview.color = 'red';
+                this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;
+                this.isLoadingReview = false;
+            }
+            this.summaryUploadReview();
         },
+        filterUploadedData(status) {
+            var data = this.$store.state.trackings['trackings'].tempTracking;
+            var filteredList = [];
+            filteredList = status == 'all' ? data : data.filter((e) => e.status === status).map((e) => {
+                return {
+                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
+                    from: e.from, to: e.to, status: e.status
+                }
+            });
+            this.listDataReview = filteredList;
+        },
+        itemRowBackground(item) {
+            console.log(item);
+            if (item === 'error') {
+                return 'errorColor';
+            }
+        },
+        loadDetails({ item }) {
+            console.log(item);
+        },
+        summaryUploadReview() {
+            var data = this.$store.state.trackings['trackings'].tempTracking;
+            console.log(data.length);
+            this.responseSummaryDataReview.totalUploadedData = data.length;
+            this.responseSummaryDataReview.totalErrors = data.filter((e) => e.status === 'error').map((e) => { return { e } }).length;
+            this.responseSummaryDataReview.totalSuccess = data.filter((e) => e.status === 'success').map((e) => { return { e } }).length;
+        },
+        splitString(item) {
+            var listData = !!item ? item.split(";") : "";
+            return listData;
+        }
     },
     created() {
         this.getSettings();
         this.getTracking();
     },
     computed: {
-        ...mapGetters(['inboxs', 'settings', 'lookups']),
+        ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),
         latterType() {
             return this.$store.state.lookup.lookups['type'];
         },
-        likesAllFruit() {
+        listSelectionType() {
             return this.filter.sifatSurat.length === this.$store.state.lookup.lookups['type'].length
         },
         icon() {
-            if (this.likesAllFruit) return 'mdi-close-box'
+            if (this.listSelectionType) return 'mdi-close-box'
             if (this.likesSomeFruit) return 'mdi-minus-box'
             return 'mdi-checkbox-blank-outline'
         },
         likesSomeFruit() {
-            return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
+            return this.filter.sifatSurat.length > 0 && !this.listSelectionType
         },
         uploadErrors() {
             const errors = []
@@ -568,5 +646,13 @@ export default {
     background: #0097A7 !important;
     color: white;
     cursor: pointer;
+}
+
+.errorColor {
+    background-color: #FFCDD2 !important;
+}
+
+#table>.v-data-footer .v-icon {
+    color: black !important;
 }
 </style>

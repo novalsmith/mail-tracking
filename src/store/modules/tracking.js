@@ -1,5 +1,8 @@
 // modules/user.js
-const state = {}
+const state = {
+    tracking: [],
+    tempTracking: []
+}
 export default {
     state,
     mutations: {
