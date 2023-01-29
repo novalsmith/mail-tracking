@@ -193,6 +193,10 @@
                                     class="mr-1">mdi-check-circle-outline</v-icon>
                                 {{ responseSummaryDataReview.totalSuccess }} Ready to save</v-chip>
 
+                            <v-chip class="mx-3" outlined> <v-icon color="blue"
+                                    class="mr-1">mdi-information-outline</v-icon>
+                                {{ responseSummaryDataReview.totalUnknown }} Unknown</v-chip>
+
                         </div>
                         <v-spacer></v-spacer>
                         <v-text-field v-model="searchReview" outlined dense append-icon="mdi-magnify" label="Search"
@@ -212,13 +216,15 @@
                             {{ index+ 1 }}
                         </template>
                         <template v-slot:item.status="{ index, item }">
+                            <span v-if="item.status == 'info'"><v-icon color="blue">mdi-information-outline</v-icon>
+                                Unknown</span>
                             <span v-if="item.status == 'error'"><v-icon color="red">mdi-close-circle-outline</v-icon>
                                 Error</span>
                             <span v-if="item.status == 'success'"><v-icon
                                     color="cyan darken-2">mdi-check-circle-outline</v-icon> Ready to save</span>
                         </template>
                         <template v-slot:item.data-table-expand="{ item, expand, isExpanded }">
-                            <td v-if="item.status == 'error'" class="text-start">
+                            <td v-if="item.status == 'error' || item.status == 'info'" class="text-start">
                                 <v-btn icon @click="expand(!isExpanded)" class="v-data-table__expand-icon"
                                     :class="{ 'v-data-table__expand-icon--active': isExpanded }">
                                     <v-icon>mdi-chevron-down</v-icon>
@@ -227,7 +233,7 @@
                         </template>
                         <template v-slot:expanded-item="{ item, headers }">
                             <td :colspan="headers.length">
-                                <p class="red--text">{{ item.message }}</p>
+                                <p :class="item.status == 'error' ? 'red--text' : 'blue--text' ">{{ item.message }}</p>
                             </td>
                         </template>
 
@@ -336,7 +342,8 @@ export default {
             responseSummaryDataReview: {
                 totalErrors: 0,
                 totalSuccess: 0,
-                totalUploadedData: 0
+                totalUploadedData: 0,
+                totalUnknown: 0
             },
             filter: {
                 sifatSurat: [],
@@ -529,6 +536,7 @@ export default {
             this.responseSummaryDataReview.totalErrors = 0;
             this.responseSummaryDataReview.totalSuccess = 0;
             this.responseSummaryDataReview.totalUploadedData = 0;
+            this.responseSummaryDataReview.totalUnknown = 0;
         },
         async handleFilesUpload() {
             try {
@@ -594,6 +602,7 @@ export default {
             this.responseSummaryDataReview.totalUploadedData = data.length;
             this.responseSummaryDataReview.totalErrors = data.filter((e) => e.status === 'error').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalSuccess = data.filter((e) => e.status === 'success').map((e) => { return { e } }).length;
+            this.responseSummaryDataReview.totalUnknown = data.filter((e) => e.status === 'info').map((e) => { return { e } }).length;
         },
         splitString(item) {
             var listData = !!item ? item.split(";") : "";

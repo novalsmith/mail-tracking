@@ -132,30 +132,35 @@ class Tracking extends BaseController
 			// validation mandatory
 			if (empty($agendaNumber)) {
 				$message = "Nomor Agenda tidak boleh kosong";
+				$status = "error";
 			}
 			if (empty($receiptDate)) {
 				if(!empty($message)){
 					$message .= ", ";
 				}
 				$message .= "Tanggal Terima tidak boleh kosong";
+				$status = "error";
 			}
 			if (empty($number)) {
 				if(!empty($message)){
 					$message .= ", ";
 				}
 				$message .= "Nomor Surat tidak boleh kosong";
+				$status = "error";
 			}
 			if (empty($realDate)) {
 				if(!empty($message)){
 					$message .= ", ";
 				}
 				$message .= "Tanggal Surat tidak boleh kosong";
+				$status = "error";
 			}
 			if (empty($type)) {
 				if(!empty($message)){
 					$message .= ", ";
 				}
 				$message .= "Sifat Surat tidak boleh kosong";
+				$status = "error";
 			}else{
 				$typeMsg = array("segera", "sangatsegera", "biasa");
 
@@ -164,6 +169,7 @@ class Tracking extends BaseController
 						$message .= ", ";
 					}
 					$message .= "Kesalahan penamaan Sifat Surat $type";
+					$status = "error";
 				}
 			} 
 
@@ -172,6 +178,7 @@ class Tracking extends BaseController
 					$message .= ", ";
 				}
 				$message .= "Isi Ringkasan/Catatan/Perihal tidak boleh kosong";
+				$status = "error";
 			}
 
 			if (empty($from)) {
@@ -179,6 +186,7 @@ class Tracking extends BaseController
 					$message .= ", ";
 				}
 				$message .= "Dari/Pengirim tidak boleh kosong";
+				$status = "error";
 			}
 			else{
 				$unitData = $modelUnit->getUnitByPrefixNameFrom($from);
@@ -187,6 +195,7 @@ class Tracking extends BaseController
 						$message .= ", ";
 					}
 					$message .= "Dari/Pengirim tidak memiliki Unit (Uknown)";
+					$status = "error";
 				}
 			}
 
@@ -195,6 +204,7 @@ class Tracking extends BaseController
 					$message .= ", ";
 				}
 				$message .= "Kepada/Penerima tidak boleh kosong";
+				$status = "error";
 			}
 			else{
 				$unitData = $modelUnit->getUnitByPrefixNameTo($to);
@@ -203,13 +213,9 @@ class Tracking extends BaseController
 						$message .= ", ";
 					}
 					$message .= "Kepada/Penerima tidak memiliki Unit (Uknown)";
+					$status = "info";
 				}
-			}
-			
-
-			if(!empty($message)){
-				$status = "error";
-			}
+			} 
 			$simpandata = [
 				'indexNumber' => rand(5,10),
 				'agendaNumber' =>  $agendaNumber , 
