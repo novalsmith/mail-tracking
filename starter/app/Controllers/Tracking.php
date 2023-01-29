@@ -5,9 +5,9 @@ namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ModelTracking;
 use App\Models\ModelUnit;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use vendor\phpoffice\phpspreadsheet\Spreadsheet;
+use vendor\phpoffice\phpspreadsheet\Reader\Xlsx;
+use vendor\phpoffice\phpspreadsheet\Reader\Xls;
 
 
 class Tracking extends BaseController
@@ -87,9 +87,9 @@ class Tracking extends BaseController
 		$file_excel = $this->request->getFile('TrackingFileUpload');
 		$ext = $file_excel->getClientExtension();
 		if($ext == 'xls') {
-			$render = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+			$render = new vendor\phpoffice\phpspreadsheet\Reader\Xls();
 		} else if($ext == 'xlsx') {
-			$render = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+			$render = new vendor\phpoffice\phpspreadsheet\Reader\Xlsx();
 		}else{
 			$dataError = [
 				"message" => "Sorry the file type .$ext is not supported, please use .xls or .xlxs"
