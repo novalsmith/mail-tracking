@@ -331,26 +331,12 @@ export default {
             }
 
         },
-        async getInbox() {
+        async getData() {
             try {
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 if (userData && userData.user) {
-                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
+                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/unknown");
                     this.allTrackingData = responseAll != undefined ? responseAll : [];
-                    var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + url);
-
-
-                    this.listData = response != undefined ? response.data : [];
-
-
-                    // var lsitInboxData = {
-                    //     allTrackingData: this.allTrackingData,
-                    //     listParentChild: listParent,
-                    //     trackingDataByRole: []
-                    // };
-                    // this.$store.dispatch('inboxs', lsitInboxData);
                 }
                 this.isLoading = false;
 
@@ -409,6 +395,7 @@ export default {
                 tglSuratEnd: this.tglSuratEnd
             }
             console.log(remappingParam);
+            this.getData();
         },
         submit() {
             this.$v.$touch()
@@ -439,8 +426,8 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getInbox();
-        this.getEmployeeParentChild();
+        // this.getInbox();
+        // this.getEmployeeParentChild();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),

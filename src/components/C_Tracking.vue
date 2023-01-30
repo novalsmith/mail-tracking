@@ -154,8 +154,8 @@
                                         prepend-icon="mdi-paperclip"></v-file-input>
                                 </v-col>
                                 <v-col md="6">
-                                    <v-btn :disabled="disabledWhenLoading" color="cyan darken-2" class="white--text"
-                                        @click="processUpload">
+                                    <v-btn :disabled="disabledWhenLoading || loadingUploadButton" color="cyan darken-2"
+                                        class="white--text" @click="processUpload" :loading="loadingUploadButton">
                                         <v-icon>mdi-cloud-arrow-up-outline</v-icon> Submit
                                     </v-btn>
                                     <v-btn text class="mr-4 white--text" color="blue-grey" @click="clearUploadValue">
@@ -173,6 +173,8 @@
                             </v-row>
                         </form>
                     </v-main>
+                    <v-progress-linear v-show="loadingUploadButton" indeterminate
+                        color="cyan darken-2"></v-progress-linear>
                     <v-divider></v-divider>
                     <v-card-title>
                         Filter
@@ -306,6 +308,7 @@ export default {
             dialogDetail: false,
             isShowAlert: false,
             isShowAlertReview: false,
+            loadingUploadButton: false,
             search: "",
             searchReview: "",
             listData: [],
@@ -429,7 +432,6 @@ export default {
         },
         async getTracking() {
             try {
-                // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
                 this.listData = response.data;
                 const state = {
@@ -526,15 +528,16 @@ export default {
             try {
                 var listData = this.mappingMultipleRecipient();
                 var formdata = new FormData();
+                this.loadingUploadButton = true;
                 formdata.append("listData", JSON.stringify(listData));
-                var resultData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'save', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
-                this.isShowAlertReview = true;
+                var resultData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'tracking/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
                 this.responseAlertReview.color = 'cyan darken-2';
                 this.responseAlertReview.message = "Data Nadine Berhasil Tersimpan";
-
+                this.loadingUploadButton = false;
+                this.isShowAlertReview = true;
                 setTimeout(() => {
                     this.isShowAlertReview = false;
-                }, 5000);
+                }, 2000);
             } catch (error) {
                 console.log(error);
             }
@@ -615,7 +618,7 @@ export default {
                 this.isLoadingReview = false;
                 this.listDataReview.forEach((item, i) => {
                     item.indexNumber = i + 1;
-                })
+                });
             } catch (error) {
                 console.log(error.response.status);
                 this.isShowAlertReview = true;

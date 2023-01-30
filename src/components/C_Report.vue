@@ -439,8 +439,8 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getInbox();
-        this.getEmployeeParentChild();
+        // this.getInbox();
+        // this.getEmployeeParentChild();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),

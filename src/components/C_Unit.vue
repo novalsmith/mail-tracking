@@ -89,7 +89,7 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getUsers();
+        // this.getUsers();
     },
     computed: {
         ...mapGetters(['unit', 'settings'])

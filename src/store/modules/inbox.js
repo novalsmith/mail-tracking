@@ -1,5 +1,7 @@
 // modules/user.js
-const state = {}
+const state = {
+    data: []
+}
 export default {
     state,
     mutations: {

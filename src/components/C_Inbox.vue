@@ -10,11 +10,11 @@
                 <v-spacer></v-spacer>
                 <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
                     v-if="isAdvanceSearch">
-                    <v-icon>mdi-arrow-down-thin</v-icon>
-                    Advance Search
-                </v-btn>
-                <v-btn v-else class="mr-4 white--text" color="blue-grey" text small dark @click="advanceSearch(true)">
                     <v-icon>mdi-arrow-up-thin</v-icon>
+                    Simple Search
+                </v-btn>
+                <v-btn v-else class="white--text" color="blue-grey" text small dark @click="advanceSearch(true)">
+                    <v-icon>mdi-arrow-down-thin</v-icon>
                     Advance Search
                 </v-btn>
             </v-card-title>
@@ -110,23 +110,20 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table v-show="isShowTable" multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
-                :items="listData" :search="search" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''">
-                <template v-slot:item="{ item, index }">
-                    <tr class="rowColor" @click="rowClick(item)">
-                        <td>{{ index + 1}}</td>
-                        <td>{{ item.agendaNumber }}</td>
-                        <td>{{ item.number }}</td>
-                        <td>{{ item.receiptDate }}</td>
-                        <td>{{ item.realDate }}</td>
-                        <td>{{ item.typeName }}</td>
-                        <td>{{ item.fromName }}</td>
-                        <td>{{ item.toName }}</td>
-                        <td>{{ item.note }}</td>
-                    </tr>
-                </template>
+            <v-data-table item-key="indexNumber" v-show="isShowTable" multi-sort :headerProps="headerprops"
+                :headers="headers" class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []"
+                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick"
+                :footer-props="{
+                    showFirstLastPage: true,
+                    firstIcon: 'mdi-arrow-collapse-left',
+                    lastIcon: 'mdi-arrow-collapse-right',
+                    prevIcon: 'mdi-minus',
+                    nextIcon: 'mdi-plus'
+                }">
             </v-data-table>
+            <template v-slot:item="{ index, item }">
+                {{ index+ 1 }}
+            </template>
         </v-card>
 
 
@@ -252,7 +249,7 @@ export default {
             dialogDetail: false,
             isShowAlert: false,
             search: "",
-            listData: [],
+            inboxListData: [],
             detailDataRow: [],
             detailDataList: [],
             allTrackingData: [],
@@ -271,7 +268,7 @@ export default {
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
-            isLoading: true,
+            isLoading: false,
             responseAlert: {
                 message: "",
                 color: ""
@@ -289,13 +286,13 @@ export default {
                 tglSuratEnd: ""
             },
             headers: [
-                { text: 'No', value: 'trackingid' },
+                { text: 'No', value: 'num' },
                 { text: 'No. Agenda', value: 'agendaNumber' },
                 { text: 'Tgl. Penerimaan', value: 'receiptDate' },
                 { text: 'No. Surat', value: 'number' },
                 { text: 'Tgl. Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'typeName' },
-                { text: 'Dari', value: 'fromName' },
+                { text: 'Sifat Surat', value: 'type' },
+                { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'toName' },
                 { text: 'Keterangan', value: 'note' }
             ],
@@ -321,10 +318,8 @@ export default {
                         });
                     }
                     this.listItemsReciver = listParent;
-                    this.isLoading = false;
                 }
             } catch (error) {
-                this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
@@ -333,24 +328,18 @@ export default {
         },
         async getInbox() {
             try {
+                this.isLoading = true;
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 if (userData && userData.user) {
-                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                    this.allTrackingData = responseAll != undefined ? responseAll : [];
-                    var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + url);
-
-
-                    this.listData = response != undefined ? response.data : [];
-
-
-                    // var lsitInboxData = {
-                    //     allTrackingData: this.allTrackingData,
-                    //     listParentChild: listParent,
-                    //     trackingDataByRole: []
-                    // };
-                    // this.$store.dispatch('inboxs', lsitInboxData);
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show/" + userData.user.roleCode);
+                    this.inboxListData = !!response ? response.data : [];
+                    const state = {
+                        data: !!response ? response.data : []
+                    }
+                    this.$store.dispatch('inboxs', state);
+                    this.inboxListData.forEach((item, i) => {
+                        item.indexNumber = i + 1;
+                    });
                 }
                 this.isLoading = false;
 
@@ -366,21 +355,16 @@ export default {
             this.$store.dispatch('settings', this.themeColoring);
         },
         rowClick(row) {
-            this.dialogDetail = true;
-            const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
+            const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
-
             this.detailDataRow = row;
-            // console.log(row); 
-            // var dateChanges = new Date(row.receiptDate); 
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
-            // console.log(resDate);
-            // this.date = new Date(row.receiptDate);
             this.detailDataList = filteredList;
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
+            this.dialogDetail = true;
         },
-        searching() {
+        async searching() {
             this.isShowTable = true;
             var mappArraySifatSurat = [];
             this.filter.sifatSurat.forEach(element => {
@@ -408,7 +392,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            console.log(remappingParam);
+            await this.getInbox();
         },
         submit() {
             this.$v.$touch()
@@ -437,10 +421,9 @@ export default {
             })
         },
     },
-    created() {
+    async created() {
         this.getSettings();
-        this.getInbox();
-        this.getEmployeeParentChild();
+        await this.getEmployeeParentChild();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
@@ -464,12 +447,9 @@ export default {
 </script> 
 
 <style lang="css" scoped>
-.rowColor:hover {
-    /* `!important` is necessary here because Vuetify overrides this
-    - background cyan darken-2
-    */
+.table-style>>>tbody tr:hover {
+    cursor: pointer;
     background: #0097A7 !important;
     color: white;
-    cursor: pointer;
 }
 </style>
