@@ -131,7 +131,7 @@ export default {
   height: 45vh;
 }
 .heroHome{
-  background: url('./assets/minerbalogin.jpg');
+  background: url('./assets/DashboardMailtracking.jpg');
   background-size: cover;
   background-position-y: top;
   height: 35vh;

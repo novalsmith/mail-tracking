@@ -117,9 +117,9 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
-                :items="listData" :search="search" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3" :items="listData"
+                :search="search" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''"
+                :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -330,7 +330,7 @@ export default {
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
-            isLoading: true,
+            isLoading: false,
             responseAlert: {
                 message: "",
                 color: ""
@@ -358,7 +358,6 @@ export default {
                 tglSuratEnd: ""
             },
             files: [],
-            isLoading: true,
             alertNotready: false,
             search: "",
             listData: [],
@@ -432,6 +431,7 @@ export default {
         },
         async getTracking() {
             try {
+                this.isLoading = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
                 this.listData = response.data;
                 const state = {
