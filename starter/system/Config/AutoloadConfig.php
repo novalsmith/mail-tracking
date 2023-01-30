@@ -49,11 +49,6 @@ class AutoloadConfig
      * @phpstan-var array<string, string|list<string>>
      */
     public $psr4 = [];
-    // public $psr4 = [
-    //     APP_NAMESPACE => APPPATH, // For custom app namespace
-    //     'Config'      => APPPATH . 'Config',
-    //     'PhpOffice' => ROOTPATH .'vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet'
-    //     ];
 
     /**
      * -------------------------------------------------------------------
