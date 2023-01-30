@@ -271,7 +271,7 @@ export default {
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
-            isLoading: true,
+            isLoading: false,
             responseAlert: {
                 message: "",
                 color: ""
@@ -333,16 +333,17 @@ export default {
         },
         async getInbox() {
             try {
+                this.isLoading = true;
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 if (userData && userData.user) {
                     // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                    this.allTrackingData = responseAll != undefined ? responseAll : [];
-                    var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + url);
+                    // var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
+                    // this.allTrackingData = responseAll != undefined ? responseAll : [];
+                    // var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/show/" + userData.user.roleCode);
 
 
-                    this.listData = response != undefined ? response.data : [];
+                    this.listData = !!response ? response.data : [];
 
 
                     // var lsitInboxData = {
@@ -380,7 +381,7 @@ export default {
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
         },
-        searching() {
+        async searching() {
             this.isShowTable = true;
             var mappArraySifatSurat = [];
             this.filter.sifatSurat.forEach(element => {
@@ -408,7 +409,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            console.log(remappingParam);
+            await this.getInbox();
         },
         submit() {
             this.$v.$touch()

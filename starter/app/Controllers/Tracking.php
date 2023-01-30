@@ -23,11 +23,9 @@ class Tracking extends BaseController
 		// $role = $this->request->getVar('role');
 		$modelData = new ModelTracking();
 		$data = $modelData->getTrackingByRole($id);
-		if ($data) {
+	 
 			return $this->respond($data, 200);
-		} else {
-			return $this->failNotFound("Data not found for id $id");
-		}
+		 
 	}
 
 	public function importCsvToDbBackup()
@@ -98,12 +96,12 @@ class Tracking extends BaseController
 		$startRow = 0;
 		$maxRows = 3000;
 		$data = $spreadsheet->getActiveSheet()->toArray();
-		if(count($data)-1 > $maxRows){
-			$dataError = [
-				"message" => "Sorry you have limit $maxRows records, please try again. "
-			];
-			return $this->respond($dataError,404);
-		} 
+		// if(count($data)-1 > $maxRows){
+		// 	$dataError = [
+		// 		"message" => "Sorry you have limit $maxRows records, please try again. "
+		// 	];
+		// 	return $this->respond($dataError,404);
+		// } 
 		$resultExcelData = [];
 		// Define how many rows we want to read for each "chunk"
 		
