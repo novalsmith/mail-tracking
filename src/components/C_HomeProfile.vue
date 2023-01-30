@@ -3,7 +3,7 @@
     <v-row>
         <v-col lg="12">
             <h1 class="font-weight-regular" :color="color">Welcome to <br> Mail Track Minerba</h1>
-            <p class="description" :color="color">LSebuah tools yang dirancang untuk membantu proses penelusuran
+            <p class="description" :color="color">Sebuah tools yang dirancang untuk membantu proses penelusuran
                 (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</p>
 
         </v-col>
