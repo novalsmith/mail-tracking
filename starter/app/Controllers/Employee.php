@@ -21,12 +21,8 @@ class Employee extends BaseController
 	{
 		$modelData = new ModelEmployee();
 		$data = $modelData->getEmployeeByParent($id);
-		if ($data) {
 			return $this->respond($data, 200);
-		} else {
-			return $this->failNotFound("Data not found for id $id");
-		}
-	}
+	}		 
 	public function create()
 	{
 		$data = $this->request->getPost();

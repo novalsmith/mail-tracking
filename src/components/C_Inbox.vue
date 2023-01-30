@@ -121,8 +121,8 @@
                     nextIcon: 'mdi-plus'
                 }">
             </v-data-table>
-            <template v-slot:item="{ index, item }">
-                {{ index+ 1 }}
+            <template v-slot:item="{ index }">
+                {{ index + 1 }}
             </template>
         </v-card>
 
@@ -286,7 +286,7 @@ export default {
                 tglSuratEnd: ""
             },
             headers: [
-                { text: 'No', value: 'num' },
+                { text: 'No', value: 'agendaNumber' },
                 { text: 'No. Agenda', value: 'agendaNumber' },
                 { text: 'Tgl. Penerimaan', value: 'receiptDate' },
                 { text: 'No. Surat', value: 'number' },
@@ -340,6 +340,7 @@ export default {
                     this.inboxListData.forEach((item, i) => {
                         item.indexNumber = i + 1;
                     });
+                    await this.getEmployeeParentChild();
                 }
                 this.isLoading = false;
 
@@ -423,7 +424,6 @@ export default {
     },
     async created() {
         this.getSettings();
-        await this.getEmployeeParentChild();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
