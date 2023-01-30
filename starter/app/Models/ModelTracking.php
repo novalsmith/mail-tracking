@@ -12,19 +12,13 @@ class ModelTracking extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    // protected $validationRules = [
-    //     'name' => 'required',
-    //     'email' => 'required|valid_email'
-    // ];
-    // protected $validationMessages = [
-    //     'name' => [
-    //         'required' => 'Silakan masukkan nama'
-    //     ],
-    //     'email' => [
-    //         'required' => 'Silakan masukkan email',
-    //         'valid_email' => 'Email yang dimasukkan tidak valid'
-    //     ]
-    // ];
+    function getTracking()
+    {
+        $builder = $this->table("v_tracking");
+        $builder->where("to", $role);
+       $data =  $builder->get()->getResult(); 
+        return $data;
+    }
 
     function getTrackingByRole($role)
     {
@@ -32,5 +26,16 @@ class ModelTracking extends Model
         $builder->where("to", $role);
        $data =  $builder->get()->getResult(); 
         return $data;
+    }
+
+    function saveData($data){
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $builderTable = $db->table('tracking'); 
+        $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        return  $isSuccess;
     }
 }

@@ -40,6 +40,7 @@ $routes->get('/tracking/(:any)', 'Tracking::show/$1');
 $routes->post('/upload', 'Tracking::importCsvToDb');
 $routes->get('/lookup', 'Lookup::index');
 $routes->post('/lookup/detail', 'Lookup::show');
+$routes->post('/save', 'Tracking::create');
 // $routes->resource("pegawai");
 
 /*

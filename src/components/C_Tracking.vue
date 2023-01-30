@@ -119,18 +119,15 @@
 
             <v-data-table v-show="isShowTable" multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
                 :items="listData" :search="search" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''">
-                <template v-slot:item="{ item, index }">
-                    <tr class="rowColor">
-                        <td>{{ index + 1}}</td>
-                        <td>{{ item.agendaNumber }}</td>
-                        <td>{{ item.receiptDate }}</td>
-                        <td>{{ item.realDate }}</td>
-                        <td>{{ item.type }}</td>
-                        <td>{{ item.from }}</td>
-                        <td>{{ item.to }}</td>
-                        <td>{{ item.note }}</td>
-                    </tr>
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
+                    showFirstLastPage: true,
+                    firstIcon: 'mdi-arrow-collapse-left',
+                    lastIcon: 'mdi-arrow-collapse-right',
+                    prevIcon: 'mdi-minus',
+                    nextIcon: 'mdi-plus'
+                }">
+                <template v-slot:item.num="{ index, item }">
+                    {{ index+ 1 }}
                 </template>
             </v-data-table>
         </v-card>
@@ -157,8 +154,8 @@
                                         prepend-icon="mdi-paperclip"></v-file-input>
                                 </v-col>
                                 <v-col md="6">
-                                    <v-btn :disabled="!!uploadedValue && !isShowAlertReview ? false : true"
-                                        color="cyan darken-2" class="white--text" @click="processUpload">
+                                    <v-btn :disabled="disabledWhenLoading" color="cyan darken-2" class="white--text"
+                                        @click="processUpload">
                                         <v-icon>mdi-cloud-arrow-up-outline</v-icon> Submit
                                     </v-btn>
                                     <v-btn text class="mr-4 white--text" color="blue-grey" @click="clearUploadValue">
@@ -233,7 +230,7 @@
                         </template>
                         <template v-slot:expanded-item="{ item, headers }">
                             <td :colspan="headers.length">
-                                <p :class="item.status == 'error' ? 'red--text' : 'blue--text' ">{{ item.message }}</p>
+                                <p :class="item.status == 'error' ? 'red--text' : 'blue--text'">{{ item.message }}</p>
                             </td>
                         </template>
 
@@ -243,9 +240,9 @@
                             </v-chip>
                         </template>
 
-                        <template v-slot:item.to="{ item }">
-                            <div v-if="item.to != ''">
-                                <v-chip small v-for="values in splitString(item.to)" class="my-2">
+                        <template v-slot:item.to.name="{ item }">
+                            <div v-if="item.to.name != ''">
+                                <v-chip small v-for="values in splitString(item.to.name)" class="my-2">
                                     {{ values }}
                                 </v-chip>
                             </div>
@@ -373,14 +370,15 @@ export default {
             content: [],
             parsed: false,
             headers: [
-                { text: 'No', value: 'trackingid' },
+                { text: 'No', value: 'num' },
                 { text: 'Agenda', value: 'agendaNumber' },
                 { text: 'Terima', value: 'receiptDate' },
                 { text: 'Tanggal Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
-                { text: 'Ket', value: 'note' }
+                { text: 'Perihal', value: 'note' },
+                { text: 'Ket', value: 'type', width: '10%' },
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
@@ -390,7 +388,9 @@ export default {
                 { text: 'Tanggal Surat', value: 'realDate', width: '10%' },
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
                 { text: 'Dari', value: 'from', width: '10%' },
-                { text: 'Kepada', value: 'to', width: '20%' },
+                { text: 'Kepada', value: 'to.name', width: '20%' },
+                { text: 'Ket', value: 'desc', width: '10%' },
+                { text: 'Perihal', value: 'note', width: '10%' },
                 { text: 'Status', value: 'status', width: '10%' },
                 { text: 'Detail', value: 'data-table-expand' }
             ],
@@ -462,16 +462,13 @@ export default {
                 .map((e) => { return e });
 
             this.detailDataRow = row;
-            // console.log(row); 
-            // var dateChanges = new Date(row.receiptDate); 
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
-            // console.log(resDate);
-            // this.date = new Date(row.receiptDate);
             this.detailDataList = filteredList;
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user.name;
         },
         searching() {
+            this.getTracking();
             this.isShowTable = true;
             var mappArraySifatSurat = [];
             this.filter.sifatSurat.forEach(element => {
@@ -499,7 +496,6 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            console.log(remappingParam);
         },
         submit() {
             this.$v.$touch()
@@ -515,7 +511,6 @@ export default {
             }
         },
         advanceSearch(value) {
-            console.log(value);
             this.isAdvanceSearch = value;
         },
         toggle() {
@@ -527,10 +522,66 @@ export default {
                 }
             })
         },
-        processUpload() {
-            console.log(this.uploadedValue);
+        async processUpload() {
+            try {
+                var listData = this.mappingMultipleRecipient();
+                var formdata = new FormData();
+                formdata.append("listData", JSON.stringify(listData));
+                var resultData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'save', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                this.isShowAlertReview = true;
+                this.responseAlertReview.color = 'cyan darken-2';
+                this.responseAlertReview.message = "Data Nadine Berhasil Tersimpan";
+
+                setTimeout(() => {
+                    this.isShowAlertReview = false;
+                }, 5000);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        mappingMultipleRecipient() {
+            var data = this.$store.state.trackings['trackings'].tempTracking;
+            var listData = data.filter((e) => e.status != "error").map((e) => {
+                return {
+                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
+                    from: e.from, to: e.to, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.note,
+                    number: e.number,
+                    note: "sample",
+                    status: e.status,
+                    note: e.note
+                }
+            });
+            var listMultipleData = [];
+            var listSingleData = [];
+            var maergeData = [];
+            listData.forEach(e => {
+                if (e.to.code.length > 0) {
+                    e.to.code.forEach(element => {
+                        var newData = {
+                            agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
+                            from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
+                            number: e.number,
+                            note: e.note
+                        }
+                        listMultipleData.push(newData);
+                    });
+                } else {
+                    var newData = {
+                        agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
+                        from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
+                        number: e.number,
+                        note: e.note
+                    }
+                    listSingleData.push(newData);
+                }
+            });
+
+            maergeData = listMultipleData.concat(listSingleData);
+            return maergeData;
         },
         clearUploadValue() {
+            this.expanded = [];
             this.uploadedValue = null;
             this.isShowAlertReview = false;
             this.responseSummaryDataReview.totalErrors = 0;
@@ -541,8 +592,6 @@ export default {
         async handleFilesUpload() {
             try {
                 var file = event.target.files[0].name;
-                console.log(file);
-
                 let formData = new FormData();
                 formData.append('TrackingFileUpload', this.uploadedValue);
                 this.dialogReview = true;
@@ -582,23 +631,18 @@ export default {
             filteredList = status == 'all' ? data : data.filter((e) => e.status === status).map((e) => {
                 return {
                     agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                    from: e.from, to: e.to, status: e.status
+                    from: e.from, to: e.to.name, status: e.status
                 }
             });
             this.listDataReview = filteredList;
         },
         itemRowBackground(item) {
-            console.log(item);
             if (item === 'error') {
                 return 'errorColor';
             }
         },
-        loadDetails({ item }) {
-            console.log(item);
-        },
         summaryUploadReview() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
-            console.log(data.length);
             this.responseSummaryDataReview.totalUploadedData = data.length;
             this.responseSummaryDataReview.totalErrors = data.filter((e) => e.status === 'error').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalSuccess = data.filter((e) => e.status === 'success').map((e) => { return { e } }).length;
@@ -641,6 +685,9 @@ export default {
             } else {
                 return true;
             }
+        },
+        disabledWhenLoading() {
+            return this.isShowAlertReview ? true : (!this.isLoadingReview && !!this.uploadedValue ? false : true);
         }
 
     }
