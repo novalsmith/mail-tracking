@@ -96,7 +96,7 @@ class Tracking extends BaseController
 		$spreadsheet = $render->load($file_excel);
 		$chunkSize = 50;
 		$startRow = 0;
-		$maxRows = 1000;
+		$maxRows = 3000;
 		$data = $spreadsheet->getActiveSheet()->toArray();
 		if(count($data)-1 > $maxRows){
 			$dataError = [

@@ -46,6 +46,7 @@ $routes->post('/lookup/detail', 'Lookup::show');
 
 $routes->presenter('tracking');
 $routes->presenter('inbox');
+$routes->presenter('unknown');
 
 
 /*

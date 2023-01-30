@@ -104,7 +104,7 @@ const routes = [{
   {
     path: '/unknown',
     name: 'Unknown',
-    component: () => import('../views/Draft.vue'),
+    component: () => import('../views/Unknown.vue'),
     beforeEnter: (to, from, next) => {
       if (localStorage.getItem('token') == null) {
         // routerObject.push("/logout");

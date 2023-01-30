@@ -76,7 +76,9 @@ class Filters extends BaseConfig
 				'employee/*',
 				'employee',
 				'lookup/*',
-				'lookup'
+				'lookup',
+				'unknown/*',
+				'unknown'
 			]
 		]
 	];
