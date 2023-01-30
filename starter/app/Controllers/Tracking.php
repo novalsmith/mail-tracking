@@ -274,27 +274,24 @@ class Tracking extends BaseController
     }
 	public function create()
 	{
-		 
 		$modelTracking = new ModelTracking(); 
 		$data = $this->request->getPost('listData');
 		$isSuccess = false;
 		if (!empty($data)) {
-			$datas = json_decode($data); 
-
-			// return $this->fail($this->model->errors());
-			$trackingData = $modelTracking->saveData($datas);
-			if($trackingData){
-				$response = [
-					'status' => 200,
-					'error' => null,
-					'messages' => "Data Nadine Berhasil tersimpan"
-					
-				];
-				return $this->respond($response);
+			$countData = json_decode($data); 
+			foreach(array_chunk($countData,count($countData),true) as $rows) {
+				$trackingData = $modelTracking->saveData($rows);
+				if($trackingData){
+					$response = [
+						'status' => 200,
+						'error' => null,
+						'messages' => "Data Nadine Berhasil tersimpan"
+					];
+					return $this->respond($response);
+				}
 			}
 		} 
 		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
-		// return $this->respond($data, 200);
 	}
 	public function update($id = null)
 	{

@@ -468,7 +468,6 @@ export default {
             this.userDefault = listData.user.name;
         },
         searching() {
-            this.getTracking();
             this.isShowTable = true;
             var mappArraySifatSurat = [];
             this.filter.sifatSurat.forEach(element => {
@@ -495,7 +494,8 @@ export default {
                 tglTerimaEnd: this.tglTerimaEnd,
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
-            }
+            };
+            this.getTracking();
         },
         submit() {
             this.$v.$touch()
@@ -655,7 +655,6 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getTracking();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),
