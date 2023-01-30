@@ -409,7 +409,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            await this.getInbox();
+            // await this.getInbox();
         },
         submit() {
             this.$v.$touch()
@@ -440,7 +440,7 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getInbox();
+        // this.getInbox();
         // this.getEmployeeParentChild();
     },
     computed: {
