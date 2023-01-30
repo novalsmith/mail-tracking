@@ -104,7 +104,8 @@ axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
 axios.interceptors.response.use(resp => resp, async error => {
     if (error.response.status === 401) {
         router.push('/logout')
-    } else {
-        return Promise.reject(error);
     }
+    // else {
+    //     return Promise.reject(error);
+    // }
 });
