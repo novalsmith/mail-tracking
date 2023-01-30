@@ -423,6 +423,7 @@ export default {
     },
     async created() {
         this.getSettings();
+        await this.getInbox();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
