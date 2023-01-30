@@ -293,7 +293,7 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'toName' },
-                { text: 'Keterangan', value: 'note' }
+                { text: 'Isi Ringkasan', value: 'note' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"

@@ -293,7 +293,7 @@ export default {
                 { text: 'Tgl. Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'toName' },
+                { text: 'Kepada', value: 'to' },
                 { text: 'Keterangan', value: 'note' }
             ],
             headerprops: {
