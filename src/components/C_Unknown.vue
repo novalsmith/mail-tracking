@@ -110,10 +110,9 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table item-key="indexNumber" v-show="isShowTable" multi-sort :headerProps="headerprops"
-                :headers="headers" class="mx-3 table-style" :items="!!listUnknownData ? listUnknownData : []"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick"
-                :footer-props="{
+            <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
+                class="mx-3 table-style" :items="!!listUnknownData ? listUnknownData : []" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',

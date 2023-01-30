@@ -110,10 +110,9 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table item-key="indexNumber" v-show="isShowTable" multi-sort :headerProps="headerprops"
-                :headers="headers" class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick"
-                :footer-props="{
+            <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
+                class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -343,6 +342,7 @@ export default {
                     await this.getEmployeeParentChild();
                 }
                 this.isLoading = false;
+                this.isShowTable = true;
 
             } catch (error) {
                 this.isLoading = false;
@@ -424,6 +424,7 @@ export default {
     },
     async created() {
         this.getSettings();
+        await this.getInbox();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),

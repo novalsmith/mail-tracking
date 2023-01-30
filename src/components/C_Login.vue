@@ -6,7 +6,7 @@
                 <v-spacer></v-spacer>
                 <img src="../assets/login-mail-track.png" alt="" srcset="" width="20%">
                 <div class="mx-2">
-                    Login <br>Mail Tracking Minerba
+                    Login <br>Mail Track Minerba
                 </div>
                 <v-spacer></v-spacer>
             </v-card-title>
@@ -30,7 +30,8 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-btn :disabled="isValid || isCompletedLoad" text class="mr-4 white--text" color="cyan darken-2" @click="login">
+                <v-btn :disabled="isValid || isCompletedLoad" text class="mr-4 white--text" color="cyan darken-2"
+                    @click="login">
                     <v-icon>mdi-lock-outline</v-icon> Login
                 </v-btn>
                 <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">

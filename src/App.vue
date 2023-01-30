@@ -4,7 +4,7 @@
       <img src="https://cdn.pixelfordinner.cloud/uploads/2014/11/voa_panel_sample-1024x0-c-f.jpg" width="100%" alt=""
         height="200%">
     </v-system-bar>
-    <div>
+    <div :class="initDataAfterLogin ? 'heroHome' : 'hero' ">
       <v-container v-if="!initDataAfterLogin">
         <C_Login />
       </v-container>
@@ -84,9 +84,9 @@ export default {
         var accessLookup = lookupData.filter(val => val.type == "ACCESS").map(result => { return result; });
         // mapping level
         var levelLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
-          // mapping desc
-          var descLookup = lookupData.filter(val => val.type == "DESC").map(result => { return result; });
-         var mapping = {
+        // mapping desc
+        var descLookup = lookupData.filter(val => val.type == "DESC").map(result => { return result; });
+        var mapping = {
           header: headerLookup,
           status: statusLookup,
           type: typeLookup,
@@ -104,7 +104,7 @@ export default {
     $route: {
       immediate: true,
       handler(to, from) {
-        document.title = to.meta.title || 'Mail Tracking Minerba';
+        document.title = to.meta.title || 'Mail Track Minerba';
       }
     },
   },
@@ -122,5 +122,18 @@ export default {
 <style lang="css" scoped>
 .on-hover {
   transition: all 0.5s ease;
+}
+
+.hero {
+  background: url('./assets/minerbalogin.jpg');
+  background-size: cover;
+  background-position-y: bottom;
+  height: 45vh;
+}
+.heroHome{
+  background: url('./assets/minerbalogin.jpg');
+  background-size: cover;
+  background-position-y: top;
+  height: 35vh;
 }
 </style>

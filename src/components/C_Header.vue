@@ -33,7 +33,7 @@
                 <div class="d-none d-lg-block">
                     <v-row class="mt-2">
                         <v-col md="4" class="text-left pt-0 pb-0">
-                            <h3>Mail Tracking Minerba</h3>
+                            <h3>Mail Track Minerba</h3>
                         </v-col>
                         <v-col md="8" class="text-right  pt-0 pb-0">
                             <v-row>
@@ -86,7 +86,7 @@
                         <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2"
                             v-show="alertSuccessLogin" elevation="2" icon="mdi-information-outline" border="left"
                             dismissible transition="scale-transition">
-                            Hi <strong>{{ users.name }}</strong> Welcome to Mail Tracking Minerba
+                            Hi <strong>{{ users.name }}</strong> Welcome to Mail Track Minerba
                         </v-alert>
                     </div>
                 </div>

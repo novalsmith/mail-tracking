@@ -110,9 +110,8 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table v-show="isShowTable" multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
-                :items="listData" :search="search" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''">
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3" :items="listData"
+                :search="search" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
                     <tr class="rowColor" @click="rowClick(item)">
                         <td>{{ index + 1}}</td>
@@ -352,6 +351,7 @@ export default {
                     //     trackingDataByRole: []
                     // };
                     // this.$store.dispatch('inboxs', lsitInboxData);
+                    this.isShowTable = true;
                 }
                 this.isLoading = false;
 
@@ -440,7 +440,7 @@ export default {
     },
     created() {
         this.getSettings();
-        // this.getInbox();
+        this.getInbox();
         // this.getEmployeeParentChild();
     },
     computed: {

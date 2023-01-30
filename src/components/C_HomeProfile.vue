@@ -2,14 +2,10 @@
 
     <v-row>
         <v-col lg="12">
-            <h1 class="font-weight-regular" :color="color">Welcome to <br> Mail Tracking Minerba</h1>
-            <p class="description" :color="color">Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Perspiciatis modi
-                ea dolorem? Sapiente maiores architecto eum labore voluptates officia accusamus est cumque
-                corporis fugit, aliquam quibusdam fuga rem, reprehenderit culpa.</p>
-            <v-btn to="profil" small :color="settings.color" class="my-4" rounded outlined>
-                Start <v-icon> mdi-chevron-right</v-icon>
-            </v-btn>
+            <h1 class="font-weight-regular" :color="color">Welcome to <br> Mail Track Minerba</h1>
+            <p class="description" :color="color">LSebuah tools yang dirancang untuk membantu proses penelusuran
+                (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</p>
+
         </v-col>
     </v-row>
 

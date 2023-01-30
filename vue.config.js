@@ -9,7 +9,7 @@ module.exports = {
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {
-      args[0].title = "Mail Tracking Minerba";
+      args[0].title = "Mail Track Minerba";
       return args;
     });
   },
@@ -18,9 +18,9 @@ module.exports = {
     config.plugins.delete('workbox');
   },
   pwa: {
-    name: "Mail Tracking Minerba",
-      name: "Mail Tracking Minerba",
-      short_name: "Tracking",
+    name: "Mail Track Minerba",
+      name: "Mail Track Minerba",
+      short_name: "Track",
       theme_color: "#1976d2",
       background_color: "#fafafa",
       manifestOptions: {

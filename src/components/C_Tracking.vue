@@ -117,7 +117,7 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table v-show="isShowTable" multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3"
                 :items="listData" :search="search" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
                     showFirstLastPage: true,
@@ -439,6 +439,7 @@ export default {
                     tempTracking: []
                 }
                 this.$store.dispatch('trackings', state);
+                this.isShowTable = true;
                 this.isLoading = false;
             } catch (error) {
                 console.log(error);
@@ -470,7 +471,7 @@ export default {
             this.userDefault = listData.user.name;
         },
         searching() {
-            this.isShowTable = true;
+            // this.isShowTable = true;
             var mappArraySifatSurat = [];
             this.filter.sifatSurat.forEach(element => {
                 mappArraySifatSurat.push(element);
@@ -503,7 +504,7 @@ export default {
             this.$v.$touch()
         },
         clear() {
-            this.isShowTable = false;
+            // this.isShowTable = false;
         },
         selectedTypeEvnt() {
             if (this.selectedType != 'Arsipkan') {
@@ -658,6 +659,7 @@ export default {
     },
     created() {
         this.getSettings();
+        this.getTracking();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),
