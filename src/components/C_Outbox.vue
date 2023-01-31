@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h2>Outbox</h2>
+            <h1>Outbox</h1>
         </div>
         <v-divider></v-divider>
         <v-card class="my-5">
@@ -472,5 +472,9 @@ export default {
     background: #0097A7 !important;
     color: white;
     cursor: pointer;
+}
+
+h1 {
+    -webkit-text-stroke: 0.8px #fff;
 }
 </style>

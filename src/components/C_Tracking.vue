@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h2>Nadine</h2>
+            <h1>Nadine</h1>
         </div>
         <v-divider></v-divider>
         <v-card class="my-5">
@@ -177,7 +177,7 @@
                         color="cyan darken-2"></v-progress-linear>
                     <v-divider></v-divider>
                     <v-card-title>
-                        Filter
+                        Status
                         <v-spacer></v-spacer>
                         <div class="font-weight-normal">
                             <v-chip class="mx-3" outlined> <v-icon color="blue-grey"
@@ -714,5 +714,8 @@ export default {
 
 #table>.v-data-footer .v-icon {
     color: black !important;
+}
+h1 {
+  -webkit-text-stroke: 0.8px #fff;
 }
 </style>

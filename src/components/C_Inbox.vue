@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h2>Inbox</h2>
+            <h1>Inbox</h1>
         </div>
         <v-divider></v-divider>
         <v-card class="my-5">
@@ -119,10 +119,11 @@
                     prevIcon: 'mdi-minus',
                     nextIcon: 'mdi-plus'
                 }">
+                <template v-slot:item.num="{ index }">
+                    {{ index + 1 }}
+                </template>
             </v-data-table>
-            <template v-slot:item="{ index }">
-                {{ index + 1 }}
-            </template>
+
         </v-card>
 
 
@@ -285,7 +286,7 @@ export default {
                 tglSuratEnd: ""
             },
             headers: [
-                { text: 'No', value: 'agendaNumber' },
+                { text: 'No', value: 'num' },
                 { text: 'No. Agenda', value: 'agendaNumber' },
                 { text: 'Tgl. Penerimaan', value: 'receiptDate' },
                 { text: 'No. Surat', value: 'number' },
@@ -452,5 +453,9 @@ export default {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
+}
+
+h1 {
+    -webkit-text-stroke: 0.8px #fff;
 }
 </style>

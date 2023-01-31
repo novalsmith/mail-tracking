@@ -10,7 +10,7 @@
                 </v-alert>
             </v-container>
             <v-card-title>
-                Employee
+                <h1>Employee</h1>
                 <v-spacer></v-spacer>
                 <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
                     hide-details></v-text-field>
@@ -244,5 +244,9 @@ export default {
     background: #0097A7 !important;
     color: white;
     cursor: pointer;
+}
+
+h1 {
+    -webkit-text-stroke: 0.8px #fff;
 }
 </style>

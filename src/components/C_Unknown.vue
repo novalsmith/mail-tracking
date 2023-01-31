@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h2>Unknown</h2>
+            <h1>Unknown</h1>
         </div>
         <v-divider></v-divider>
         <v-card class="my-5">
@@ -112,17 +112,26 @@
 
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
                 class="mx-3 table-style" :items="!!listUnknownData ? listUnknownData : []" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
                     prevIcon: 'mdi-minus',
                     nextIcon: 'mdi-plus'
                 }">
+                <template v-slot:item.num="{ item, index }">
+                    {{ index+ 1}}
+                </template>
+                <template v-slot:item.takeIt="{ item }">
+                    <v-btn color="cyan darken-2" dark>
+                        <v-icon class="mr-2" @click="takeItAction(item)">
+                            mdi-check-circle-outline
+                        </v-icon>
+                        Ambil
+                    </v-btn>
+                </template>
             </v-data-table>
-            <template v-slot:item.count="{ item, index }">
-                {{ index+ 1}}
-            </template>
+
 
         </v-card>
 
@@ -286,7 +295,7 @@ export default {
                 tglSuratEnd: ""
             },
             headers: [
-                { text: 'No', value: 'trackingid' },
+                { text: 'No', value: 'num' },
                 { text: 'No. Agenda', value: 'agendaNumber' },
                 { text: 'Tgl. Penerimaan', value: 'receiptDate' },
                 { text: 'No. Surat', value: 'number' },
@@ -294,7 +303,8 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
-                { text: 'Keterangan', value: 'note' }
+                { text: 'Keterangan', value: 'note', with: '10%' },
+                { text: '#', value: 'takeIt', with: '10%' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -420,6 +430,9 @@ export default {
                 }
             })
         },
+        takeItAction(item) {
+            console.log(item);
+        }
     },
     async created() {
         this.getSettings();
@@ -447,9 +460,12 @@ export default {
 </script> 
 
 <style lang="css" scoped>
-.table-style>>>tbody tr:hover {
+/* .table-style>>>tbody tr:hover {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
+} */
+h1 {
+    -webkit-text-stroke: 0.8px #fff;
 }
 </style>
