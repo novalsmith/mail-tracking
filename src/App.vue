@@ -86,13 +86,16 @@ export default {
         var levelLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
         // mapping desc
         var descLookup = lookupData.filter(val => val.type == "DESC").map(result => { return result; });
+          // mapping actionFollowup
+          var actionLookup = lookupData.filter(val => val.type == "ACTION").map(result => { return result; });
         var mapping = {
           header: headerLookup,
           status: statusLookup,
           type: typeLookup,
           access: accessLookup,
           level: levelLookup,
-          desc: descLookup
+          desc: descLookup,
+          action:actionLookup
         };
         this.$store.dispatch('lookups', mapping);
         status = true;

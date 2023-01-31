@@ -45,7 +45,9 @@ $routes->post('/lookup/detail', 'Lookup::show');
 // $routes->get('/inbox/unitid/(:any)', 'Tracking::show/$1');
 
 $routes->presenter('tracking');
-$routes->presenter('inbox');
+$routes->presenter('inbox'); 
+$routes->post('/inbox/log', 'Inbox::log');
+
 $routes->presenter('unknown');
 
 

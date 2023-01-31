@@ -18,5 +18,34 @@ class ModelInbox extends Model
        $data =  $builder->get()->getResult(); 
         return $data;
     }
+    public function getLog($agendaNumber)
+    {
+        $dbs = \Config\Database::connect();
+        $builderTable = $dbs->table('v_tracking')->where("agendaNumber", $agendaNumber);
+       $data =  $builderTable->get()->getResult(); 
+       $list = [
+        "logData" => $data,
+        "maxData" => $this->getMaxSequenceByAgendaNumber($agendaNumber)+1
+       ];
+        return $list;
+    }
+    public function getMaxSequenceByAgendaNumber($agendaNumber)
+    {
+        $dbs = \Config\Database::connect();
+        $builderTable = $dbs->table('v_tracking')->where("agendaNumber", $agendaNumber)->selectMax('sequence','sequenceTotal');
+       $data =  $builderTable->get()->getRow()->sequenceTotal; 
+        return $data;
+    }
+    public function saveData($data)
+    {
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $builderTable = $db->table('tracking'); 
+        $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        return  $isSuccess;
+    }
  
 }

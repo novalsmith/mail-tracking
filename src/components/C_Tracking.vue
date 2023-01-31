@@ -135,7 +135,7 @@
         <v-dialog v-model="dialogReview" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar color="cyan darken-2" class="white--text">
-                    <v-btn icon dark @click="dialogReview = false">
+                    <v-btn icon dark @click="closeModalReview">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Upload and Review</v-toolbar-title>
@@ -370,6 +370,7 @@ export default {
             },
             file: '',
             content: [],
+            userLocalData: [],
             parsed: false,
             headers: [
                 { text: 'No', value: 'num' },
@@ -378,7 +379,7 @@ export default {
                 { text: 'Tanggal Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'to' },
+                { text: 'Kepada', value: 'toName' },
                 { text: 'Perihal', value: 'note' },
                 { text: 'Ket', value: 'type', width: '10%' },
             ],
@@ -407,13 +408,12 @@ export default {
         submit() { },
         async getEmployeeParentChild() {
             try {
-                var userData = JSON.parse(localStorage.getItem('userData'));
-                if (userData && userData.user) {
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.roleCode);
+                if (this.userLocalData) {
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + this.userLocalData.roleCode);
                     var listParent = [];
                     if (responsesParent != undefined) {
                         responsesParent.data.forEach(element => {
-                            if (userData.user.employeeId != element.employeeId) {
+                            if (this.userLocalData.employeeId != element.employeeId) {
                                 listParent.push(element.employeeId + "-" + element.name);
                             }
                         });
@@ -449,16 +449,6 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        async getSettings() {
-
-            this.$store.dispatch('trackings', this.themeColoring);
-        },
-        rowClick(row) {
-        },
-        async getSettings() {
-
-            this.$store.dispatch('settings', this.themeColoring);
-        },
         rowClick(row) {
             this.dialogDetail = true;
             const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
@@ -467,8 +457,8 @@ export default {
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             this.detailDataList = filteredList;
-            var listData = JSON.parse(localStorage.getItem('userData'));
-            this.userDefault = listData.user.name;
+            // var listData = JSON.parse(localStorage.getItem('userData'));
+            this.userDefault = this.userLocalData.name;
         },
         searching() {
             // this.isShowTable = true;
@@ -559,6 +549,9 @@ export default {
             var listMultipleData = [];
             var listSingleData = [];
             var maergeData = [];
+            var createdBy = this.userLocalData.employeeId;
+            var createdDate = new moment(new Date).locale('id');
+
             listData.forEach(e => {
                 if (e.to.code.length > 0) {
                     e.to.code.forEach(element => {
@@ -566,7 +559,10 @@ export default {
                             agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
                             from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
                             number: e.number,
-                            note: e.note
+                            note: e.note,
+                            createdBy: createdBy,
+                            createdDate: createdDate,
+                            dataType: "Upload"
                         }
                         listMultipleData.push(newData);
                     });
@@ -575,7 +571,10 @@ export default {
                         agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
                         from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
                         number: e.number,
-                        note: e.note
+                        note: e.note,
+                        createdBy: createdBy,
+                        createdDate: createdDate,
+                        dataType: "Upload"
                     }
                     listSingleData.push(newData);
                 }
@@ -655,11 +654,16 @@ export default {
         splitString(item) {
             var listData = !!item ? item.split(";") : "";
             return listData;
+        },
+        closeModalReview() {
+            this.dialogReview = false;
+            this.getTracking();
         }
     },
     created() {
-        this.getSettings();
         this.getTracking();
+        var userData = JSON.parse(localStorage.getItem('userData'));
+        this.userLocalData = userData.user;
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),
@@ -715,7 +719,8 @@ export default {
 #table>.v-data-footer .v-icon {
     color: black !important;
 }
+
 h1 {
-  -webkit-text-stroke: 0.8px #fff;
+    -webkit-text-stroke: 0.8px #fff;
 }
 </style>

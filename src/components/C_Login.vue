@@ -87,7 +87,7 @@ export default {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
                 if (this.token != "") {
-                    var paramLookup = { "params": ['STATUS', 'TYPE', 'HEADER', 'DESC', 'ACCESS', 'LEVEL'] };
+                    var paramLookup = { "params": ['STATUS', 'TYPE', 'HEADER', 'DESC', 'ACCESS', 'LEVEL', 'ACTION'] };
                     await axios.post(process.env.VUE_APP_SERVICE_URL + "lookup/detail", paramLookup).then(res => {
                         var resulttData = res != undefined ? res : [];
                         if (resulttData) {

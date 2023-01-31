@@ -17,10 +17,32 @@ class Inbox extends BaseController
 	{
 		$data = $this->model->getInboxByRole($id);
 	    return $this->respond($data, 200);
+	}
+	public function log()
+	{
+		$dataParam = $this->request->getPost('agendaNumber');
+		$data = $this->model->getLog($dataParam);
+	    return $this->respond($data, 200);
 	} 
 	public function create()
 	{
-		 // todo
+		$data = $this->request->getPost('listData');
+		$isSuccess = false;
+		if (!empty($data)) {
+			$countData = json_decode($data); 
+			foreach(array_chunk($countData,count($countData),true) as $rows) {
+				$trackingData = $this->model->saveData($rows);
+				if($trackingData){
+					$response = [
+						'status' => 200,
+						'error' => null,
+						'messages' => "Data Berhasil tersimpan"
+					];
+					return $this->respond($response);
+				}
+			}
+		} 
+		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
 	}
 	public function update($id = null)
 	{

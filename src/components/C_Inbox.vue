@@ -142,47 +142,57 @@
                 </v-toolbar>
                 <v-container>
                     <v-main class="my-5">
+                        <v-col md="12" v-if="isShowAlertDialogDetail">
+                            <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
+                                elevation="2" icon="mdi-information-outline" border="left" dismissible
+                                transition="scale-transition">
+                                {{ responseAlert.message }}
+                            </v-alert>
+
+                        </v-col>
                         <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Transaksi Surat</h3>
                         <form class="my-10">
 
 
                             <v-row>
                                 <v-col md="4">
-                                    <v-text-field :disabled="true" v-model="userDefault" label="Dari"
+                                    <v-text-field :disabled="true" dense outlined v-model="userDefault" label="Dari"
                                         required></v-text-field>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="date" persistent
-                                        width="290px">
+                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction"
+                                        persistent width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field v-model="date" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                v-on="on"></v-text-field>
+                                            <v-text-field outlined dense v-model="dateAction"
+                                                label="Tanggal Tindak Lanjut" prepend-icon="mdi-calendar" readonly
+                                                v-bind="attrs" v-on="on"></v-text-field>
                                         </template>
-                                        <v-date-picker v-model="date" type="date" scrollable>
+                                        <v-date-picker dense v-model="dateAction" type="date" scrollable>
                                             <v-spacer></v-spacer>
                                             <v-btn text color="primary" @click="modalDate = false">
                                                 Cancel
                                             </v-btn>
-                                            <v-btn text color="primary" @click="$refs.dialog.save(date)">
+                                            <v-btn text color="primary" @click="$refs.dialog.save(dateAction)">
                                                 OK
                                             </v-btn>
                                         </v-date-picker>
                                     </v-dialog>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-select :items="listType" v-model="selectedType" @change="selectedTypeEvnt"
+                                    <v-select :items="actionFollowUp" item-text="name" item-value="code"
+                                        v-model="selectedType" dense outlined @change="selectedTypeEvnt"
                                         label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple
-                                            chips></v-combobox>
+                                        <v-combobox :items="listItemsReciver" dense outlined v-model="recipient"
+                                            label="Kepada" multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea outlined name="input-7-4" label="Keterangan" value=""></v-textarea>
+                                        <v-textarea v-model="description" dense outlined name="input-7-4"
+                                            label="Keterangan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
@@ -202,7 +212,7 @@
                     <v-list three-line subheader class="my-5">
                         <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
 
-                        <v-list-item v-for="items in detailDataList">
+                        <v-list-item v-for="items in detailDataList.logData">
                             <v-list-item-content v-if="items.createdDate != null">
                                 <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined fab>{{
                                     items.sequence
@@ -241,9 +251,10 @@ export default {
     // },
     data() {
         return {
+            isShowAlertDialogDetail: false,
             isAdvanceSearch: false,
             isShowTable: false,
-            date: null,
+            dateAction: null,
             menuDate: false,
             modalDate: false,
             dialogDetail: false,
@@ -263,10 +274,8 @@ export default {
             response: {
                 fail: ""
             },
-            listType: ['Arsipkan', 'Teruskan', 'Disposisi'],
             userDefault: "",
             isReciverShow: false,
-            selectedType: "",
             listItemsReciver: [],
             isLoading: false,
             responseAlert: {
@@ -298,22 +307,68 @@ export default {
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
-            }
+            },
+            description: "",
+            recipient: "",
+            selectedType: "",
+            listLocalUserData: []
 
         }
     },
     methods: {
-        submit() { },
+        async submit() {
+            console.log(this.detailDataRow);
+            var listData = [];
+            if (this.recipient) {
+                this.recipient.forEach(element => {
+                    var newData = {
+                        agendaNumber: this.detailDataRow.agendaNumber, receiptDate: this.detailDataRow.receiptDate, realDate: this.detailDataRow.realDate, type: this.detailDataRow.type,
+                        from: this.detailDataRow.from, to: element.value, isUnknown: this.detailDataRow.isUnknown, description: this.detailDataRow.description,
+                        number: this.detailDataRow.number,
+                        note: this.description,
+                        createdBy: this.listLocalUserData.employeeId,
+                        createdDate: new moment(this.dateAction).locale('id'),
+                        dataType: "Form",
+                        actionFollowUp: this.selectedType,
+                        sequence: this.detailDataList.maxData
+                    }
+
+                    listData.push(newData);
+                });
+            }
+
+            try {
+
+                var formdata = new FormData();
+                this.loadingUploadButton = true;
+                formdata.append("listData", JSON.stringify(listData));
+                await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                this.responseAlert.color = 'cyan darken-2';
+                this.responseAlert.message = "Data Berhasil Tersimpan";
+                this.loadingUploadButton = false;
+                this.isShowAlertDialogDetail = true;
+                await this.getSettings(this.detailDataRow.agendaNumber);
+                setTimeout(() => {
+                    this.isShowAlertDialogDetail = false;
+                }, 2000);
+            } catch (error) {
+                console.log(error);
+            }
+
+        },
         async getEmployeeParentChild() {
             try {
-                var userData = JSON.parse(localStorage.getItem('userData'));
-                if (userData && userData.user) {
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.roleCode);
+
+                if (this.listLocalUserData) {
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + this.listLocalUserData.roleCode);
                     var listParent = [];
                     if (responsesParent != undefined) {
                         responsesParent.data.forEach(element => {
-                            if (userData.user.employeeId != element.employeeId) {
-                                listParent.push(element.employeeId + "-" + element.name);
+                            if (this.listLocalUserData.employeeId != element.employeeId) {
+                                listParent.push({
+                                    value: element.employeeId,
+                                    text: element.employeeId + " - " + element.name
+                                });
                             }
                         });
                     }
@@ -329,9 +384,8 @@ export default {
         async getInbox() {
             try {
                 this.isLoading = true;
-                var userData = JSON.parse(localStorage.getItem('userData'));
-                if (userData && userData.user) {
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show/" + userData.user.roleCode);
+                if (this.listLocalUserData) {
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show/" + this.listLocalUserData.roleCode);
                     this.inboxListData = !!response ? response.data : [];
                     const state = {
                         data: !!response ? response.data : []
@@ -352,19 +406,30 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        async getSettings() {
+        async getSettings(agendaNumber) {
 
-            this.$store.dispatch('settings', this.themeColoring);
+            try {
+                var formdata = new FormData();
+                this.loadingUploadButton = true;
+                formdata.append("agendaNumber", agendaNumber);
+                var response = await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/log', formdata);
+                this.detailDataList = !!response ? response.data : [];
+                // console.log(this.detailDataList);
+            } catch (error) {
+                console.log(error);
+            }
         },
-        rowClick(row) {
+        async rowClick(row) {
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
+            // console.log(filteredList);
             this.detailDataRow = row;
-            this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
-            this.detailDataList = filteredList;
-            var listData = JSON.parse(localStorage.getItem('userData'));
-            this.userDefault = listData.user.name;
+            this.dateAction = moment(String(row.receiptDate)).format('YYYY-MM-DD');
+            // this.detailDataList = filteredList;
+            this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
+            this.description = filteredList[0].note;
+            await this.getSettings(row.agendaNumber);
         },
         async searching() {
             this.isShowTable = true;
@@ -396,14 +461,12 @@ export default {
             }
             await this.getInbox();
         },
-        submit() {
-            this.$v.$touch()
-        },
         clear() {
             this.isShowTable = false;
         },
         selectedTypeEvnt() {
-            if (this.selectedType != 'Arsipkan') {
+            console.log(this.selectedType);
+            if (this.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
             } else {
                 this.isReciverShow = false;
@@ -424,13 +487,19 @@ export default {
         },
     },
     async created() {
+        var data = JSON.parse(localStorage.getItem('userData'));
+        this.listLocalUserData = data.user;
         this.getSettings();
         await this.getInbox();
+
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
         latterType() {
             return this.$store.state.lookup.lookups['type'];
+        },
+        actionFollowUp() {
+            return this.$store.state.lookup.lookups['action'];
         },
         likesAllFruit() {
             return this.filter.sifatSurat.length === this.$store.state.lookup.lookups['type'].length
