@@ -319,6 +319,8 @@ export default {
         async submit() {
             console.log(this.detailDataRow);
             var listData = [];
+            var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
+            var newNumber = maxDataFromLocal + 1;
             if (this.recipient) {
                 this.recipient.forEach(element => {
                     var newData = {
@@ -330,12 +332,13 @@ export default {
                         createdDate: new moment(this.dateAction).locale('id'),
                         dataType: "Form",
                         actionFollowUp: this.selectedType,
-                        sequence: this.detailDataList.maxData
+                        sequence: newNumber // auto increment
                     }
-
+                    newNumber++;
                     listData.push(newData);
                 });
             }
+            console.log(listData);
 
             try {
 
@@ -384,8 +387,13 @@ export default {
         async getInbox() {
             try {
                 this.isLoading = true;
+                console.log(this.listLocalUserData);
                 if (this.listLocalUserData) {
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show/" + this.listLocalUserData.roleCode);
+                    var params = {
+                        "params": [this.listLocalUserData.roleCode, this.listLocalUserData.employeeId]
+                    };
+
+                    var response = await axios.post(process.env.VUE_APP_SERVICE_URL + "inbox/show", params);
                     this.inboxListData = !!response ? response.data : [];
                     const state = {
                         data: !!response ? response.data : []
@@ -422,13 +430,14 @@ export default {
         async rowClick(row) {
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
-            // console.log(filteredList);
+            console.log(row);
             this.detailDataRow = row;
             this.dateAction = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
-            this.description = filteredList[0].note;
+            this.description = row.note;
+            this.selectedType = row.actionFollowUp;
             await this.getSettings(row.agendaNumber);
         },
         async searching() {

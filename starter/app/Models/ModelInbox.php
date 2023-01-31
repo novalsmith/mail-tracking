@@ -12,11 +12,12 @@ class ModelInbox extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    function getInboxByRole($role)
+    function getInboxByRole($param)
     {
-        $builder = $this->table("v_inbox")->where("to", $role);
-       $data =  $builder->get()->getResult(); 
-        return $data;
+        $builder = $this->table("v_inbox");
+        $builder->whereIn("to", $param);
+       return  $builder->get()->getResult();
+       
     }
     public function getLog($agendaNumber)
     {
@@ -25,7 +26,7 @@ class ModelInbox extends Model
        $data =  $builderTable->get()->getResult(); 
        $list = [
         "logData" => $data,
-        "maxData" => $this->getMaxSequenceByAgendaNumber($agendaNumber)+1
+        "maxData" => $this->getMaxSequenceByAgendaNumber($agendaNumber)
        ];
         return $list;
     }

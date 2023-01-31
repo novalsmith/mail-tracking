@@ -13,9 +13,10 @@ class Inbox extends BaseController
 		$this->model = new ModelInbox();
 	}
 	 
-	public function show($id)
+	public function showData()
 	{
-		$data = $this->model->getInboxByRole($id);
+		$params = $this->request->getVar('params');
+ 		$data = $this->model->getInboxByRole($params);
 	    return $this->respond($data, 200);
 	}
 	public function log()
