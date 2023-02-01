@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h1  class="font-weight-medium">Outbox</h1>
+            <h1 class="font-weight-medium">Outbox</h1>
         </div>
         <!-- <v-divider></v-divider> -->
         <v-card class="my-5">
@@ -296,7 +296,7 @@ export default {
                 { text: 'Sifat Surat', value: 'typeName' },
                 { text: 'Dari', value: 'fromName' },
                 { text: 'Kepada', value: 'toName' },
-                { text: 'Keterangan', value: 'note' }
+                { text: 'Isi Ringkasan', value: 'note' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
