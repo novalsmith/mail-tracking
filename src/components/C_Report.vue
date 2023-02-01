@@ -2,9 +2,9 @@
 <template>
     <v-container>
         <div>
-            <h1>Report</h1>
+            <h1 class="font-weight-medium">Report</h1>
         </div>
-        <v-divider></v-divider>
+        <!-- <v-divider></v-divider> -->
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
@@ -473,7 +473,7 @@ export default {
     cursor: pointer;
 }
 
-h1 {
+/* h1 {
     -webkit-text-stroke: 0.8px #fff;
-}
+} */
 </style>

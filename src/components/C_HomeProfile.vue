@@ -2,7 +2,7 @@
 
     <v-row>
         <v-col lg="12">
-            <h1 class="font-weight-bold" :color="color">Welcome to <br> Mail Track Minerba</h1>
+            <h1 class="font-weight-medium" :color="color">Welcome to <br> Mail Track Minerba</h1>
             <p class="description" :color="color">Sebuah tools yang dirancang untuk membantu proses penelusuran
                 (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</p>
 
@@ -42,9 +42,9 @@ p.description {
     /* color: #444444ba; */
 
 }
-h1 {
+/* h1 {
   -webkit-text-stroke: 0.8px #fff;
-}
+} */
 
 /* 
 .img-circle {

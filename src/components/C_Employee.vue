@@ -1,119 +1,61 @@
- 
+
 <template>
-    <div>
-        <v-card>
+    <v-container>
+        <div>
+            <h1 class="font-weight-medium">Employee</h1>
+        </div>
+        <v-card class="my-5">
+            <v-card-title>Filter
+
+            </v-card-title>
+            <v-form>
+                <v-container>
+                    <v-row>
+
+                        <v-col cols="12" md="4">
+                            <v-text-field dense outlined clearable label="NIP" required></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" md="4">
+                            <v-text-field dense outlined clearable label="Nama" required></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                            <v-text-field dense label="Jabatan" outlined clearable required></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-form>
+            <v-card-actions>
+                <v-btn color="cyan darken-2" dark @click="searching">
+                    <v-icon>mdi-magnify</v-icon> Search
+                </v-btn>
+                <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
+                    <v-icon>mdi-cached</v-icon> Clear
+                </v-btn>
+            </v-card-actions>
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2" v-model="alertNotready"
-                    elevation="2" icon="mdi-information-outline" border="left" dismissible
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
+                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
                     transition="scale-transition">
-                    Sorry, this feature is not ready yet - <strong>Under Maintenance!</strong>
+                    {{ responseAlert.message }}
                 </v-alert>
             </v-container>
-            <v-card-title>
-                <h1>Employee</h1>
-                <v-spacer></v-spacer>
-                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
-                    hide-details></v-text-field>
-                <v-spacer></v-spacer>
-                <v-btn @click="notready" small color="cyan darken-2" class="white--text"> <v-icon>mdi-plus</v-icon>
-                    Add</v-btn>
-            </v-card-title>
-            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData" :search="search"
-                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
-
-                <template v-slot:item="{ item, index }">
-                    <tr class="rowColor" @click="rowClick(item)">
-                        <td>{{ index + 1}}</td>
-                        <td>{{ item.employeeId }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.position }}</td>
-                        <td>{{ item.es2 }}</td>
-                        <td>{{ item.es3 }}</td>
-                        <td>{{ item.es4 }}</td>
-                        <td>{{ item.roleCode }}</td>
-                        <td>{{ item.roleName }}</td>
-                        <td>{{ item.level }}</td>
-                    </tr>
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" :items="listData"
+                :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
+                    showFirstLastPage: true,
+                    firstIcon: 'mdi-arrow-collapse-left',
+                    lastIcon: 'mdi-arrow-collapse-right',
+                    prevIcon: 'mdi-minus',
+                    nextIcon: 'mdi-plus'
+                }">
+                <template v-slot:item.num="{ index, item }">
+                    {{ index+ 1 }}
                 </template>
             </v-data-table>
         </v-card>
-        <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card>
-                <v-toolbar color="cyan darken-2" class="white--text">
-                    <v-btn icon dark @click="dialogDetail = false">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title> {{ detailDataRow.employeeId }} - {{
-                        detailDataRow.name
-                    }}</v-toolbar-title>
-                    <v-spacer></v-spacer>
-
-                </v-toolbar>
-                <v-container>
-                    <v-main class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Role Access</h3>
-                        <form class="my-10">
-
-
-                            <v-row>
-                                <v-col md="4">
-                                    <v-text-field label="Ubah Password"></v-text-field>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-select :items="listLevelLookup" v-model="selectedRoleValue" item-text="name"
-                                        item-value="code" label="Role"></v-select>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-select :items="statusList" v-model="selectedStatusValue" item-text="name"
-                                        item-value="code" label="Status"></v-select>
-                                </v-col>
-                                <v-col md="12">
-                                    <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
-                                        <v-icon>mdi-check</v-icon> Submit
-                                    </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
-                                        <v-icon>mdi-cached</v-icon> Clear
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-
-                        </form>
-                    </v-main>
-                    <v-divider></v-divider>
-                    <v-list three-line subheader class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-account</v-icon> Employee Detail </h3>
-
-                        <v-list-item>
-                            <v-list-item-content>
-                                <!-- <v-list-item-title> {{ detailDataRow.employeeId }} - {{ detailDataRow.name }}
-                                </v-list-item-title> -->
-                                <v-list-item-title> Jabatan </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.position }}</v-list-item-subtitle>
-                                <v-list-item-title> ES II </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.es2 }}</v-list-item-subtitle>
-                                <v-list-item-title> ES III </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.es3 }}</v-list-item-subtitle>
-                                <v-list-item-title> ES IV </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.es4 }}</v-list-item-subtitle>
-                                <v-list-item-title> Kode Unit Organisasi
-                                </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.unitCode }}</v-list-item-subtitle>
-                                <v-list-item-title> Kode </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.roleCode }}</v-list-item-subtitle>
-                                <v-list-item-title> Role </v-list-item-title>
-                                <v-list-item-subtitle class="mb-3">{{ detailDataRow.roleName }}</v-list-item-subtitle>
-                                <v-list-item-title> Level </v-list-item-title>
-                                <v-list-item-subtitle>{{ detailDataRow.level }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-
-                    </v-list>
-                </v-container>
-
-            </v-card>
-        </v-dialog>
-    </div>
+    </v-container>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -121,6 +63,16 @@ import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
+            responseAlert: {
+                message: "",
+                color: ""
+            },
+            responseAlertReview: {
+                message: "",
+                color: ""
+            },
+            isShowAlert: false,
+            dialogReview: false,
             dialogDetail: false,
             detailDataRow: [],
             alertNotready: false,
@@ -224,10 +176,11 @@ export default {
         clear() {
             // this.$v.$reset() 
         },
+        searching() { }
     },
     created() {
         this.getSettings();
-        // this.getData();
+        this.getData();
     },
     computed: {
         ...mapGetters(['user', 'settings']),
@@ -235,18 +188,3 @@ export default {
     }
 }
 </script>
-
-<style lang="css">
-.rowColor:hover {
-    /* `!important` is necessary here because Vuetify overrides this
-    - background cyan darken-2
-    */
-    background: #0097A7 !important;
-    color: white;
-    cursor: pointer;
-}
-
-h1 {
-    -webkit-text-stroke: 0.8px #fff;
-}
-</style>

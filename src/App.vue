@@ -4,14 +4,14 @@
       <img src="https://cdn.pixelfordinner.cloud/uploads/2014/11/voa_panel_sample-1024x0-c-f.jpg" width="100%" alt=""
         height="200%">
     </v-system-bar>
-    <div :class="initDataAfterLogin ? 'heroHome' : 'hero' ">
-      <v-container v-if="!initDataAfterLogin">
+    <div :class="!initDataAfterLogin ? 'hero' : ''">
+      <div v-if="!initDataAfterLogin">
         <C_Login />
-      </v-container>
-      <v-container v-else>
-        <C_Header />
+      </div>
+      <div v-else  >
+        <C_Header class="heroHome" />
         <router-view />
-      </v-container>
+      </div>
 
 
       <v-btn v-scroll="onScroll" v-show="fab" fab fixed small bottom right :color="settings.color" @click="toTop"
@@ -136,7 +136,6 @@ export default {
 .heroHome{
   background: url('./assets/DashboardMailtracking.jpg');
   background-size: cover;
-  background-position-y: top;
-  height: 35vh;
+  background-position-y: bottom;
 }
 </style>

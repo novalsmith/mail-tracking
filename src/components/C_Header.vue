@@ -3,7 +3,7 @@
     <div>
         <v-app-bar color="transparent" elevation="0" height="auto">
 
-            <v-main>
+            <v-container>
                 <div class="d-lg-none mb-10">
                     <v-row>
                         <!-- logo here -->
@@ -83,14 +83,14 @@
                         </v-col>
                     </v-row>
                     <div class="mt-2">
-                        <v-alert text dense close-icon="mdi-close-circle-outline" color="cyan darken-2"
+                        <v-alert dense dark close-icon="mdi-close-circle-outline" color="cyan darken-1"
                             v-show="alertSuccessLogin" elevation="2" icon="mdi-information-outline" border="left"
                             dismissible transition="scale-transition">
                             Hi <strong>{{ users.name }}</strong> Welcome to Mail Track Minerba
                         </v-alert>
                     </div>
                 </div>
-            </v-main>
+            </v-container>
         </v-app-bar>
     </div>
 </template>
@@ -191,7 +191,7 @@ export default {
                     isShow: ((level == 0) ? true : false)
                 },
                 {
-                    name: "Unknown Box",
+                    name: "Unknown",
                     path: "/unknown",
                     icon: "mdi-phone",
                     isShow: ((level == 0 || level == 2) ? true : false)
