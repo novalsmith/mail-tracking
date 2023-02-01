@@ -379,7 +379,7 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'toName' },
-                { text: 'Perihal', value: 'note' },
+                { text: 'Isi Ringkasan', value: 'note' },
                 { text: 'Ket', value: 'type', width: '10%' },
             ],
             headersReview: [
@@ -392,7 +392,7 @@ export default {
                 { text: 'Dari', value: 'from', width: '10%' },
                 { text: 'Kepada', value: 'to', width: '20%' },
                 { text: 'Ket', value: 'desc', width: '10%' },
-                { text: 'Perihal', value: 'note', width: '10%' },
+                { text: 'Isi Ringkasan', value: 'note', width: '10%' },
                 { text: 'Status', value: 'status', width: '10%' },
                 { text: 'Detail', value: 'data-table-expand' }
             ],

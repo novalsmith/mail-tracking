@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h1  class="font-weight-medium">Unknown Box</h1>
+            <h1 class="font-weight-medium">Unknown Box</h1>
         </div>
         <!-- <v-divider></v-divider> -->
         <v-card class="my-5">
@@ -303,7 +303,7 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
-                { text: 'Keterangan', value: 'note', with: '10%' },
+                { text: 'Isi Ringkasan', value: 'note', with: '10%' },
                 { text: '#', value: 'takeIt', with: '10%' }
             ],
             headerprops: {
