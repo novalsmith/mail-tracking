@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h1>Unknown</h1>
+            <h1>Unknown Box</h1>
         </div>
         <v-divider></v-divider>
         <v-card class="my-5">
