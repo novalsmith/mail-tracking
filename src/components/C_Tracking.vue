@@ -2,18 +2,14 @@
 <template>
     <v-container>
         <div>
-            <h1>Nadine</h1>
+            <h1 class="font-weight-medium">Nadine</h1>
         </div>
-        <v-divider></v-divider>
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
                 <v-btn @click="dialogReview = true" text small color="cyan darken-2 mr-2" class="white--text">
                     <v-icon>mdi-upload</v-icon>
                     Upload</v-btn>
-                <v-btn text small color="cyan darken-2" class="white--text">
-                    <v-icon>mdi-download</v-icon>
-                    Template</v-btn>
                 <v-divider vertical class="mx-2"></v-divider>
                 <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
                     v-if="isAdvanceSearch">
@@ -180,19 +176,22 @@
                         Status
                         <v-spacer></v-spacer>
                         <div class="font-weight-normal">
-                            <v-chip class="mx-3" outlined> <v-icon color="blue-grey"
-                                    class="mr-1">mdi-progress-upload</v-icon>
+                            <v-chip class="mx-3" :outlined="uploadStatus.all" color="blue-grey" dark
+                                @click="filterUploadedData('all')"> <v-icon class="mr-1">mdi-progress-upload</v-icon>
                                 {{ responseSummaryDataReview.totalUploadedData }} Total Data</v-chip>
 
-                            <v-chip class="mx-3" outlined> <v-icon color="red"
+                            <v-chip class="mx-3" :outlined="uploadStatus.error" color="red" dark
+                                @click="filterUploadedData('error')"> <v-icon
                                     class="mr-1">mdi-close-circle-outline</v-icon>
                                 {{ responseSummaryDataReview.totalErrors }} Errors</v-chip>
 
-                            <v-chip class="mx-3" outlined> <v-icon color="cyan darken-2"
+                            <v-chip class="mx-3" :outlined="uploadStatus.success" color="cyan darken-2" dark
+                                @click="filterUploadedData('success')"> <v-icon
                                     class="mr-1">mdi-check-circle-outline</v-icon>
                                 {{ responseSummaryDataReview.totalSuccess }} Ready to save</v-chip>
 
-                            <v-chip class="mx-3" outlined> <v-icon color="blue"
+                            <v-chip class="mx-3" :outlined="uploadStatus.info" color="blue" dark
+                                @click="filterUploadedData('info')"> <v-icon
                                     class="mr-1">mdi-information-outline</v-icon>
                                 {{ responseSummaryDataReview.totalUnknown }} Unknown</v-chip>
 
@@ -242,7 +241,7 @@
                             </v-chip>
                         </template>
 
-                        <template v-slot:item.to.name="{ item }">
+                        <template v-slot:item.to="{ item }">
                             <div v-if="item.to.name != ''">
                                 <v-chip small v-for="values in splitString(item.to.name)" class="my-2">
                                     {{ values }}
@@ -391,7 +390,7 @@ export default {
                 { text: 'Tanggal Surat', value: 'realDate', width: '10%' },
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
                 { text: 'Dari', value: 'from', width: '10%' },
-                { text: 'Kepada', value: 'to.name', width: '20%' },
+                { text: 'Kepada', value: 'to', width: '20%' },
                 { text: 'Ket', value: 'desc', width: '10%' },
                 { text: 'Perihal', value: 'note', width: '10%' },
                 { text: 'Status', value: 'status', width: '10%' },
@@ -402,6 +401,12 @@ export default {
             },
             expanded: [],
             singleExpand: false,
+            uploadStatus: {
+                all: true,
+                error: true,
+                success: true,
+                info: true
+            }
         }
     },
     methods: {
@@ -552,7 +557,8 @@ export default {
             var createdBy = this.userLocalData.employeeId;
             var createdDate = new moment(new Date).locale('id');
 
-            listData.forEach(e => {
+            listData.forEach((e, index) => {
+                index = index + 1;
                 if (e.to.code.length > 0) {
                     e.to.code.forEach(element => {
                         var newData = {
@@ -562,7 +568,9 @@ export default {
                             note: e.note,
                             createdBy: createdBy,
                             createdDate: createdDate,
-                            dataType: "Upload"
+                            dataType: "Upload",
+                            sequence: index // auto increment
+
                         }
                         listMultipleData.push(newData);
                     });
@@ -574,7 +582,8 @@ export default {
                         note: e.note,
                         createdBy: createdBy,
                         createdDate: createdDate,
-                        dataType: "Upload"
+                        dataType: "Upload",
+                        sequence: 1 // auto increment
                     }
                     listSingleData.push(newData);
                 }
@@ -629,12 +638,30 @@ export default {
             this.summaryUploadReview();
         },
         filterUploadedData(status) {
+            this.uploadStatus.all = true;
+            this.uploadStatus.error = true;
+            this.uploadStatus.success = true;
+            this.uploadStatus.info = true;
+
+            if (status == 'all') {
+                this.uploadStatus.all = false;
+            } else if (status == 'error') {
+                this.uploadStatus.error = false;
+            } else if (status == 'info') {
+                this.uploadStatus.info = false;
+            } else if (status == 'success') {
+                this.uploadStatus.success = false;
+            } else if (status == 'info') {
+                this.uploadStatus.error = false;
+            }
+
+
             var data = this.$store.state.trackings['trackings'].tempTracking;
             var filteredList = [];
             filteredList = status == 'all' ? data : data.filter((e) => e.status === status).map((e) => {
                 return {
-                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                    from: e.from, to: e.to.name, status: e.status
+                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, desc: e.type,
+                    from: e.from, to: e.to, status: e.status, note: e.note
                 }
             });
             this.listDataReview = filteredList;
@@ -720,7 +747,7 @@ export default {
     color: black !important;
 }
 
-h1 {
+/* h1 {
     -webkit-text-stroke: 0.8px #fff;
-}
+} */
 </style>
