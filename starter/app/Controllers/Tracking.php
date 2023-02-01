@@ -264,7 +264,10 @@ class Tracking extends BaseController
 	
 					// $db->table('siswa')->insert($simpandata);
 					// session()->setFlashdata('message','Berhasil import excel');
-					$resultExcelData[] = $simpandata; 
+					if(empty(array_search($number,$resultExcelData))){
+						$resultExcelData[] = $simpandata; 
+					}
+					
 				}
 			}
 			return $this->respond($resultExcelData, 200);
