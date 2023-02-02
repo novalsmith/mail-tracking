@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <div>
-            <h1  class="font-weight-medium">Inbox</h1>
+            <h1 class="font-weight-medium">Inbox</h1>
         </div>
         <!-- <v-divider></v-divider> -->
         <v-card class="my-5">
@@ -66,7 +66,7 @@
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-combobox :items="listItemsReciver" v-model="filter.keterangan" dense outlined
-                                        label="Keterangan" multiple chips></v-combobox>
+                                        label="Keterangan/Catatan" multiple chips></v-combobox>
                                 </v-col>
 
                                 <v-col cols="12" md="3">
@@ -479,7 +479,7 @@ export default {
                 .map((e) => { return e });
             console.log(row);
             this.detailDataRow = row;
-            this.dateAction = moment(String(row.receiptDate)).format('YYYY-MM-DD');
+            this.dateAction = moment(String(row.receiptDate)).format('DD-MM-YYYY');
             // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;

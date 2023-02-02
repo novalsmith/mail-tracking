@@ -264,15 +264,21 @@ class Tracking extends BaseController
 	
 					// $db->table('siswa')->insert($simpandata);
 					// session()->setFlashdata('message','Berhasil import excel');
-					if(empty(array_search($number,$resultExcelData))){
-						$resultExcelData[] = $simpandata; 
-					}
-					
+					// if(!in_array($number, $resultExcelData['number'])){
+						$filteredItems = array_filter($resultExcelData, function($elem) use($number){
+							return $elem['number'] == $number;
+						});
+						if(count($filteredItems) == 0){
+							$resultExcelData[] = $simpandata; 
+						}
 				}
 			}
 			return $this->respond($resultExcelData, 200);
 		
     }
+
+	
+	
 	public function create()
 	{
 		$modelTracking = new ModelTracking(); 
