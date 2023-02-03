@@ -583,10 +583,10 @@ export default {
                     this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda..";
                 }
 
-                setTimeout(() => {
-                    this.isShowAlertReview = false;
+                // setTimeout(() => {
+                //     this.isShowAlertReview = false;
                     this.isLoadingReview = false;
-                }, 5000);
+                // }, 5000);
             } catch (error) {
                 this.isLoadingReview = false;
                 console.log(error);

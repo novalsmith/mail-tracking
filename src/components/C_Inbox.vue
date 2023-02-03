@@ -483,7 +483,7 @@ export default {
             // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
-            this.description = row.note;
+            // this.description = row.note;
             this.selectedType = row.actionFollowUp;
             await this.getSettings(row.agendaNumber);
         },
