@@ -218,20 +218,7 @@ class Tracking extends BaseController
 								}
 								$message .= "Dari/Pengirim tidak boleh kosong";
 								$status = "error";
-							}
-							
-							// else{
-							// 	$unitData = $modelUnit->getUnitByPrefixNameFrom($from);a
-							// 	if(empty($unitData)){
-							// 		if(!empty($message)){
-							// 			$message .= ", ";
-							// 		}
-							// 		$message .= "Dari/Pengirim tidak memiliki Unit (Uknown)";
-							// 		$status = "error";
-							// 	}
-							// }
-			
-							
+							} 
 		
 							if (empty($desc)) {
 								if(!empty($message)){
@@ -258,8 +245,7 @@ class Tracking extends BaseController
 						'indexNumber' => rand(5,10),
 						'agendaNumber' =>  $agendaNumber , 
 						'receiptDate' => $receiptDate, 
-						'number' => $number, 
-						'type'=> $type,
+						'number' => $number,  
 						'realDate'=> $realDate,
 						'type'=> $type,
 						'note'=> $note,

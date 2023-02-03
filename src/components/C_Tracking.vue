@@ -27,7 +27,7 @@
                     <v-row>
 
                         <v-col cols="12" md="4">
-                            <v-select clearable :items="latterType" item-text="name" item-value="code"
+                            <!-- <v-select clearable :items="latterType" item-text="name" item-value="code"
                                 v-model="filter.sifatSurat" dense outlined label="Sifat Surat" multiple chips>
                                 <template v-slot:prepend-item>
                                     <v-list-item ripple @mousedown.prevent @click="toggle">
@@ -45,7 +45,9 @@
                                     </v-list-item>
                                     <v-divider class="mt-2"></v-divider>
                                 </template>
-                            </v-select>
+                            </v-select> -->
+                            <v-text-field dense outlined clearable v-model="filter.sifatSurat" label="Sifat Surat"
+                                required></v-text-field>
                         </v-col>
 
                         <v-col cols="12" md="4">
@@ -73,13 +75,32 @@
                                 </v-col>
 
                                 <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
-                                        label="Tgl. Penerimaan - Start" required></v-text-field>
+                                    <!-- <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
+                                        label="Tgl. Penerimaan - Start" required></v-text-field> -->
+                                    <v-dialog ref="dialog" v-model="filter.tglTerimaStart"
+                                        :return-value.sync="filter.modalDateWTglTerimaStart" persistent width="290px">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field outlined dense v-model="filter.modalDateWTglTerimaStart"
+                                                label="Tgl. Penerimaan - Start" prepend-icon="mdi-calendar" readonly
+                                                v-bind="attrs" v-on="on"></v-text-field>
+                                        </template>
+                                        <v-date-picker dense v-model="filter.modalDateWTglTerimaStart" type="date"
+                                            scrollable>
+                                            <v-spacer></v-spacer>
+                                            <v-btn text color="primary" @click="filter.tglTerimaStart = false">
+                                                Cancel
+                                            </v-btn>
+                                            <v-btn text color="primary"
+                                                @click="$refs.dialog.save(filter.modalDateWTglTerimaStart)">
+                                                OK
+                                            </v-btn>
+                                        </v-date-picker>
+                                    </v-dialog>
                                 </v-col>
 
                                 <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
-                                        label="Tgl. Penerimaan - End" required></v-text-field>
+                                    <!-- <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
+                                        label="Tgl. Penerimaan - End" required></v-text-field> -->
                                 </v-col>
 
                                 <v-col cols="12" md="3">
@@ -375,8 +396,9 @@ export default {
                 totalUnknown: 0,
                 totalOriginalSource: 0
             },
+            modalDateWTglTerimaStart: null,
             filter: {
-                sifatSurat: [],
+                sifatSurat: "",
                 noAgenda: "",
                 noSurat: "",
                 dari: "",
@@ -411,7 +433,7 @@ export default {
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'toName' },
                 { text: 'Isi Ringkasan', value: 'note' },
-                { text: 'Ket', value: 'type', width: '10%' },
+                { text: 'Ket', value: 'ket', width: '10%' },
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
@@ -498,11 +520,7 @@ export default {
             this.userDefault = this.userLocalData.name;
         },
         searching() {
-            // this.isShowTable = true;
-            var mappArraySifatSurat = [];
-            this.filter.sifatSurat.forEach(element => {
-                mappArraySifatSurat.push(element);
-            });
+            // this.isShowTable = true; 
             var mappArrayKepada = [];
             this.filter.kepada.forEach(element => {
                 mappArrayKepada.push(element);
@@ -514,7 +532,7 @@ export default {
             });
             var remappingParam = {
                 isAdvancedSearch: this.isAdvanceSearch,
-                sifatSurat: mappArraySifatSurat,
+                sifatSurat: this.filter.sifatSurat,
                 noSurat: this.filter.noSurat,
                 noAgenda: this.filter.noAgenda,
                 dari: this.filter.dari,
@@ -525,6 +543,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             };
+            console.log(remappingParam);
             this.getTracking();
         },
         submit() {
@@ -585,7 +604,7 @@ export default {
 
                 // setTimeout(() => {
                 //     this.isShowAlertReview = false;
-                    this.isLoadingReview = false;
+                this.isLoadingReview = false;
                 // }, 5000);
             } catch (error) {
                 this.isLoadingReview = false;
@@ -601,9 +620,9 @@ export default {
                     agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
                     from: e.from, to: e.to, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.note,
                     number: e.number,
-                    note: "sample",
                     status: e.status,
-                    note: e.note
+                    note: e.note,
+                    desc: e.desc
                 }
             });
             var listMultipleData = [];
@@ -620,6 +639,7 @@ export default {
                             agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
                             from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
                             number: e.number,
+                            ket: e.desc,
                             note: e.note,
                             createdBy: createdBy,
                             createdDate: createdDate,
@@ -634,10 +654,11 @@ export default {
                         agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
                         from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
                         number: e.number,
-                        note: e.note,
+                        ket: e.desc,
                         createdBy: createdBy,
                         createdDate: createdDate,
                         dataType: "Upload",
+                        note: e.note,
                         sequence: 1 // auto increment
                     }
                     listSingleData.push(newData);
@@ -748,7 +769,35 @@ export default {
         closeModalReview() {
             this.dialogReview = false;
             this.getTracking();
-        }
+        },
+        async searching() {
+            this.isShowTable = true;
+            var mappArraySifatSurat = [];
+            var mappArrayKepada = [];
+            this.filter.kepada.forEach(element => {
+                mappArrayKepada.push(element);
+            });
+
+            var mappArrayKet = [];
+            this.filter.keterangan.forEach(element => {
+                mappArrayKet.push(element);
+            });
+            var remappingParam = {
+                isAdvancedSearch: this.isAdvanceSearch,
+                sifatSurat: mappArraySifatSurat,
+                noSurat: this.filter.noSurat,
+                noAgenda: this.filter.noAgenda,
+                dari: this.filter.dari,
+                kepada: mappArrayKepada,
+                keterangan: mappArrayKet,
+                tglTerimaStart: this.tglTerimaStart,
+                tglTerimaEnd: this.tglTerimaEnd,
+                tglSuratStart: this.tglSuratStart,
+                tglSuratEnd: this.tglSuratEnd
+            }
+            console.log(remappingParam);
+            // await this.getInbox();
+        },
     },
     created() {
         this.getTracking();
