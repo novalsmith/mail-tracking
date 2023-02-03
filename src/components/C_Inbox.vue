@@ -209,64 +209,64 @@
                         </form>
                     </v-main>
                     <v-divider></v-divider>
-                    <!-- <v-list three-line subheader class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
 
-                        <v-list-item v-for="items in detailDataList.logData">
-                            <v-list-item-content v-if="items.createdDate != null">
-                                <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined fab>{{
-                                    items.sequence
-                                }} </v-btn> {{
-    items.createdBy
-}}</v-list-item-title>
-                                <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }} - {{
-                                    items.note
-                                }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Tanggal : {{ items.createdDate }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Keterangan: {{ items.note }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-
-                    </v-list> -->
 
                     <v-card>
                         <v-toolbar flat>
-                            <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-                            <v-toolbar-title>Contact Database</v-toolbar-title>
-
-                            <v-spacer></v-spacer>
-
-                            <v-btn icon>
-                                <v-icon>mdi-magnify</v-icon>
-                            </v-btn>
-
-                            <v-btn icon>
-                                <v-icon>mdi-dots-vertical</v-icon>
-                            </v-btn>
 
                             <template v-slot:extension>
                                 <v-tabs v-model="tabs" fixed-tabs>
                                     <v-tabs-slider></v-tabs-slider>
                                     <v-tab href="#mobile-tabs-5-1" class="primary--text">
-                                        <v-icon>mdi-phone</v-icon>
+                                        <v-icon class="mx-2">mdi-file-document</v-icon> Detail Surat
                                     </v-tab>
 
                                     <v-tab href="#mobile-tabs-5-2" class="primary--text">
-                                        <v-icon>mdi-heart</v-icon>
-                                    </v-tab>
-
-                                    <v-tab href="#mobile-tabs-5-3" class="primary--text">
-                                        <v-icon>mdi-account-box</v-icon>
+                                        <v-icon class="mx-2">mdi-history</v-icon> Riwayat
                                     </v-tab>
                                 </v-tabs>
                             </template>
                         </v-toolbar>
 
                         <v-tabs-items v-model="tabs">
-                            <v-tab-item v-for="i in 3" :key="i" :value="'mobile-tabs-5-' + i">
+                            <v-tab-item value="mobile-tabs-5-1">
                                 <v-card flat>
-                                    <v-card-text v-text="text"></v-card-text>
+                                    <v-card-text>
+                                        <h3>Detail Surat</h3>
+                                    </v-card-text>
+                                </v-card>
+                            </v-tab-item>
+                        </v-tabs-items>
+                        <v-tabs-items v-model="tabs">
+                            <v-tab-item value="mobile-tabs-5-2">
+                                <v-card flat>
+                                    <v-card-text>
+                                        <v-list three-line subheader class="my-5">
+                                            <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
+
+                                            <v-list-item v-for="items in detailDataList.logData">
+                                                <v-list-item-content v-if="items.createdDate != null">
+                                                    <v-list-item-title> <v-btn dark x-small color="cyan darken-2"
+                                                            outlined fab>{{
+                                                                items.sequence
+                                                            }} </v-btn> {{
+    items.createdBy
+}}</v-list-item-title>
+                                                    <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }}
+                                                        - {{
+                                                            items.note
+                                                        }}</v-list-item-subtitle>
+                                                    <v-list-item-subtitle>Tanggal : {{
+                                                        items.createdDate
+                                                    }}</v-list-item-subtitle>
+                                                    <v-list-item-subtitle>Keterangan: {{
+                                                        items.note
+                                                    }}</v-list-item-subtitle>
+                                                </v-list-item-content>
+                                            </v-list-item>
+
+                                        </v-list>
+                                    </v-card-text>
                                 </v-card>
                             </v-tab-item>
                         </v-tabs-items>
@@ -479,7 +479,7 @@ export default {
                 .map((e) => { return e });
             console.log(row);
             this.detailDataRow = row;
-            this.dateAction = moment(String(row.receiptDate)).format('DD-MM-YYYY');
+            this.dateAction = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
