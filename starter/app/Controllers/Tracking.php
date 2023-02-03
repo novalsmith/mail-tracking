@@ -287,7 +287,7 @@ class Tracking extends BaseController
 			}
 			$responseData = [
 				"responseData" => $resultExcelData,
-				"totalOriginalData" => count($data)
+				"totalOriginalData" => (count($data)-1)
 			];
 			return $this->respond($responseData, 200);
 		

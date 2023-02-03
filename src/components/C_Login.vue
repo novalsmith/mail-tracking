@@ -122,6 +122,10 @@ export default {
             this.password = ''
         },
     },
+    mounted() {
+        $("label\[for=\'NIP\'\]").addClass('v-label--active');
+        $("label\[for=\'password\'\]").addClass('v-label--active');
+    },
     computed: {
         ...mapGetters(['users', 'settings', 'lookups']),
         nipErrors() {

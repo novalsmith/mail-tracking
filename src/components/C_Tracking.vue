@@ -240,7 +240,7 @@
                             </td>
                         </template>
 
-                        <template v-slot:item.from="{ item }">
+                        <!-- <template v-slot:item.from="{ item }">
                             <v-chip small class="my-2">
                                 {{ item.from }}
                             </v-chip>
@@ -253,6 +253,31 @@
                                 </v-chip>
                             </div>
 
+                        </template> -->
+
+
+                        <template v-slot:item.from="{ item }">
+                            <!-- <v-chip small class="my-2">
+                                {{ item.from }}
+                            </v-chip> -->
+                            <p class="my-2">
+                                {{ item.from }}
+                            </p>
+                        </template>
+
+                        <template v-slot:item.to="{ item }">
+                            <div v-if="item.to.name != ''">
+                                <!-- <v-chip small v-for="values in splitString(item.to.name)" class="my-2">
+                                    {{ values }}
+                                </v-chip> -->
+                                <!-- <p v-for="values in splitString(item.to.name)" class="my-2">
+                                    {{ values }}
+                                </p> -->
+                                <ul>
+                                    <li v-for="values in splitString(item.to.name)">
+                                        {{ values }}</li>
+                                </ul>
+                            </div>
                         </template>
 
                     </v-data-table>
@@ -390,15 +415,15 @@ export default {
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
-                { text: 'Agenda', value: 'agendaNumber', width: '10%' },
-                { text: 'No Surat', value: 'number', width: '10%' },
-                { text: 'Terima', value: 'receiptDate', width: '10%' },
-                { text: 'Tanggal Surat', value: 'realDate', width: '10%' },
+                { text: 'Agenda', value: 'agendaNumber', width: '5%' },
+                { text: 'No Surat', value: 'number', width: '5%' },
+                { text: 'Terima', value: 'receiptDate', width: '5%' },
+                { text: 'Tanggal Surat', value: 'realDate', width: '5%' },
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
-                { text: 'Dari', value: 'from', width: '10%' },
-                { text: 'Kepada', value: 'to', width: '20%' },
-                { text: 'Ket', value: 'desc', width: '10%' },
-                { text: 'Isi Ringkasan', value: 'note', width: '10%' },
+                { text: 'Dari', value: 'from', width: '15%' },
+                { text: 'Kepada', value: 'to', width: '15%' },
+                { text: 'Ket', value: 'desc', width: '5%' },
+                { text: 'Isi Ringkasan', value: 'note', width: '25%' },
                 { text: 'Status', value: 'status', width: '10%' },
                 { text: 'Detail', value: 'data-table-expand' }
             ],
