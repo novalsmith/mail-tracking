@@ -16,6 +16,7 @@ class ModelTracking extends Model
     {
         $builder = $this->table("v_tracking");
         $builder->where("to", $role);
+        $builder->orWhere("isUnknown", 'N');
        $data =  $builder->get()->getResult(); 
         return $data;
     }
@@ -24,6 +25,7 @@ class ModelTracking extends Model
     {
         $builder = $this->table("v_tracking");
         $builder->where("to", $role);
+        $builder->orWhere("isUnknown", 'N');
        $data =  $builder->get()->getResult(); 
         return $data;
     }
@@ -37,5 +39,12 @@ class ModelTracking extends Model
             $isSuccess = true;
         }
         return  $isSuccess;
+    }
+
+    function validateDumplicate($number){
+        $builder = $this->table("v_tracking");
+        $builder->where("number", $number);
+       $data =  $builder->get()->getResult(); 
+        return $data;
     }
 }

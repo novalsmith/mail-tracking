@@ -176,6 +176,11 @@
                         Status
                         <v-spacer></v-spacer>
                         <div class="font-weight-normal">
+
+                            <v-chip class="mx-3" outlined color="indigo" dark> <v-icon
+                                    class="mr-1">mdi-file-excel-outline</v-icon>
+                                {{ responseSummaryDataReview.totalOriginalSource }} Sources</v-chip>
+
                             <v-chip class="mx-3" :outlined="uploadStatus.all" color="blue-grey" dark
                                 @click="filterUploadedData('all')"> <v-icon class="mr-1">mdi-progress-upload</v-icon>
                                 {{ responseSummaryDataReview.totalUploadedData }} Total Data</v-chip>
@@ -342,7 +347,8 @@ export default {
                 totalErrors: 0,
                 totalSuccess: 0,
                 totalUploadedData: 0,
-                totalUnknown: 0
+                totalUnknown: 0,
+                totalOriginalSource: 0
             },
             filter: {
                 sifatSurat: [],
@@ -441,7 +447,8 @@ export default {
                 this.listData = response.data;
                 const state = {
                     tracking: response.data,
-                    tempTracking: []
+                    tempTracking: [],
+                    totalOriginalData: 0
                 }
                 this.$store.dispatch('trackings', state);
                 this.isShowTable = true;
@@ -523,24 +530,47 @@ export default {
         async processUpload() {
             try {
                 var listData = this.mappingMultipleRecipient();
-                var formdata = new FormData();
-                this.loadingUploadButton = true;
-                formdata.append("listData", JSON.stringify(listData));
-                var resultData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'tracking/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
-                this.responseAlertReview.color = 'cyan darken-2';
-                this.responseAlertReview.message = "Data Nadine Berhasil Tersimpan";
-                this.loadingUploadButton = false;
-                this.isShowAlertReview = true;
+                if (listData.length > 0) {
+                    var formdata = new FormData();
+                    this.loadingUploadButton = true;
+                    formdata.append("listData", JSON.stringify(listData));
+                    var ResonseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'tracking/create', formdata);          // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                    console.log(ResonseData);
+
+                    if (ResonseData.data[0].status != 'success') {
+                        this.isShowAlertReview = true;
+                        this.responseAlertReview.color = 'error';
+                        this.responseAlertReview.message = ResonseData.data.length + " Data sudah ada (Duplikasi)";
+                        this.loadingUploadButton = false;
+                    } else {
+                        this.isShowAlertReview = true;
+                        this.responseAlertReview.color = 'cyan darken-2';
+                        this.responseAlertReview.message = "Data Nadine Berhasil Tersimpan";
+                        this.loadingUploadButton = false;
+                    }
+
+                    // var errorCount = resData.filter((e) => e.status == "error").map((e) => { return e }).length;
+                    // console.log(errorCount);
+
+                } else {
+                    this.isShowAlertReview = true;
+                    this.responseAlertReview.color = 'error';
+                    this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda..";
+                }
+
                 setTimeout(() => {
                     this.isShowAlertReview = false;
-                }, 2000);
+                    this.isLoadingReview = false;
+                }, 5000);
             } catch (error) {
+                this.isLoadingReview = false;
                 console.log(error);
             }
         },
 
         mappingMultipleRecipient() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
+
             var listData = data.filter((e) => e.status != "error").map((e) => {
                 return {
                     agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
@@ -600,6 +630,7 @@ export default {
             this.responseSummaryDataReview.totalSuccess = 0;
             this.responseSummaryDataReview.totalUploadedData = 0;
             this.responseSummaryDataReview.totalUnknown = 0;
+            this.responseSummaryDataReview.totalOriginalSource = 0;
         },
         async handleFilesUpload() {
             try {
@@ -618,10 +649,11 @@ export default {
                     }
                 );
 
-                this.listDataReview = !!listData ? listData.data : [];
+                this.listDataReview = !!listData ? listData.data.responseData : [];
                 const state = {
                     tracking: [],
-                    tempTracking: !!listData ? listData.data : []
+                    tempTracking: !!listData ? listData.data.responseData : [],
+                    totalOriginalData: listData.data.totalOriginalData
                 }
                 this.$store.dispatch('trackings', state);
                 this.isLoadingReview = false;
@@ -660,11 +692,15 @@ export default {
             var filteredList = [];
             filteredList = status == 'all' ? data : data.filter((e) => e.status === status).map((e) => {
                 return {
-                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, desc: e.type,
-                    from: e.from, to: e.to, status: e.status, note: e.note
+                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
+                    from: e.from, to: e.to, status: e.status, note: e.note, message: e.message,
+                    number: e.number, desc: e.desc
                 }
             });
             this.listDataReview = filteredList;
+            this.listDataReview.forEach((item, i) => {
+                item.indexNumber = i + 1;
+            });
         },
         itemRowBackground(item) {
             if (item === 'error') {
@@ -673,10 +709,12 @@ export default {
         },
         summaryUploadReview() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
+            var total = this.$store.state.trackings['trackings'].totalOriginalData;
             this.responseSummaryDataReview.totalUploadedData = data.length;
             this.responseSummaryDataReview.totalErrors = data.filter((e) => e.status === 'error').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalSuccess = data.filter((e) => e.status === 'success').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalUnknown = data.filter((e) => e.status === 'info').map((e) => { return { e } }).length;
+            this.responseSummaryDataReview.totalOriginalSource = total;
         },
         splitString(item) {
             var listData = !!item ? item.split(";") : "";

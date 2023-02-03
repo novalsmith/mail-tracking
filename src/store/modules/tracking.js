@@ -1,7 +1,8 @@
 // modules/user.js
 const state = {
     tracking: [],
-    tempTracking: []
+    tempTracking: [],
+    totalOriginalData:0
 }
 export default {
     state,
