@@ -65,8 +65,8 @@
                                         label="Kepada" multiple chips></v-combobox>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.keterangan" dense outlined
-                                        label="Keterangan/Catatan" multiple chips></v-combobox>
+                                    <v-combobox v-model="filter.keterangan" dense outlined label="Keterangan/Catatan"
+                                        multiple chips></v-combobox>
                                 </v-col>
 
                                 <v-col cols="12" md="3">
@@ -186,8 +186,10 @@
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox :items="listItemsReciver" dense outlined v-model="recipient"
-                                            label="Kepada" multiple chips></v-combobox>
+                                        <v-combobox
+                                            :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
+                                            dense outlined v-model="recipient" label="Kepada" multiple
+                                            chips></v-combobox>
                                     </div>
 
                                     <div>
@@ -323,7 +325,10 @@ export default {
             },
             userDefault: "",
             isReciverShow: false,
-            listItemsReciver: [],
+            listItemsReciver: {
+                teruskan: [],
+                disposisi: []
+            },
             isLoading: false,
             responseAlert: {
                 message: "",
@@ -349,7 +354,7 @@ export default {
                 { text: 'Tgl. Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'toName' },
+                { text: 'Kepada', value: 'to' },
                 { text: 'Isi Ringkasan', value: 'note' }
             ],
             headerprops: {
@@ -374,12 +379,13 @@ export default {
                         agendaNumber: this.detailDataRow.agendaNumber, receiptDate: this.detailDataRow.receiptDate, realDate: this.detailDataRow.realDate, type: this.detailDataRow.type,
                         from: this.detailDataRow.from, to: element.value, isUnknown: this.detailDataRow.isUnknown, description: this.detailDataRow.description,
                         number: this.detailDataRow.number,
-                        note: this.description,
+                        // note: this.description,
                         createdBy: this.listLocalUserData.employeeId,
                         createdDate: new moment(this.dateAction).locale('id'),
                         dataType: "Form",
                         actionFollowUp: this.selectedType,
-                        sequence: newNumber // auto increment
+                        sequence: newNumber, // auto increment
+                        actionFollowUpDescription: this.description
                     }
                     newNumber++;
                     listData.push(newData);
@@ -410,19 +416,31 @@ export default {
             try {
 
                 if (this.listLocalUserData) {
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + this.listLocalUserData.roleCode);
+                    var param = { params: { roleCode: this.listLocalUserData.roleCode, roleLevel: this.listLocalUserData.roleLevel } };
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/parent", param);
                     var listParent = [];
+                    var listLevel = [];
                     if (responsesParent != undefined) {
-                        responsesParent.data.forEach(element => {
+                        responsesParent.data.parent.forEach(element => {
                             if (this.listLocalUserData.employeeId != element.employeeId) {
                                 listParent.push({
                                     value: element.employeeId,
-                                    text: element.employeeId + " - " + element.name
+                                    text: element.employeeId + " - " + element.name + " - " + element.roleCode
+                                });
+                            }
+                        });
+                        responsesParent.data.level.forEach(element => {
+                            if (this.listLocalUserData.employeeId != element.employeeId) {
+                                listLevel.push({
+                                    value: element.employeeId,
+                                    text: element.employeeId + " - " + element.name + " - " + element.roleCode
                                 });
                             }
                         });
                     }
-                    this.listItemsReciver = listParent;
+                    this.listItemsReciver.teruskan = listLevel;
+                    this.listItemsReciver.disposisi = listParent;
+                    console.log(this.listItemsReciver);
                 }
             } catch (error) {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -437,7 +455,7 @@ export default {
                 console.log(this.listLocalUserData);
                 if (this.listLocalUserData) {
                     var params = {
-                        "params": [this.listLocalUserData.roleCode, this.listLocalUserData.employeeId]
+                        "params": [this.listLocalUserData.roleCode]
                     };
 
                     var response = await axios.post(process.env.VUE_APP_SERVICE_URL + "inbox/show", params);
@@ -479,7 +497,7 @@ export default {
                 .map((e) => { return e });
             console.log(row);
             this.detailDataRow = row;
-            this.dateAction = moment(String(row.receiptDate)).format('YYYY-MM-DD');
+            this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
             // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
@@ -522,12 +540,14 @@ export default {
         },
         selectedTypeEvnt() {
             console.log(this.selectedType);
+            this.recipient = [];
             if (this.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
             } else {
                 this.isReciverShow = false;
             }
         },
+
         advanceSearch(value) {
             console.log(value);
             this.isAdvanceSearch = value;
@@ -579,8 +599,4 @@ export default {
     background: #0097A7 !important;
     color: white;
 }
-
-/* h1 {
-    -webkit-text-stroke: 0.8px #fff;
-} */
 </style>

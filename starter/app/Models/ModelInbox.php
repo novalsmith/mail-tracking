@@ -12,10 +12,10 @@ class ModelInbox extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    function getInboxByRole($param)
+    function getInboxByUnit($param)
     {
         $builder = $this->table("v_inbox");
-        $builder->whereIn("to", $param);
+        $builder->whereIn("uploader", $param);
        return  $builder->get()->getResult();
        
     }

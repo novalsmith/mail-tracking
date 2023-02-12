@@ -8,7 +8,7 @@
       <div v-if="!initDataAfterLogin">
         <C_Login />
       </div>
-      <div v-else  >
+      <div v-else>
         <C_Header class="heroHome" />
         <router-view />
       </div>
@@ -86,8 +86,11 @@ export default {
         var levelLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
         // mapping desc
         var descLookup = lookupData.filter(val => val.type == "DESC").map(result => { return result; });
-          // mapping actionFollowup
-          var actionLookup = lookupData.filter(val => val.type == "ACTION").map(result => { return result; });
+        // mapping actionFollowup
+        var actionLookup = lookupData.filter(val => val.type == "ACTION").map(result => { return result; });
+        // mapping filePrefixLookup
+        var filePrefixLookup = lookupData.filter(val => val.type == "FILEPREFIX").map(result => { return result; });
+
         var mapping = {
           header: headerLookup,
           status: statusLookup,
@@ -95,7 +98,8 @@ export default {
           access: accessLookup,
           level: levelLookup,
           desc: descLookup,
-          action:actionLookup
+          action: actionLookup,
+          filePrefix:filePrefixLookup
         };
         this.$store.dispatch('lookups', mapping);
         status = true;
@@ -133,7 +137,8 @@ export default {
   background-position-y: bottom;
   height: 45vh;
 }
-.heroHome{
+
+.heroHome {
   background: url('./assets/DashboardMailtracking.jpg');
   background-size: cover;
   background-position-y: bottom;

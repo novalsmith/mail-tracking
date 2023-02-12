@@ -15,7 +15,8 @@ class Tracking extends BaseController
 	}
 	public function index()
 	{
-		$data = $this->model->findAll();
+		$searchingParams = $this->request->getVar('searchingParams');
+		$data = $this->model->getTracking($searchingParams);
 		return $this->respond($data, 200);
 	}
 	public function show($id)
@@ -27,58 +28,28 @@ class Tracking extends BaseController
 			return $this->respond($data, 200);
 		 
 	}
-
-	public function importCsvToDbBackup()
-    {
-       
-            if($file = $this->request->getFile('TrackingFileUpload')) {
-            if ($file->isValid() && ! $file->hasMoved()) {
-                $newName = $file->getRandomName();
-                $file->move('../public/csvfile', $newName);
-                $file = fopen("../public/csvfile/".$newName,"r");
-                $i = 0;
-                $numberOfFields = 2;
-                $csvArr = array();
-				$resultData = array();
-                
-                while (($filedata = fgetcsv($file, 400, ";")) !== FALSE) {
-                    $num = count($filedata);
-                    if($i > 0 && $num == $numberOfFields){ 
-                        $csvArr[$i]['agendaNumber'] = $filedata[0];
-                        $csvArr[$i]['receiptDate'] = $filedata[1];
-                        // $csvArr[$i]['number'] = $filedata[2];
-                        // $csvArr[$i]['realDate'] = $filedata[3];
-						// $csvArr[$i]['type'] = $filedata[4];
-						// $csvArr[$i]['note'] = $filedata[5];
-						// $csvArr[$i]['from'] = $filedata[6];
-						// $csvArr[$i]['to'] = $filedata[7];
-						// $csvArr[$i]['description'] = $filedata[8];
-						
-                    }
-                    $i++;
-					$resultData[] =   $csvArr;
-                }
-                fclose($file);
-                $count = 0;
-			
-			 
-			 	return $this->respond($resultData, 200);
-				
-                // session()->setFlashdata('message', $count.' rows successfully added.');
-                // session()->setFlashdata('alert-class', 'alert-success');
-            }
-            else{
-                // session()->setFlashdata('message', 'CSV file coud not be imported.');
-                // session()->setFlashdata('alert-class', 'alert-danger');
-				return $this->failNotFound($file);
-            }
+	
+	public function removeUnusedFile(){
+		$fileName = $this->request->getVar('fileName');
+		if(file_exists(ROOTPATH.'public/nadineFiles/'.$fileName)){
+			if(unlink(ROOTPATH.'public/nadineFiles/'.$fileName)){
+				$sample = [
+					"data" => 'success'
+				];
+				return $this->respond($sample,200);
+			}else{
+				return $this->respond("File $fileName Cannot deleted",404);
+			}
 		}
-			
-    }
+		else{
+			return $this->respond("File $fileName Not Found",404);
+		}
+	}
 	public function importCsvToDb()
     {
 		$modelUnit = new ModelUnit();
 		$file_excel = $this->request->getFile('TrackingFileUpload');
+		$unitTo = $this->request->getPost('to');
 		$ext = $file_excel->getClientExtension();
 		if($ext == 'xls') {
 			$render = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
@@ -92,6 +63,8 @@ class Tracking extends BaseController
 			// return $this->respond("Please use .xls or .xlxs",500);
 		}
 		$spreadsheet = $render->load($file_excel);
+		$newName = $file_excel->getName();
+		$file_excel->move('../public/nadineFiles', $newName);
 		$chunkSize = 50;
 		$startRow = 0;
 		$maxRows = 3000;
@@ -103,21 +76,15 @@ class Tracking extends BaseController
 		// 	return $this->respond($dataError,404);
 		// } 
 		$resultExcelData = [];
+		$resultExcelDataDuplicate = [];
 		$unitData = "";
+		$unitTo = explode ("_", $newName)[0];
 		// Define how many rows we want to read for each "chunk"
 		
 			foreach(array_chunk($data,count($data),true) as $rows) {
 				foreach($rows as $x => $row) {
 					if ($x == 0) {
 						continue;
-						// $agendaNumberHeader =  $rows[$x][0];
-						// $receiptDateHeader =  $rows[$x][1];
-						// $numberHeader =  $rows[$x][2];
-						// $realDateHeader =  $rows[$x][3];
-						// $typeHeader =  $rows[$x][4];
-						// $noteHeader =  $rows[$x][5];
-						// $fromHeader =  $rows[$x][6];
-						// $toHeader =  $rows[$x][7];
 					} 
 
 					$agendaNumber =  $row[0];
@@ -139,15 +106,16 @@ class Tracking extends BaseController
 						$message .= "Nomor Surat tidak boleh kosong";
 						$status = "error";
 					}else{
+
 						// Do for all validation when doesn't have duplicate data
-						$numberData = $this->model->validateDumplicate($number);
-						if(!empty($numberData)){
-							if(!empty($message)){
-								$message .= ", ";
-							}
-							$message .= "Nomor surat $number sudah ada (Duplikasi)";
-							$status = "error";
-						}else{
+						// $numberData = $this->model->validateDumplicate($number,$unitTo);
+						// if(!empty($numberData)){
+						// 	if(!empty($message)){
+						// 		$message .= ", ";
+						// 	}
+						// 	$message .= "Nomor surat $number sudah ada (Duplikasi)";
+						// 	$status = "error";
+						// }else{
 							if (empty($to)) {
 								if(!empty($message)){
 									$message .= ", ";
@@ -155,16 +123,16 @@ class Tracking extends BaseController
 								$message .= "Kepada/Penerima tidak boleh kosong";
 								$status = "error";
 							}
-							else{
-								$unitData = $modelUnit->getUnitByPrefixNameTo($to);
-								if(empty($unitData)){
-									if(!empty($message)){
-										$message .= ", ";
-									}
-									$message .= "Kepada/Penerima tidak memiliki Unit (Uknown)";
-									$status = "info";
-								}
-							} 
+							// else{
+							// 	$unitData = $modelUnit->getUnitByPrefixNameTo($to);
+							// 	if(empty($unitData)){
+							// 		if(!empty($message)){
+							// 			$message .= ", ";
+							// 		}
+							// 		$message .= "Kepada/Penerima tidak memiliki Unit (Uknown)";
+							// 		$status = "info";
+							// 	}
+							// } 
 		
 							// validation mandatory
 							if (empty($agendaNumber)) {
@@ -237,10 +205,8 @@ class Tracking extends BaseController
 									$status = "error";
 								}
 							} 
-						}
-					}
-
-
+						// }
+					} 
 					$simpandata = [
 						'indexNumber' => rand(5,10),
 						'agendaNumber' =>  $agendaNumber , 
@@ -250,11 +216,8 @@ class Tracking extends BaseController
 						'type'=> $type,
 						'note'=> $note,
 						'from'=> $from,
-						'to' => $to,
-						'to'=> [
-							'code' => $unitData,
-							'name'=> $to
-						],
+						'unitTo' =>  $unitTo,					 
+						'to'=> $to,
 						'desc'=> $desc,
 						'status' => $status,
 						"message" => $message
@@ -262,21 +225,52 @@ class Tracking extends BaseController
 	
 					// $db->table('siswa')->insert($simpandata);
 					// session()->setFlashdata('message','Berhasil import excel');
-					// if(!in_array($number, $resultExcelData['number'])){
-						$filteredItems = array_filter($resultExcelData, function($elem) use($number){
-							return $elem['number'] == $number;
+					if(!in_array($number, $resultExcelData)){
+						$filteredItems = array_filter($resultExcelData, function($elem) use($number,$agendaNumber){
+							return $elem['number'] == $number &&  $elem['agendaNumber'] == $agendaNumber;
 						});
 						if(count($filteredItems) == 0){
 							$resultExcelData[] = $simpandata; 
+						}else{ 
+							$resultExcelDataDuplicate[] = $filteredItems;
 						}
 				}
 			}
+			// $a = array_unique($resultExcelData,SORT_REGULAR);
+			// $duplicates= array_diff($resultExcelData $a, );
+			$duplications = [];
+			foreach($resultExcelDataDuplicate as $key => $value){
+				foreach($resultExcelDataDuplicate[$key] as  $keys => $val){
+					// $resultExcelDataDuplicate[$key][$keys]['status'] = 'info';
+					$simpandata = [
+						'indexNumber' => rand(5,10),
+						'agendaNumber' =>  $val['agendaNumber'] , 
+						'receiptDate' =>   $val['receiptDate'] , 
+						'number' =>  $val['number'] , 
+						'realDate'=>  $val['realDate'] , 
+						'type'=>   $val['type'] , 
+						'note'=>   $val['note'] , 
+						'from'=>   $val['from'] , 
+						'unitTo' =>  	 $val['unitTo'] , 				 
+						'to'=> $val['to'] , 	
+						'desc'=>   $val['desc'] , 	
+						'status' => 'info', 
+						"message" =>  "No.Agenda ".$val['agendaNumber']." dan No.Surat ".$val['number']." Duplikasi data pada file excel."
+					];
+					$duplications[] = $simpandata;
+				}
+				 
+			}
 			$responseData = [
-				"responseData" => $resultExcelData,
+				// "a"=> count($a),
+				// "bb"=> count($resultExcelData),
+				// "duplicates" => $newData,
+				"responseData" => array_merge($duplications,$resultExcelData),
+				// "merging" => array_merge($newData,$resultExcelData),
 				"totalOriginalData" => (count($data)-1)
 			];
 			return $this->respond($responseData, 200);
-		
+			}
     }
 
 	
@@ -292,24 +286,24 @@ class Tracking extends BaseController
 			$message = "";
 			$status = "";
 			foreach(array_chunk($listData,count($listData),true) as $rows) {
-				foreach($rows as $x => $row) {
-					$numberData = $this->model->validateDumplicate($row->number);
-					if(!empty($numberData)){
-						if(!empty($message)){
-							$message .= ", ";
-						}
-						$message .= "Nomor surat $row->number sudah ada (Duplikasi)";
-						$status = "error";
+				// foreach($rows as $x => $row) {
+				// 	$numberData = $this->model->validateDumplicate($row->number,$row->unitTo);
+				// 	if(!empty($numberData)){
+				// 		if(!empty($message)){
+				// 			$message .= ", ";
+				// 		}
+				// 		$message .= "Nomor surat $row->number sudah ada (Duplikasi)";
+				// 		$status = "error";
 					
-						$simpandata = [
-							'status' => $status,
-							"message" => $message
-						];
-						$resultExcelData[] = $simpandata;
-					}
-				}
+				// 		$simpandata = [
+				// 			'status' => $status,
+				// 			"message" => $message
+				// 		];
+				// 		$resultExcelData[] = $simpandata;
+				// 	}
+				// }
 				
-				if(empty($status)){
+				// if(empty($status)){
 					$trackingData = $modelTracking->saveData($rows);
 					if($trackingData){
 						$response = [
@@ -319,7 +313,7 @@ class Tracking extends BaseController
 						$resultExcelData[] = $response;
 						// return $this->respond($response);
 					}
-				}
+				// }
 			}
 
 			// if(!empty($status)){

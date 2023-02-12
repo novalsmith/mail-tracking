@@ -17,10 +17,12 @@ class Employee extends BaseController
 		$data = $this->model->findAll();
 		return $this->respond($data, 200);
 	}
-	public function employeeByParent($id = null)
+	public function employeeByParent()
 	{
+		$roleCode = $this->request->getVar('roleCode');
+		$roleLevel = $this->request->getVar('roleLevel');
 		$modelData = new ModelEmployee();
-		$data = $modelData->getEmployeeByParent($id);
+		$data = $modelData->getEmployeeByParent($roleCode,$roleLevel);
 			return $this->respond($data, 200);
 	}		 
 	public function create()

@@ -9,9 +9,20 @@ class ModelEmployee extends Model
     protected $table = "v_employee";
     protected $primaryKey = "employeeId";
 
-    function getEmployeeByParent($id){
+    function getEmployeeByParent($roleCode,$roleLevel){
         $builder = $this->table("v_employee");
-        $builder->where("parent", $id);
+        $builder->where("parent", $roleCode);
+       $data =  $builder->get()->getResult();
+       $response = [
+        "parent" =>  $data,
+        "level" => $this->getEmployeeByLevel($roleLevel)
+       ];
+        return $response;
+    }
+
+    function getEmployeeByLevel($roleLevel){
+        $builder = $this->table("v_employee");
+        $builder->where("level", $roleLevel);
        $data =  $builder->get()->getResult();
         return $data;
     }

@@ -78,7 +78,9 @@ class Filters extends BaseConfig
 				'lookup/*',
 				'lookup',
 				'unknown/*',
-				'unknown'
+				'unknown',
+				'removefile/*',
+				'removefile'
 			]
 		]
 	];

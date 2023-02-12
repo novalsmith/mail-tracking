@@ -7,9 +7,14 @@
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
-                <v-btn @click="dialogReview = true" text small color="cyan darken-2 mr-2" class="white--text">
+                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
+                    color="cyan darken-2 mr-2" class="white--text">
                     <v-icon>mdi-upload</v-icon>
                     Upload</v-btn>
+                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
+                    color="cyan darken-2 mr-2" class="white--text">
+                    <v-icon>mdi-file-excel-outline</v-icon>
+                    Original File</v-btn>
                 <v-divider vertical class="mx-2"></v-divider>
                 <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
                     v-if="isAdvanceSearch">
@@ -26,94 +31,81 @@
                 <v-container>
                     <v-row>
 
-                        <v-col cols="12" md="4">
-                            <!-- <v-select clearable :items="latterType" item-text="name" item-value="code"
-                                v-model="filter.sifatSurat" dense outlined label="Sifat Surat" multiple chips>
-                                <template v-slot:prepend-item>
-                                    <v-list-item ripple @mousedown.prevent @click="toggle">
-                                        <v-list-item-action>
-                                            <v-icon
-                                                :color="filter.sifatSurat.length > 0 ? 'cyan darken-2' : 'cyan darken-2'">
-                                                {{ icon }}
-                                            </v-icon>
-                                        </v-list-item-action>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Select All
-                                            </v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-divider class="mt-2"></v-divider>
-                                </template>
-                            </v-select> -->
-                            <v-text-field dense outlined clearable v-model="filter.sifatSurat" label="Sifat Surat"
-                                required></v-text-field>
-                        </v-col>
 
-                        <v-col cols="12" md="4">
-                            <v-text-field dense outlined clearable v-model="filter.noAgenda" label="Nomor Agenda"
+
+                        <v-col cols="12" md="3">
+                            <v-text-field dense outlined v-model="filter.noAgenda" label="Nomor Agenda"
                                 required></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="4">
+                        <v-col cols="12" md="3">
                             <v-text-field dense label="Nomor Surat" v-model="filter.noSurat" outlined clearable
                                 required></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglTerima" :return-value.sync="filter.modalDateTglTerima"
+                                persistent width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Penerimaan" prepend-icon="mdi-calendar"
+                                        readonly v-bind="attrs" v-on="on" v-model="dateRangeText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionTerima" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglTerima.save(filter.modalDateTglTerima)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglSurat" :return-value.sync="filter.modalDateTglSurat"
+                                persistent width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Surat" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeSuratText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionSurat" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglSurat.save(filter.modalDateTglSurat)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
                         </v-col>
                         <!-- show if is advanced search -->
                         <v-container v-if="isAdvanceSearch">
                             <v-row>
-                                <v-col cols="12" md="4">
+                                <v-col cols="12" md="6">
                                     <v-text-field dense label="Dari" v-model="filter.dari" outlined clearable
                                         required></v-text-field>
                                 </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field dense label="Kepada" v-model="filter.kepada" outlined clearable
+                                        required></v-text-field>
+                                </v-col>
+
+                            </v-row>
+                            <v-row>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.kepada" dense outlined
-                                        label="Kepada" multiple chips></v-combobox>
+                                    <v-text-field dense label="Isi Ringkasan" v-model="filter.isiRingkasan" outlined
+                                        clearable required></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+
+                                    <v-text-field dense outlined clearable v-model="filter.sifatSurat"
+                                        label="Sifat Surat" required></v-text-field>
+
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.keterangan" dense outlined
-                                        label="Keterangan" multiple chips></v-combobox>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <!-- <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
-                                        label="Tgl. Penerimaan - Start" required></v-text-field> -->
-                                    <v-dialog ref="dialog" v-model="filter.tglTerimaStart"
-                                        :return-value.sync="filter.modalDateWTglTerimaStart" persistent width="290px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field outlined dense v-model="filter.modalDateWTglTerimaStart"
-                                                label="Tgl. Penerimaan - Start" prepend-icon="mdi-calendar" readonly
-                                                v-bind="attrs" v-on="on"></v-text-field>
-                                        </template>
-                                        <v-date-picker dense v-model="filter.modalDateWTglTerimaStart" type="date"
-                                            scrollable>
-                                            <v-spacer></v-spacer>
-                                            <v-btn text color="primary" @click="filter.tglTerimaStart = false">
-                                                Cancel
-                                            </v-btn>
-                                            <v-btn text color="primary"
-                                                @click="$refs.dialog.save(filter.modalDateWTglTerimaStart)">
-                                                OK
-                                            </v-btn>
-                                        </v-date-picker>
-                                    </v-dialog>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <!-- <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
-                                        label="Tgl. Penerimaan - End" required></v-text-field> -->
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratStart"
-                                        label="Tgl. Surat - Start"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratEnd"
-                                        label="Tgl. Surat - End"></v-text-field>
+                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Keterangan"
+                                        required></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
-                        <!-- show if is advanced search -->
                     </v-row>
                 </v-container>
             </v-form>
@@ -146,6 +138,13 @@
                 <template v-slot:item.num="{ index, item }">
                     {{ index+ 1 }}
                 </template>
+                <template v-slot:item.to="{ item }">
+                    <ul>
+                        <li v-for="values in splitString(item.to)">
+                            {{ values }}</li>
+                    </ul>
+                </template>
+
             </v-data-table>
         </v-card>
 
@@ -169,13 +168,17 @@
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                         @change="handleFilesUpload" outlined chips truncate-length="50" dense
                                         prepend-icon="mdi-paperclip"></v-file-input>
+                                    <span class="text--secondary">
+                                        <v-icon>mdi-information-outline</v-icon>
+                                        Contoh Penamaan File : SDB_2023_01_01.xlsx</span>
                                 </v-col>
                                 <v-col md="6">
                                     <v-btn :disabled="disabledWhenLoading || loadingUploadButton" color="cyan darken-2"
                                         class="white--text" @click="processUpload" :loading="loadingUploadButton">
                                         <v-icon>mdi-cloud-arrow-up-outline</v-icon> Submit
                                     </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clearUploadValue">
+                                    <v-btn text :disabled="disabledCancelWhenLoading || loadingUploadButton"
+                                        class="mr-4 white--text" color="blue-grey" @click="clearUploadValue">
                                         <v-icon>mdi-cached</v-icon> Clear
                                     </v-btn>
                                 </v-col>
@@ -187,8 +190,10 @@
                                     </v-alert>
 
                                 </v-col>
+
                             </v-row>
                         </form>
+
                     </v-main>
                     <v-progress-linear v-show="loadingUploadButton" indeterminate
                         color="cyan darken-2"></v-progress-linear>
@@ -261,44 +266,17 @@
                             </td>
                         </template>
 
-                        <!-- <template v-slot:item.from="{ item }">
-                            <v-chip small class="my-2">
-                                {{ item.from }}
-                            </v-chip>
-                        </template>
-
-                        <template v-slot:item.to="{ item }">
-                            <div v-if="item.to.name != ''">
-                                <v-chip small v-for="values in splitString(item.to.name)" class="my-2">
-                                    {{ values }}
-                                </v-chip>
-                            </div>
-
-                        </template> -->
-
-
                         <template v-slot:item.from="{ item }">
-                            <!-- <v-chip small class="my-2">
-                                {{ item.from }}
-                            </v-chip> -->
                             <p class="my-2">
                                 {{ item.from }}
                             </p>
                         </template>
 
                         <template v-slot:item.to="{ item }">
-                            <div v-if="item.to.name != ''">
-                                <!-- <v-chip small v-for="values in splitString(item.to.name)" class="my-2">
-                                    {{ values }}
-                                </v-chip> -->
-                                <!-- <p v-for="values in splitString(item.to.name)" class="my-2">
-                                    {{ values }}
-                                </p> -->
-                                <ul>
-                                    <li v-for="values in splitString(item.to.name)">
-                                        {{ values }}</li>
-                                </ul>
-                            </div>
+                            <ul>
+                                <li v-for="values in splitString(item.to)">
+                                    {{ values }}</li>
+                            </ul>
                         </template>
 
                     </v-data-table>
@@ -396,18 +374,25 @@ export default {
                 totalUnknown: 0,
                 totalOriginalSource: 0
             },
-            modalDateWTglTerimaStart: null,
+
             filter: {
+                range: true,
                 sifatSurat: "",
                 noAgenda: "",
                 noSurat: "",
                 dari: "",
-                kepada: [],
-                keterangan: [],
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
                 tglTerimaStart: "",
                 tglTerimaEnd: "",
                 tglSuratStart: "",
-                tglSuratEnd: ""
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+                searchingParams: []
             },
             files: [],
             alertNotready: false,
@@ -426,24 +411,28 @@ export default {
             parsed: false,
             headers: [
                 { text: 'No', value: 'num' },
-                { text: 'Agenda', value: 'agendaNumber' },
-                { text: 'Terima', value: 'receiptDate' },
-                { text: 'Tanggal Surat', value: 'realDate' },
+                { text: 'No. Agenda', value: 'agendaNumber' },
+                { text: 'No. Surat', value: 'number' },
+                { text: 'Tgl. Terima', value: 'receiptDate' },
+                { text: 'Tgl. Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'toName' },
+                // { text: 'Kepada', value: 'toName' },
+                { text: 'Kepada', value: 'to', width: '15%' },
+                { text: 'Uploader', value: 'unitTo', width: '5%' },
                 { text: 'Isi Ringkasan', value: 'note' },
-                { text: 'Ket', value: 'ket', width: '10%' },
+                { text: 'Keterangan', value: 'ket', width: '10%' },
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
                 { text: 'Agenda', value: 'agendaNumber', width: '5%' },
                 { text: 'No Surat', value: 'number', width: '5%' },
-                { text: 'Terima', value: 'receiptDate', width: '5%' },
-                { text: 'Tanggal Surat', value: 'realDate', width: '5%' },
+                { text: 'Tgl. Terima', value: 'receiptDate', width: '5%' },
+                { text: 'Tgl. Surat', value: 'realDate', width: '5%' },
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
                 { text: 'Dari', value: 'from', width: '15%' },
                 { text: 'Kepada', value: 'to', width: '15%' },
+                { text: 'Uploader', value: 'unitTo', width: '5%' },
                 { text: 'Ket', value: 'desc', width: '5%' },
                 { text: 'Isi Ringkasan', value: 'note', width: '25%' },
                 { text: 'Status', value: 'status', width: '10%' },
@@ -459,15 +448,15 @@ export default {
                 error: true,
                 success: true,
                 info: true
-            }
+            },
+            isClearFile: true
         }
     },
     methods: {
-        submit() { },
-        async getEmployeeParentChild() {
+        async getFiltersData() {
             try {
                 if (this.userLocalData) {
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + this.userLocalData.roleCode);
+                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
                     var listParent = [];
                     if (responsesParent != undefined) {
                         responsesParent.data.forEach(element => {
@@ -489,11 +478,12 @@ export default {
         },
         async getTracking() {
             try {
+
                 this.isLoading = true;
-                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                this.listData = response.data;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking", { params: { searchingParams: this.filter.searchingParams } });
+                this.listData = !!response ? response.data : [];
                 const state = {
-                    tracking: response.data,
+                    tracking: !!response ? response.data : [],
                     tempTracking: [],
                     totalOriginalData: 0
                 }
@@ -519,38 +509,69 @@ export default {
             // var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = this.userLocalData.name;
         },
-        searching() {
-            // this.isShowTable = true; 
-            var mappArrayKepada = [];
-            this.filter.kepada.forEach(element => {
-                mappArrayKepada.push(element);
-            });
+        async searching() {
 
-            var mappArrayKet = [];
-            this.filter.keterangan.forEach(element => {
-                mappArrayKet.push(element);
-            });
+            var dateActionTerimaStart = "";
+            var dateActionTerimaEnd = "";
+
+            var dateActionSuratStart = "";
+            var dateActionSuratEnd = "";
+
+            if (this.filter.dateActionTerima.length == 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
+            }
+            if (this.filter.dateActionTerima.length > 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
+                dateActionTerimaEnd = this.filter.dateActionTerima[1];
+            }
+
+            if (this.filter.dateActionSurat.length == 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+            }
+            if (this.filter.dateActionSurat.length > 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+                dateActionSuratEnd = this.filter.dateActionSurat[1];
+            }
+
             var remappingParam = {
                 isAdvancedSearch: this.isAdvanceSearch,
-                sifatSurat: this.filter.sifatSurat,
-                noSurat: this.filter.noSurat,
-                noAgenda: this.filter.noAgenda,
-                dari: this.filter.dari,
-                kepada: mappArrayKepada,
-                keterangan: mappArrayKet,
-                tglTerimaStart: this.tglTerimaStart,
-                tglTerimaEnd: this.tglTerimaEnd,
-                tglSuratStart: this.tglSuratStart,
-                tglSuratEnd: this.tglSuratEnd
+                type: this.filter.sifatSurat,
+                number: this.filter.noSurat,
+                agendaNumber: this.filter.noAgenda,
+                from: this.filter.dari,
+                to: this.filter.kepada,
+                ket: this.filter.ket,
+                dateActionTerimaStart: dateActionTerimaStart,
+                dateActionTerimaEnd: dateActionTerimaEnd,
+                dateActionSuratStart: dateActionSuratStart,
+                dateActionSuratEnd: dateActionSuratEnd,
+                note: this.filter.isiRingkasan
             };
-            console.log(remappingParam);
-            this.getTracking();
+            this.filter.searchingParams = remappingParam;
+            await this.getTracking();
         },
         submit() {
             this.$v.$touch()
         },
-        clear() {
-            // this.isShowTable = false;
+        async clear() {
+            var remappingParam = {
+                sifatSurat: "",
+                noAgenda: "",
+                noSurat: "",
+                dari: "",
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
+                tglTerimaStart: "",
+                tglTerimaEnd: "",
+                tglSuratStart: "",
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+            };
+            this.filter = remappingParam;
         },
         selectedTypeEvnt() {
             if (this.selectedType != 'Arsipkan') {
@@ -591,6 +612,7 @@ export default {
                         this.responseAlertReview.color = 'cyan darken-2';
                         this.responseAlertReview.message = "Data Nadine Berhasil Tersimpan";
                         this.loadingUploadButton = false;
+                        this.isClearFile = false;
                     }
 
                     // var errorCount = resData.filter((e) => e.status == "error").map((e) => { return e }).length;
@@ -614,75 +636,131 @@ export default {
 
         mappingMultipleRecipient() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
-
-            var listData = data.filter((e) => e.status != "error").map((e) => {
-                return {
-                    agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                    from: e.from, to: e.to, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.note,
-                    number: e.number,
-                    status: e.status,
-                    note: e.note,
-                    desc: e.desc
-                }
-            });
-            var listMultipleData = [];
-            var listSingleData = [];
-            var maergeData = [];
             var createdBy = this.userLocalData.employeeId;
             var createdDate = new moment(new Date).locale('id');
 
-            listData.forEach((e, index) => {
-                index = index + 1;
-                if (e.to.code.length > 0) {
-                    e.to.code.forEach(element => {
-                        var newData = {
-                            agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                            from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
-                            number: e.number,
-                            ket: e.desc,
-                            note: e.note,
-                            createdBy: createdBy,
-                            createdDate: createdDate,
-                            dataType: "Upload",
-                            sequence: index // auto increment
-
-                        }
-                        listMultipleData.push(newData);
-                    });
-                } else {
-                    var newData = {
-                        agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                        from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
-                        number: e.number,
-                        ket: e.desc,
-                        createdBy: createdBy,
-                        createdDate: createdDate,
-                        dataType: "Upload",
-                        note: e.note,
-                        sequence: 1 // auto increment
-                    }
-                    listSingleData.push(newData);
+            var listData = data.filter((e) => e.status != "error").map((e) => {
+                return {
+                    trackingid: (String(createdBy + e.unitTo) + Math.random().toString(36).slice(3)).toLowerCase(),
+                    unknownId: (String(createdBy) + Math.random().toString(36).slice(2)).toLowerCase(),
+                    agendaNumber: e.agendaNumber, receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                    realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'), type: e.type,
+                    from: e.from,
+                    fromPrefix: (e.from.toLowerCase()).replaceAll(' ', ''),
+                    to: e.to,
+                    unitTo: (e.status === 'info' ? null : e.unitTo),
+                    isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.note,
+                    number: e.number,
+                    note: e.note,
+                    createdBy: createdBy,
+                    createdDate: createdDate,
+                    dataType: "Upload",
+                    ket: e.desc
                 }
             });
+            // var listMultipleData = [];
+            // var listSingleData = [];
+            // var maergeData = [];
 
-            maergeData = listMultipleData.concat(listSingleData);
-            return maergeData;
+            // listData.forEach((e, index) => {
+            //     index = index + 1;
+            //     if (e.to.code.length > 0) {
+            //         e.to.code.forEach(element => {
+            //             var newData = {
+            //                 agendaNumber: e.agendaNumber,
+            //                 receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            //                 realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            //                 type: e.type,
+            //                 from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
+            //                 number: e.number,
+            //                 ket: e.desc,
+            //                 note: e.note,
+            //                 createdBy: createdBy,
+            //                 createdDate: createdDate,
+            //                 dataType: "Upload",
+            //                 unitTo: e.unitTo,
+            //                 sequence: index // auto increment
+
+            //             }
+            //             listMultipleData.push(newData);
+            //         });
+            //     } else {
+            //         var newData = {
+            //             agendaNumber: e.agendaNumber,
+            //             receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            //             realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            //             type: e.type,
+            //             from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
+            //             number: e.number,
+            //             ket: e.desc,
+            //             createdBy: createdBy,
+            //             createdDate: createdDate,
+            //             dataType: "Upload",
+            //             note: e.note,
+            //             unitTo: e.unitTo,
+            //             sequence: 1 // auto increment
+            //         }
+            //         listSingleData.push(newData);
+            //     }
+            // });
+
+            // maergeData = listMultipleData.concat(listSingleData);
+            return listData;
         },
-        clearUploadValue() {
+        async clearUploadValue() {
             this.expanded = [];
-            this.uploadedValue = null;
             this.isShowAlertReview = false;
             this.responseSummaryDataReview.totalErrors = 0;
             this.responseSummaryDataReview.totalSuccess = 0;
             this.responseSummaryDataReview.totalUploadedData = 0;
             this.responseSummaryDataReview.totalUnknown = 0;
             this.responseSummaryDataReview.totalOriginalSource = 0;
+
+            try {
+
+                this.isLoading = true;
+                if (this.isClearFile && this.uploadedValue != null) {
+                    await axios.get(process.env.VUE_APP_SERVICE_URL + "removefile", { params: { fileName: this.uploadedValue.name } }).then((data) => {
+                        if (!!data) {
+                            console.log('masuk sukses');
+                        }
+                    });
+                }
+                this.uploadedValue = null;
+
+            } catch (error) {
+                this.uploadedValue = null;
+                console.log(error);
+                this.isLoading = false;
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
+            }
+
         },
         async handleFilesUpload() {
             try {
+                this.isClearFile = true;
                 var file = event.target.files[0].name;
+                var prefixFile = this.$store.state.lookup.lookups['filePrefix'];
+                console.log(file.split('_'));
+                if (file.split('_').length > 1) {
+
+                    var datas = prefixFile.filter(e => e.code == file.split('_')[0]).map(el => { return el });
+                    console.log(datas);
+                } else {
+                    this.isShowAlertReview = true;
+                    this.responseAlertReview.color = 'red';
+                    this.responseAlertReview.message = 'Periksa kembali format nama file anda. Contoh : SDB_2023_01_01.xlsx';
+                    this.uploadedValue = null;
+                    return null;
+                }
+
+                this.userLocalData;
                 let formData = new FormData();
+                console.log(this.uploadedValue.name);
                 formData.append('TrackingFileUpload', this.uploadedValue);
+                formData.append('unitTo', file.split('_')[0]);
                 this.dialogReview = true;
                 this.isLoadingReview = true;
                 this.listDataReview = [];
@@ -739,7 +817,7 @@ export default {
             filteredList = status == 'all' ? data : data.filter((e) => e.status === status).map((e) => {
                 return {
                     agendaNumber: e.agendaNumber, receiptDate: e.receiptDate, realDate: e.realDate, type: e.type,
-                    from: e.from, to: e.to, status: e.status, note: e.note, message: e.message,
+                    from: e.from, to: e.to, unitTo: e.unitTo, status: e.status, note: e.note, message: e.message,
                     number: e.number, desc: e.desc
                 }
             });
@@ -770,39 +848,12 @@ export default {
             this.dialogReview = false;
             this.getTracking();
         },
-        async searching() {
-            this.isShowTable = true;
-            var mappArraySifatSurat = [];
-            var mappArrayKepada = [];
-            this.filter.kepada.forEach(element => {
-                mappArrayKepada.push(element);
-            });
-
-            var mappArrayKet = [];
-            this.filter.keterangan.forEach(element => {
-                mappArrayKet.push(element);
-            });
-            var remappingParam = {
-                isAdvancedSearch: this.isAdvanceSearch,
-                sifatSurat: mappArraySifatSurat,
-                noSurat: this.filter.noSurat,
-                noAgenda: this.filter.noAgenda,
-                dari: this.filter.dari,
-                kepada: mappArrayKepada,
-                keterangan: mappArrayKet,
-                tglTerimaStart: this.tglTerimaStart,
-                tglTerimaEnd: this.tglTerimaEnd,
-                tglSuratStart: this.tglSuratStart,
-                tglSuratEnd: this.tglSuratEnd
-            }
-            console.log(remappingParam);
-            // await this.getInbox();
-        },
     },
     created() {
         this.getTracking();
         var userData = JSON.parse(localStorage.getItem('userData'));
         this.userLocalData = userData.user;
+        // this.getFiltersData();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),
@@ -835,22 +886,23 @@ export default {
         },
         disabledWhenLoading() {
             return this.isShowAlertReview ? true : (!this.isLoadingReview && !!this.uploadedValue ? false : true);
-        }
+        },
+        disabledCancelWhenLoading() {
+            return this.isShowAlertReview ? false : (this.isLoadingReview && !!this.uploadedValue ? true : false);
+        },
+        dateRangeText() {
+            return this.filter.dateActionTerima.join(' ~ ')
+        },
+        dateRangeSuratText() {
+            return this.filter.dateActionSurat.join(' ~ ')
+        },
+
 
     }
 }
 </script> 
 
 <style lang="css" scoped>
-.rowColor:hover {
-    /* `!important` is necessary here because Vuetify overrides this
-    - background cyan darken-2
-    */
-    background: #0097A7 !important;
-    color: white;
-    cursor: pointer;
-}
-
 .errorColor {
     background-color: #FFCDD2 !important;
 }
@@ -859,7 +911,9 @@ export default {
     color: black !important;
 }
 
-/* h1 {
-    -webkit-text-stroke: 0.8px #fff;
-} */
+.table-style>>>tbody tr:hover {
+    cursor: pointer;
+    background: #0097A7 !important;
+    color: white;
+}
 </style>

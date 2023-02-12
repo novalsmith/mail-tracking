@@ -87,9 +87,9 @@ export default {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
                 if (this.token != "") {
-                    var paramLookup = { "params": ['STATUS', 'TYPE', 'HEADER', 'DESC', 'ACCESS', 'LEVEL', 'ACTION'] };
+                    var paramLookup = { "params": ['STATUS', 'TYPE', 'HEADER', 'DESC', 'ACCESS', 'LEVEL', 'ACTION', 'FILEPREFIX'] };
                     await axios.post(process.env.VUE_APP_SERVICE_URL + "lookup/detail", paramLookup).then(res => {
-                        var resulttData = res != undefined ? res : [];
+                        var resulttData = !!res ? res : [];
                         if (resulttData) {
                             localStorage.setItem('lookups', JSON.stringify(resulttData.data));
                             this.$router.push("/").catch(() => { })
@@ -121,10 +121,6 @@ export default {
             this.nip = ''
             this.password = ''
         },
-    },
-    mounted() {
-        $("label\[for=\'NIP\'\]").addClass('v-label--active');
-        $("label\[for=\'password\'\]").addClass('v-label--active');
     },
     computed: {
         ...mapGetters(['users', 'settings', 'lookups']),

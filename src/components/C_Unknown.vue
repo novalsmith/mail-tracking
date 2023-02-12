@@ -111,8 +111,9 @@
             </v-container>
 
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
-                class="mx-3 table-style" :items="!!listUnknownData ? listUnknownData : []" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
+                class="mx-3 table-style" :items="listUnknownData != null ? listUnknownData : []"
+                :loading="isLoadingUnknown" :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
+                @click:row="takeItAction" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -122,115 +123,68 @@
                 <template v-slot:item.num="{ item, index }">
                     {{ index+ 1}}
                 </template>
-                <template v-slot:item.takeIt="{ item }">
-                    <v-btn color="cyan darken-2" dark>
-                        <v-icon class="mr-2" @click="takeItAction(item)">
-                            mdi-check-circle-outline
-                        </v-icon>
-                        Ambil
-                    </v-btn>
+
+                <template v-slot:item.unitTo="{ item, index }">
+
+                    <!-- <v-btn v-if="item.unitTo ?? ''" small color="cyan darken-2" dark> {{ item.unitTo }}</v-btn> -->
+                    <v-chip v-if="item.unitTo" color="cyan darken-2" dark>
+                        {{ item.unitTo }} <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                    </v-chip>
+                    <v-chip v-else color="orange" dark>
+                        {{ item.unitTo }} Tidak ada <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                    </v-chip>
                 </template>
+
             </v-data-table>
 
 
         </v-card>
 
+        <v-row justify="center">
+            <v-dialog v-model="dialogUnknown" persistent max-width="500px">
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">Unit {{ userDefault.roleCode }}</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field class="mb-3" v-model="searchUnknown" append-icon="mdi-magnify" label="Search"
+                            single-line hide-details></v-text-field>
+                        <v-data-table ref="unknownTable" :items-per-page="5" :loading="isLoadingUnknown"
+                            :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
+                            :footer-props="{ 'items-per-page-options': [5, 10, 50, 100, -1] }" :headers="headersUnknown"
+                            :items="listUnitUnknown" :search="searchUnknown">
+                            <template v-slot:item.num="{ index }">
+                                {{ index + 1 }}
+                            </template>
+                            <template v-slot:item.takeIt="{ item }">
+                                <v-btn :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
+                                    color="cyan darken-2" class="white--text mr-2">
+                                    OK <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                                </v-btn>
+                                <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
+                                    color="orange" class="white--text">
+                                    Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
+                                </v-btn> -->
 
+                                <v-btn v-if="item.unitTo != null" :disabled="disabledUnknownButton"
+                                    @click="moveToInbox(item, true)" small color="orange" class="white--text">
+                                    Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
+                                </v-btn>
+                            </template>
 
-        <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card>
-                <v-toolbar color="cyan darken-2" class="white--text">
-                    <v-btn icon dark @click="dialogDetail = false">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Agenda - {{ detailDataRow.agendaNumber }} - Perihal - {{
-                        detailDataRow.note
-                    }}</v-toolbar-title>
-                    <v-spacer></v-spacer>
+                        </v-data-table>
+                    </v-card-text>
 
-                </v-toolbar>
-                <v-container>
-                    <v-main class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Transaksi Surat</h3>
-                        <form class="my-10">
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="cyan darken-2" text @click="dialogUnknown = false">
+                            OK
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
 
-
-                            <v-row>
-                                <v-col md="4">
-                                    <v-text-field :disabled="true" v-model="userDefault" label="Dari"
-                                        required></v-text-field>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="date" persistent
-                                        width="290px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field v-model="date" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                v-on="on"></v-text-field>
-                                        </template>
-                                        <v-date-picker v-model="date" type="date" scrollable>
-                                            <v-spacer></v-spacer>
-                                            <v-btn text color="primary" @click="modalDate = false">
-                                                Cancel
-                                            </v-btn>
-                                            <v-btn text color="primary" @click="$refs.dialog.save(date)">
-                                                OK
-                                            </v-btn>
-                                        </v-date-picker>
-                                    </v-dialog>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-select :items="listType" v-model="selectedType" @change="selectedTypeEvnt"
-                                        label="Tindak Lanjut"></v-select>
-                                </v-col>
-                                <v-col md="12">
-
-                                    <div v-if="isReciverShow">
-                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple
-                                            chips></v-combobox>
-                                    </div>
-
-                                    <div>
-                                        <v-textarea outlined name="input-7-4" label="Keterangan" value=""></v-textarea>
-
-                                    </div>
-                                </v-col>
-                                <v-col md="12">
-                                    <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
-                                        <v-icon>mdi-check</v-icon> Submit
-                                    </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
-                                        <v-icon>mdi-cached</v-icon> Clear
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-
-                        </form>
-                    </v-main>
-                    <v-divider></v-divider>
-                    <v-list three-line subheader class="my-5">
-                        <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
-
-                        <v-list-item v-for="items in detailDataList">
-                            <v-list-item-content v-if="items.createdDate != null">
-                                <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined fab>{{
-                                    items.sequence
-                                }} </v-btn> {{
-    items.createdBy
-}}</v-list-item-title>
-                                <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }} - {{
-                                    items.note
-                                }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Tanggal : {{ items.createdDate }}</v-list-item-subtitle>
-                                <v-list-item-subtitle>Keterangan: {{ items.note }}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-
-                    </v-list>
-                </v-container>
-
-            </v-card>
-        </v-dialog>
     </v-container>
 </template>
 
@@ -273,11 +227,12 @@ export default {
                 fail: ""
             },
             listType: ['Arsipkan', 'Teruskan', 'Disposisi'],
-            userDefault: "",
+            userDefault: {},
             isReciverShow: false,
             selectedType: "",
             listItemsReciver: [],
             isLoading: false,
+            isLoadingUnknown: false,
             responseAlert: {
                 message: "",
                 color: ""
@@ -304,42 +259,63 @@ export default {
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
                 { text: 'Isi Ringkasan', value: 'note', with: '10%' },
-                { text: '#', value: 'takeIt', with: '10%' }
+                { text: 'Unit Tujuan', value: 'unitTo', with: '10%' },
+
+            ],
+            searchUnknown: "",
+            listUnitUnknown: [],
+            pagination: {
+                rowsPerPage: 5
+            },
+            headersUnknown: [
+                { text: 'No', value: 'num', with: '10%' },
+                { text: 'Unit', value: 'code', with: '90%' },
+                { text: 'Pindahkan', value: 'takeIt', with: '10%' }
+
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
-            }
+            },
+            dialogUnknown: false,
+            detailUnknownData: [],
+            disabledUnknownButton: false,
+            loadingUploadButton: false
+
 
         }
     },
     methods: {
-        submit() { },
-        async getEmployeeParentChild() {
+        async getUnitParent() {
             try {
-                var userData = JSON.parse(localStorage.getItem('userData'));
-                if (userData && userData.user) {
-                    var responsesParent = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/" + userData.user.roleCode);
-                    var listParent = [];
-                    if (responsesParent != undefined) {
-                        responsesParent.data.forEach(element => {
-                            if (userData.user.employeeId != element.employeeId) {
-                                listParent.push(element.employeeId + "-" + element.name);
-                            }
-                        });
-                    }
-                    this.listItemsReciver = listParent;
-                }
-            } catch (error) {
-                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
-                this.responseAlert.color = "red";
-                this.isShowAlert = true;
-            }
+                console.log(this.userDefault);
+                this.isLoadingUnknown = true;
+                if (this.userDefault) {
+                    var params = {
+                        params: { roleCode: this.userDefault.roleCode }
+                    };
 
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "parent", params);
+                    this.listUnitUnknown = !!response ? response.data : [];
+                    // const state = {
+                    //     data: !!response ? response.data : []
+                    // }
+                    // this.$store.dispatch('inboxs', state);
+                    // this.inboxListData.forEach((item, i) => {
+                    //     item.indexNumber = i + 1;
+                    // });
+                    // await this.getEmployeeParentChild();
+
+                    this.isLoadingUnknown = false;
+                }
+
+            } catch (error) {
+                this.isLoadingUnknown = false;
+            }
         },
-        async getInbox() {
+        async getUnknown() {
             try {
                 this.isLoading = true;
-
+                this.listUnknownData = [];
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown");
                 this.listUnknownData = !!response ? response.data : [];
                 // const state = {
@@ -360,9 +336,9 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        async getSettings() {
-
-            this.$store.dispatch('settings', this.themeColoring);
+        getSettings() {
+            var listData = JSON.parse(localStorage.getItem('userData'));
+            this.userDefault = listData.user;
         },
         rowClick(row) {
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
@@ -370,8 +346,6 @@ export default {
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             this.detailDataList = filteredList;
-            var listData = JSON.parse(localStorage.getItem('userData'));
-            this.userDefault = listData.user.name;
             this.dialogDetail = true;
         },
         async searching() {
@@ -402,7 +376,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            await this.getInbox();
+            this.getUnknown();
         },
         submit() {
             this.$v.$touch()
@@ -430,13 +404,71 @@ export default {
                 }
             })
         },
-        takeItAction(item) {
-            console.log(item);
+        async takeItAction(row) {
+            this.getUnknown();
+            this.dialogUnknown = true;
+            this.detailUnknownData = row;
+            this.searchUnknown = row.unitTo;
+
+
+        },
+        async moveToInbox(item, isCancel) {
+
+            var row = this.detailUnknownData;
+            console.log(row);
+            var params = [
+                {
+                    trackingid: row.trackingid,
+                    unitTo: isCancel ? null : item.code,
+                    updateDate: moment().format('YYYY-MM-DD'),
+                    updateBy: row.createdBy
+                }
+            ]
+            console.log(params);
+
+            try {
+                if (params) {
+                    var formdata = new FormData();
+                    this.disabledUnknownButton = true;
+                    formdata.append("listData", JSON.stringify(params));
+                    formdata.append("trackingid", row.trackingid);
+
+                    var ResonseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'unknown/create', formdata);          // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                    console.log(ResonseData);
+
+                    this.isShowAlert = true;
+                    this.responseAlert.color = 'cyan darken-2';
+                    this.responseAlert.message = "Data Berhasil Dipindahkan ke Unit " + item.code;
+                    this.dialogUnknown = false;
+                    // await this.getUnknown();
+
+                } else {
+                    this.isShowAlert = true;
+                    this.responseAlert.color = 'error';
+                    this.responseAlert.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda..";
+                }
+                this.isLoading = false;
+                this.dialogUnknown = false;
+                this.disabledUnknownButton = false;
+                this.getUnknown();
+            } catch (error) {
+                this.isShowAlert = true;
+                this.isLoading = false;
+                console.log(error);
+                this.dialogUnknown = false;
+                this.disabledUnknownButton = false;
+                this.responseAlert.color = 'error';
+                this.responseAlert.message = error.response.data.message;
+            }
+
+
         }
     },
     async created() {
         this.getSettings();
-        await this.getInbox();
+        this.getUnknown();
+        await this.getUnitParent();
+
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
@@ -468,4 +500,9 @@ export default {
 /* h1 {
     -webkit-text-stroke: 0.8px #fff;
 } */
+.table-style>>>tbody tr:hover {
+    cursor: pointer;
+    background: #0097A7 !important;
+    color: white;
+}
 </style>

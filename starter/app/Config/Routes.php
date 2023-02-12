@@ -34,7 +34,7 @@ $routes->setAutoRoute(true);
 $routes->get('/access', 'Access::index');
 $routes->get('/unit', 'Unit::index');
 $routes->get('/employee', 'Employee::index');
-$routes->get('/employee/(:any)', 'Employee::employeeByParent/$1');
+$routes->get('/employee/parent', 'Employee::employeeByParent');
 // $routes->get('/tracking', 'Tracking::index');
 // $routes->get('/tracking/(:any)', 'Tracking::show/$1');
 $routes->post('/upload', 'Tracking::importCsvToDb');
@@ -45,10 +45,11 @@ $routes->post('/lookup/detail', 'Lookup::show');
 // $routes->get('/inbox/unitid/(:any)', 'Tracking::show/$1');
 
 $routes->presenter('tracking');
+$routes->get('/removefile', 'Tracking::removeUnusedFile');
 $routes->presenter('inbox'); 
 $routes->post('/inbox/log', 'Inbox::log');
 $routes->post('/inbox/show', 'Inbox::showData');
-
+$routes->get('/parent', 'Unknown::unitParent');
 $routes->presenter('unknown');
 
 
