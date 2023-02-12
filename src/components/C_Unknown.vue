@@ -296,14 +296,6 @@ export default {
 
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
-                    // const state = {
-                    //     data: !!response ? response.data : []
-                    // }
-                    // this.$store.dispatch('inboxs', state);
-                    // this.inboxListData.forEach((item, i) => {
-                    //     item.indexNumber = i + 1;
-                    // });
-                    // await this.getEmployeeParentChild();
 
                     this.isLoadingUnknown = false;
                 }
@@ -315,20 +307,12 @@ export default {
         async getUnknown() {
             try {
                 this.isLoading = true;
-                this.listUnknownData = [];
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown");
                 this.listUnknownData = !!response ? response.data : [];
-                // const state = {
-                //     data: !!response ? response.data : []
-                // }
-                // this.$store.dispatch('inboxs', state);
                 this.listUnknownData.forEach((item, i) => {
                     item.indexNumber = i + 1;
                 });
-
-
                 this.isLoading = false;
-
             } catch (error) {
                 this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -376,7 +360,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            this.getUnknown();
+            // this.getUnknown();
         },
         submit() {
             this.$v.$touch()
@@ -405,7 +389,7 @@ export default {
             })
         },
         async takeItAction(row) {
-            this.getUnknown();
+            await this.getUnitParent();
             this.dialogUnknown = true;
             this.detailUnknownData = row;
             this.searchUnknown = row.unitTo;
@@ -440,7 +424,6 @@ export default {
                     this.responseAlert.color = 'cyan darken-2';
                     this.responseAlert.message = "Data Berhasil Dipindahkan ke Unit " + item.code;
                     this.dialogUnknown = false;
-                    // await this.getUnknown();
 
                 } else {
                     this.isShowAlert = true;
@@ -450,7 +433,7 @@ export default {
                 this.isLoading = false;
                 this.dialogUnknown = false;
                 this.disabledUnknownButton = false;
-                this.getUnknown();
+                await this.getUnknown();
             } catch (error) {
                 this.isShowAlert = true;
                 this.isLoading = false;
@@ -466,7 +449,7 @@ export default {
     },
     async created() {
         this.getSettings();
-        this.getUnknown();
+        await this.getUnknown();
         await this.getUnitParent();
 
     },
