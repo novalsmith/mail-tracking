@@ -51,6 +51,7 @@ $routes->post('/inbox/log', 'Inbox::log');
 $routes->post('/inbox/show', 'Inbox::showData');
 $routes->get('/parent', 'Unknown::unitParent');
 $routes->presenter('unknown');
+$routes->presenter('outbox');
 
 
 /*

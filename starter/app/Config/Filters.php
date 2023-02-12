@@ -80,7 +80,9 @@ class Filters extends BaseConfig
 				'unknown/*',
 				'unknown',
 				'removefile/*',
-				'removefile'
+				'removefile',
+				'outbox/*',
+				'outbox'
 			]
 		]
 	];

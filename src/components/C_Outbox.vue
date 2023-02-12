@@ -112,18 +112,8 @@
 
             <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3" :items="listData"
                 :search="search" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''">
-                <template v-slot:item="{ item, index }">
-                    <tr class="rowColor" @click="rowClick(item)">
-                        <td>{{ index + 1}}</td>
-                        <td>{{ item.agendaNumber }}</td>
-                        <td>{{ item.number }}</td>
-                        <td>{{ item.receiptDate }}</td>
-                        <td>{{ item.realDate }}</td>
-                        <td>{{ item.typeName }}</td>
-                        <td>{{ item.fromName }}</td>
-                        <td>{{ item.toName }}</td>
-                        <td>{{ item.note }}</td>
-                    </tr>
+                <template v-slot:item.num="{ index, item }">
+                    {{ index+ 1 }}
                 </template>
             </v-data-table>
         </v-card>
@@ -288,15 +278,15 @@ export default {
                 tglSuratEnd: ""
             },
             headers: [
-                { text: 'No', value: 'trackingid' },
-                { text: 'No. Agenda', value: 'agendaNumber' },
-                { text: 'Tgl. Penerimaan', value: 'receiptDate' },
-                { text: 'No. Surat', value: 'number' },
-                { text: 'Tgl. Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'typeName' },
-                { text: 'Dari', value: 'fromName' },
-                { text: 'Kepada', value: 'toName' },
-                { text: 'Isi Ringkasan', value: 'note' }
+                { text: 'No', value: 'num', width: "2%" },
+                { text: 'No. Agenda', value: 'agendaNumber', width: "5%" },
+                { text: 'Tgl. Penerimaan', value: 'receiptDate', width: "5%" },
+                { text: 'No. Surat', value: 'number', width: "5%" },
+                { text: 'Tgl. Surat', value: 'realDate', width: "5%" },
+                { text: 'Sifat Surat', value: 'type', width: "5%" },
+                { text: 'Dari', value: 'fromName', width: "5%" },
+                { text: 'Kepada', value: 'toName', width: "5%" },
+                { text: 'Isi Ringkasan', value: 'note', width: "20%" }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -330,27 +320,13 @@ export default {
             }
 
         },
-        async getInbox() {
+        async getOutbox() {
             try {
                 this.isLoading = true;
                 var userData = JSON.parse(localStorage.getItem('userData'));
                 if (userData && userData.user) {
-                    // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-                    // var responseAll = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking");
-                    // this.allTrackingData = responseAll != undefined ? responseAll : [];
-                    // var url = userData.user.level == 0 ? "tracking" : "tracking/" + userData.user.roleCode;
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking/show/" + userData.user.roleCode);
-
-
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "outbox", { params: { code: userData.user.roleCode } });
                     this.listData = !!response ? response.data : [];
-
-
-                    // var lsitInboxData = {
-                    //     allTrackingData: this.allTrackingData,
-                    //     listParentChild: listParent,
-                    //     trackingDataByRole: []
-                    // };
-                    // this.$store.dispatch('inboxs', lsitInboxData);
                     this.isShowTable = true;
                 }
                 this.isLoading = false;
@@ -409,7 +385,7 @@ export default {
                 tglSuratStart: this.tglSuratStart,
                 tglSuratEnd: this.tglSuratEnd
             }
-            // await this.getInbox();
+            // await this.getOutbox();
         },
         submit() {
             this.$v.$touch()
@@ -440,7 +416,7 @@ export default {
     },
     created() {
         this.getSettings();
-        // this.getInbox();
+        this.getOutbox();
         // this.getEmployeeParentChild();
     },
     computed: {
