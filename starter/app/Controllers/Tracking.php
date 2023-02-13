@@ -226,8 +226,8 @@ class Tracking extends BaseController
 					// $db->table('siswa')->insert($simpandata);
 					// session()->setFlashdata('message','Berhasil import excel');
 					if(!in_array($number, $resultExcelData)){
-						$filteredItems = array_filter($resultExcelData, function($elem) use($number,$agendaNumber){
-							return $elem['number'] == $number &&  $elem['agendaNumber'] == $agendaNumber;
+						$filteredItems = array_filter($resultExcelData, function($elem) use($number){
+							return $elem['number'] == $number;
 						});
 						if(count($filteredItems) == 0){
 							$resultExcelData[] = $simpandata; 
