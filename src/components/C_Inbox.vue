@@ -374,8 +374,9 @@ export default {
             var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
             var newNumber = maxDataFromLocal + 1;
             if (this.recipient) {
-                this.recipient.forEach(element => {
+                this.recipient.forEach((key, element) => {
                     var newData = {
+                        trackingid: (String(moment()) + key + Math.random().toString(36).slice(5)).toLowerCase(),
                         agendaNumber: this.detailDataRow.agendaNumber, receiptDate: this.detailDataRow.receiptDate, realDate: this.detailDataRow.realDate, type: this.detailDataRow.type,
                         from: this.detailDataRow.from, to: element.value, isUnknown: this.detailDataRow.isUnknown, description: this.detailDataRow.description,
                         number: this.detailDataRow.number,
