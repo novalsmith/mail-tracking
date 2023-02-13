@@ -405,9 +405,7 @@ export default {
                 this.loadingUploadButton = false;
                 this.isShowAlertDialogDetail = true;
                 await this.getSettings(this.detailDataRow.agendaNumber);
-                setTimeout(() => {
-                    this.isShowAlertDialogDetail = false;
-                }, 2000);
+
             } catch (error) {
                 console.log(error);
             }
