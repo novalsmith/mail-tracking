@@ -131,7 +131,7 @@
                         {{ item.unitTo }} <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
                     </v-chip>
                     <v-chip v-else color="orange" dark>
-                        {{ item.unitTo }} Tidak ada <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                        {{ item.unitTo }} Unknown <v-icon class="mx-1">mdi-alert-outline</v-icon>
                     </v-chip>
                 </template>
 
