@@ -330,7 +330,7 @@ export default {
                     this.isShowTable = true;
                 }
                 this.isLoading = false;
-
+                this.listData = [];
             } catch (error) {
                 this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -416,7 +416,7 @@ export default {
     },
     created() {
         this.getSettings();
-        this.getOutbox();
+        // this.getOutbox();
         // this.getEmployeeParentChild();
     },
     computed: {

@@ -417,11 +417,10 @@ export default {
                 { text: 'Tgl. Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
-                // { text: 'Kepada', value: 'toName' },
                 { text: 'Kepada', value: 'to', width: '15%' },
-                { text: 'Uploader', value: 'unitTo', width: '5%' },
                 { text: 'Isi Ringkasan', value: 'note' },
                 { text: 'Keterangan', value: 'ket', width: '10%' },
+                { text: 'Uploader', value: 'unitTo', width: '5%' },
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
@@ -432,11 +431,11 @@ export default {
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
                 { text: 'Dari', value: 'from', width: '15%' },
                 { text: 'Kepada', value: 'to', width: '15%' },
-                { text: 'Uploader', value: 'unitTo', width: '5%' },
                 { text: 'Ket', value: 'desc', width: '5%' },
                 { text: 'Isi Ringkasan', value: 'note', width: '25%' },
                 { text: 'Status', value: 'status', width: '10%' },
-                { text: 'Detail', value: 'data-table-expand' }
+                { text: 'Detail', value: 'data-table-expand' },
+                { text: 'Uploader', value: 'unitTo', width: '5%' },
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
