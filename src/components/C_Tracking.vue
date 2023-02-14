@@ -432,7 +432,7 @@ export default {
                 },
                 {
                     id: "N",
-                    name: "Tidak"
+                    name: "Bukan"
                 }
             ],
             headers: [
