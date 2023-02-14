@@ -23,6 +23,7 @@ class ModelTracking extends Model
             $to = $searchingParams["to"];
             $ket = $searchingParams["ket"];
             $note = $searchingParams["note"];
+            $isUnknown = $searchingParams["isUnknown"];
             $dateActionTerimaStart = $searchingParams["dateActionTerimaStart"];
             $dateActionTerimaEnd = $searchingParams["dateActionTerimaEnd"];
             $dateActionSuratStart = $searchingParams["dateActionSuratStart"];
@@ -56,6 +57,10 @@ class ModelTracking extends Model
                 $builder->like("note",  $note);
             }
 
+            if(!empty($isUnknown)){
+                $builder->where("isUnknown",  $isUnknown);
+            }
+
             if(!empty($dateActionTerimaStart) && !empty($dateActionTerimaEnd)){
                $builder->where("receiptDate BETWEEN '$dateActionTerimaStart' AND '$dateActionTerimaEnd'");
             //    $builder->where('receiptDate >=', $dateActionTerimaStart);
@@ -76,7 +81,7 @@ class ModelTracking extends Model
                   }
              }
         }
-        $builder->where("isUnknown",'N');
+        // $builder->where("isUnknown",'N');
        $data =  $builder->get()->getResult(); 
         return $data;
     }

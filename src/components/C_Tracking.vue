@@ -75,13 +75,18 @@
                         <!-- show if is advanced search -->
                         <v-container v-if="isAdvanceSearch">
                             <v-row>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" md="4">
                                     <v-text-field dense label="Dari" v-model="filter.dari" outlined clearable
                                         required></v-text-field>
                                 </v-col>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" md="4">
                                     <v-text-field dense label="Kepada" v-model="filter.kepada" outlined clearable
                                         required></v-text-field>
+                                </v-col>
+
+                                <v-col md="4">
+                                    <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
+                                        item-text="name" item-value="id" label="Unknown?"></v-select>
                                 </v-col>
 
                             </v-row>
@@ -141,7 +146,16 @@
                             {{ values }}</li>
                     </ul>
                 </template>
+                <template v-slot:item.statusUnknown="{ item }">
 
+                    <!-- <p v-else :class="'blue--text'">Tidak</p> -->
+                    <v-chip v-if="item.isUnknown == 'Y'" color="info">
+                        Ya
+                    </v-chip>
+                    <v-chip v-else color="default">
+                        Bukan
+                    </v-chip>
+                </template>
             </v-data-table>
         </v-card>
 
@@ -389,7 +403,8 @@ export default {
                 tglSuratEnd: "",
                 modalDateTglTerima: null,
                 modalDateTglSurat: null,
-                searchingParams: []
+                searchingParams: [],
+                unknownModelData: []
             },
             files: [],
             alertNotready: false,
@@ -406,6 +421,20 @@ export default {
             content: [],
             userLocalData: [],
             parsed: false,
+            unknownData: [
+                {
+                    id: "",
+                    name: "Semua"
+                },
+                {
+                    id: "Y",
+                    name: "Ya"
+                },
+                {
+                    id: "N",
+                    name: "Tidak"
+                }
+            ],
             headers: [
                 { text: 'No', value: 'num' },
                 { text: 'No. Agenda', value: 'agendaNumber' },
@@ -418,6 +447,8 @@ export default {
                 { text: 'Isi Ringkasan', value: 'note' },
                 { text: 'Keterangan', value: 'ket', width: '10%' },
                 { text: 'Uploader', value: 'unitTo', width: '5%' },
+                { text: 'Unknown?', value: 'statusUnknown', width: '5%' },
+
             ],
             headersReview: [
                 { text: 'No', value: 'num' },
@@ -541,9 +572,11 @@ export default {
                 dateActionTerimaEnd: dateActionTerimaEnd,
                 dateActionSuratStart: dateActionSuratStart,
                 dateActionSuratEnd: dateActionSuratEnd,
-                note: this.filter.isiRingkasan
+                note: this.filter.isiRingkasan,
+                isUnknown: this.filter.unknownModelData
             };
             this.filter.searchingParams = remappingParam;
+            console.log(this.filter.searchingParams);
             await this.getTracking();
         },
         submit() {
