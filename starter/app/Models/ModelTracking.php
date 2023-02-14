@@ -90,6 +90,23 @@ class ModelTracking extends Model
         return $data;
     }
 
+    function getTrackingTemp()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('v_tracking_temp');  
+       $data =  $builder->get()->getResult(); 
+        return $data;
+    }
+
+    function deleteData(){
+        $db = \Config\Database::connect(); 
+        $sql = "Delete from tracking_temp";  
+        $db->query($sql);
+            return   $sql;
+
+    }
+    
+
     function saveData($data){
         $isSuccess = false;
         $db = \Config\Database::connect();
@@ -99,6 +116,29 @@ class ModelTracking extends Model
             $isSuccess = true;
         }
         return  $isSuccess;
+    }
+
+    function saveDataTemp($data){
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $builderTable = $db->table('tracking_temp'); 
+        $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        return  $isSuccess;
+    }
+
+    function updateData(){
+        $db = \Config\Database::connect();
+     
+
+            $sql = "UPDATE tracking_temp
+            tracking_temp  INNER JOIN 
+             v_tracking_temp_duplicates  ON tracking_temp.number = v_tracking_temp_duplicates.number
+            SET tracking_temp.`status` = 'unknown'";  
+            $db->query($sql);
+                return   $sql;
     }
 
     function validateDumplicate($number,$unitTo){

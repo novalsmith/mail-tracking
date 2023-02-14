@@ -208,7 +208,6 @@ class Tracking extends BaseController
 						// }
 					} 
 					$simpandata = [
-						'indexNumber' => rand(5,10),
 						'agendaNumber' =>  $agendaNumber , 
 						'receiptDate' => $receiptDate, 
 						'number' => $number,  
@@ -218,63 +217,113 @@ class Tracking extends BaseController
 						'from'=> $from,
 						'unitTo' =>  $unitTo,					 
 						'to'=> $to,
-						'desc'=> $desc,
+						'ket'=> $desc,
 						'status' => $status,
 						"message" => $message
 					];
 	
 					// $db->table('siswa')->insert($simpandata);
 					// session()->setFlashdata('message','Berhasil import excel');
-					if(!in_array($number, $resultExcelData)){
-						$filteredItems = array_filter($resultExcelData, function($elem) use($number){
-							return $elem['number'] == $number;
-						});
-						if(count($filteredItems) == 0){
+				// 	if(!in_array($number, $resultExcelData)){
+				// 		$filteredItems = array_filter($resultExcelData, function($elem) use($number){
+				// 			return $elem['number'] == $number;
+				// 		});
+				// 		if(count($filteredItems) == 0){
 							$resultExcelData[] = $simpandata; 
-						}else{ 
-							$resultExcelDataDuplicate[] = $filteredItems;
-						}
-				}
+				// 		}else{ 
+				// 			$resultExcelDataDuplicate[] = $filteredItems;
+				// 		}
+				// }
 			}
 			// $a = array_unique($resultExcelData,SORT_REGULAR);
 			// $duplicates= array_diff($resultExcelData $a, );
-			$duplications = [];
-			foreach($resultExcelDataDuplicate as $key => $value){
-				foreach($resultExcelDataDuplicate[$key] as  $keys => $val){
-					// $resultExcelDataDuplicate[$key][$keys]['status'] = 'info';
-					$simpandata = [
-						'indexNumber' => rand(5,10),
-						'agendaNumber' =>  $val['agendaNumber'] , 
-						'receiptDate' =>   $val['receiptDate'] , 
-						'number' =>  $val['number'] , 
-						'realDate'=>  $val['realDate'] , 
-						'type'=>   $val['type'] , 
-						'note'=>   $val['note'] , 
-						'from'=>   $val['from'] , 
-						'unitTo' =>  	 $val['unitTo'] , 				 
-						'to'=> $val['to'] , 	
-						'desc'=>   $val['desc'] , 	
-						'status' => 'info', 
-						"message" =>  "No.Agenda ".$val['agendaNumber']." dan No.Surat ".$val['number']." Duplikasi data pada file excel."
-					];
-					$duplications[] = $simpandata;
-				}
+			// $duplications = [];
+			// foreach($resultExcelDataDuplicate as $key => $value){
+			// 	foreach($resultExcelDataDuplicate[$key] as  $keys => $val){
+			// 		// $resultExcelDataDuplicate[$key][$keys]['status'] = 'info';
+			// 		$simpandata = [
+			// 			'indexNumber' => rand(5,10),
+			// 			'agendaNumber' =>  $val['agendaNumber'] , 
+			// 			'receiptDate' =>   $val['receiptDate'] , 
+			// 			'number' =>  $val['number'] , 
+			// 			'realDate'=>  $val['realDate'] , 
+			// 			'type'=>   $val['type'] , 
+			// 			'note'=>   $val['note'] , 
+			// 			'from'=>   $val['from'] , 
+			// 			'unitTo' =>  	 $val['unitTo'] , 				 
+			// 			'to'=> $val['to'] , 	
+			// 			'desc'=>   $val['desc'] , 	
+			// 			'status' => 'info', 
+			// 			"message" =>  "No.Agenda ".$val['agendaNumber']." dan No.Surat ".$val['number']." Duplikasi data pada file excel."
+			// 		];
+			// 		$duplications[] = $simpandata;
+			// 	}
 				 
-			}
+			// }
+			$datas = $this->createToTemp($resultExcelData);
 			$responseData = [
 				// "a"=> count($a),
 				// "bb"=> count($resultExcelData),
 				// "duplicates" => $newData,
-				"responseData" => array_merge($duplications,$resultExcelData),
+				"responseData" => $this->model->getTrackingTemp(),
 				// "merging" => array_merge($newData,$resultExcelData),
 				"totalOriginalData" => (count($data)-1)
 			];
+			$this->model->deleteData();
 			return $this->respond($responseData, 200);
 			}
     }
 
 	
-	
+	public function createToTemp($listData)
+	{
+		$modelTracking = new ModelTracking(); 
+		// $data = $this->request->getPost('listData');
+		$isSuccess = false;
+		if (!empty($listData)) {
+			// $listData = json_decode($data); 
+			$resultExcelData = [];
+			$message = "";
+			$status = "";
+			foreach(array_chunk($listData,count($listData),true) as $rows) {
+				// foreach($rows as $x => $row) {
+				// 	$numberData = $this->model->validateDumplicate($row->number,$row->unitTo);
+				// 	if(!empty($numberData)){
+				// 		if(!empty($message)){
+				// 			$message .= ", ";
+				// 		}
+				// 		$message .= "Nomor surat $row->number sudah ada (Duplikasi)";
+				// 		$status = "error";
+					
+				// 		$simpandata = [
+				// 			'status' => $status,
+				// 			"message" => $message
+				// 		];
+				// 		$resultExcelData[] = $simpandata;
+				// 	}
+				// }
+				
+				// if(empty($status)){
+					$trackingData = $modelTracking->saveDataTemp($rows);
+					if($trackingData){
+						$response = [
+							"status" => 'success',
+							"message" => ""
+						];
+						$resultExcelData[] = $response;
+						// return $this->respond($response);
+					}
+				// }
+			}
+			$modelTracking->updateData();
+
+			// if(!empty($status)){
+				return $this->respond($resultExcelData, 200);
+			// }
+		} 
+		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
+	}
+
 	public function create()
 	{
 		$modelTracking = new ModelTracking(); 

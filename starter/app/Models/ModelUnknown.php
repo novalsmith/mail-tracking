@@ -19,6 +19,75 @@ class ModelUnknown extends Model
         return $data;
     }
 
+    function getUnknowns($searchingParams)
+    {
+        $builder = $this->table("v_inbox");
+        if(!empty($searchingParams)){
+            $type = $searchingParams["type"];
+            $number = $searchingParams["number"];
+            $agendaNumber = $searchingParams["agendaNumber"];
+            $from = $searchingParams["from"];
+            $to = $searchingParams["to"];
+            $ket = $searchingParams["ket"];
+            $note = $searchingParams["note"];
+            $dateActionTerimaStart = $searchingParams["dateActionTerimaStart"];
+            $dateActionTerimaEnd = $searchingParams["dateActionTerimaEnd"];
+            $dateActionSuratStart = $searchingParams["dateActionSuratStart"];
+            $dateActionSuratEnd = $searchingParams["dateActionSuratEnd"];
+           
+            if(!empty($agendaNumber)){
+                $builder->like("agendaNumber",  $agendaNumber);
+            }
+
+            if(!empty($number)){
+                    $builder->like("number",  $number);
+            }
+
+            if(!empty($type)){
+                $builder->like("type",  $type);
+            }
+
+            if(!empty($from)){
+                $builder->like("from",  $from);
+            }
+
+            if(!empty($to)){
+                $builder->like("to",  $to);
+            }
+
+            if(!empty($ket)){
+                $builder->like("ket",  $ket);
+            }
+
+            if(!empty($note)){
+                $builder->like("note",  $note);
+            }
+
+            if(!empty($dateActionTerimaStart) && !empty($dateActionTerimaEnd)){
+               $builder->where("receiptDate BETWEEN '$dateActionTerimaStart' AND '$dateActionTerimaEnd'");
+            //    $builder->where('receiptDate >=', $dateActionTerimaStart);
+            //    $builder->where('receiptDate <=', $dateActionTerimaEnd);
+            }else{
+                if(!empty($dateActionTerimaStart)){
+                    $builder->where('receiptDate', $dateActionTerimaStart);
+                 }
+            }
+
+            if(!empty($dateActionSuratStart) && !empty($dateActionSuratEnd)){
+                $builder->where("realDate BETWEEN '$dateActionSuratStart' AND '$dateActionSuratEnd'");
+                // $builder->where('realDate >=', $dateActionSuratStart);
+                // $builder->where('realDate <=', $dateActionSuratEnd);
+             }else{
+                 if(!empty($dateActionSuratStart)){
+                     $builder->where("realDate",$dateActionSuratStart); 
+                  }
+             }
+        }
+        $builder->where("isUnknown",'N');
+       $data =  $builder->get()->getResult(); 
+        return $data;
+    }
+
     function getUnknownById($param)
     {
         $dbs = \Config\Database::connect();  

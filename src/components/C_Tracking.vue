@@ -30,9 +30,6 @@
             <v-form>
                 <v-container>
                     <v-row>
-
-
-
                         <v-col cols="12" md="3">
                             <v-text-field dense outlined v-model="filter.noAgenda" label="Nomor Agenda"
                                 required></v-text-field>
@@ -222,7 +219,7 @@
                                 {{ responseSummaryDataReview.totalSuccess }} Ready to save</v-chip>
 
                             <v-chip class="mx-3" :outlined="uploadStatus.info" color="blue" dark
-                                @click="filterUploadedData('info')"> <v-icon
+                                @click="filterUploadedData('unknown')"> <v-icon
                                     class="mr-1">mdi-information-outline</v-icon>
                                 {{ responseSummaryDataReview.totalUnknown }} Unknown</v-chip>
 
@@ -245,7 +242,7 @@
                             {{ index+ 1 }}
                         </template>
                         <template v-slot:item.status="{ index, item }">
-                            <span v-if="item.status == 'info'"><v-icon color="blue">mdi-information-outline</v-icon>
+                            <span v-if="item.status == 'unknown'"><v-icon color="blue">mdi-information-outline</v-icon>
                                 Unknown</span>
                             <span v-if="item.status == 'error'"><v-icon color="red">mdi-close-circle-outline</v-icon>
                                 Error</span>
@@ -253,7 +250,7 @@
                                     color="cyan darken-2">mdi-check-circle-outline</v-icon> Ready to save</span>
                         </template>
                         <template v-slot:item.data-table-expand="{ item, expand, isExpanded }">
-                            <td v-if="item.status == 'error' || item.status == 'info'" class="text-start">
+                            <td v-if="item.status == 'error' || item.status == 'unknown'" class="text-start">
                                 <v-btn icon @click="expand(!isExpanded)" class="v-data-table__expand-icon"
                                     :class="{ 'v-data-table__expand-icon--active': isExpanded }">
                                     <v-icon>mdi-chevron-down</v-icon>
@@ -647,8 +644,8 @@ export default {
                     from: e.from,
                     fromPrefix: (e.from.toLowerCase()).replaceAll(' ', ''),
                     to: e.to,
-                    unitTo: (e.status === 'info' ? null : e.unitTo),
-                    isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.note,
+                    unitTo: (e.status === 'unknown' ? null : e.unitTo),
+                    isUnknown: (e.status === 'unknown' ? 'Y' : 'N'), description: e.note,
                     number: e.number,
                     note: e.note,
                     createdBy: createdBy,
@@ -802,11 +799,11 @@ export default {
                 this.uploadStatus.all = false;
             } else if (status == 'error') {
                 this.uploadStatus.error = false;
-            } else if (status == 'info') {
+            } else if (status == 'unknown') {
                 this.uploadStatus.info = false;
             } else if (status == 'success') {
                 this.uploadStatus.success = false;
-            } else if (status == 'info') {
+            } else if (status == 'unknown') {
                 this.uploadStatus.error = false;
             }
 
@@ -836,7 +833,7 @@ export default {
             this.responseSummaryDataReview.totalUploadedData = data.length;
             this.responseSummaryDataReview.totalErrors = data.filter((e) => e.status === 'error').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalSuccess = data.filter((e) => e.status === 'success').map((e) => { return { e } }).length;
-            this.responseSummaryDataReview.totalUnknown = data.filter((e) => e.status === 'info').map((e) => { return { e } }).length;
+            this.responseSummaryDataReview.totalUnknown = data.filter((e) => e.status === 'unknown').map((e) => { return { e } }).length;
             this.responseSummaryDataReview.totalOriginalSource = total;
         },
         splitString(item) {
