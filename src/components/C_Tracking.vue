@@ -86,7 +86,7 @@
 
                                 <v-col md="4">
                                     <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
-                                        item-text="name" item-value="id" label="Unknown?"></v-select>
+                                        item-text="name" item-value="id" label="Menu"></v-select>
                                 </v-col>
 
                             </v-row>
@@ -421,21 +421,21 @@ export default {
             unknownData: [
                 {
                     id: "",
-                    name: "Semua"
+                    name: "All"
                 },
                 {
                     id: "Y",
-                    name: "Ya"
+                    name: "Unknown Box"
                 },
                 {
                     id: "N",
-                    name: "Bukan"
+                    name: "Inbox"
                 }
             ],
             headers: [
                 { text: 'No', value: 'num' },
                 { text: 'No.Agenda', value: 'agendaNumber' },
-                { text: 'Tgl.Penermaan', value: 'receiptDate' },
+                { text: 'Tgl.Penerimaan', value: 'receiptDate' },
                 { text: 'No.Surat', value: 'number' },
                 { text: 'Tgl.Surat', value: 'realDate' },
                 { text: 'Sifat Surat', value: 'type' },
@@ -450,7 +450,7 @@ export default {
             headersReview: [
                 { text: 'No', value: 'num' },
                 { text: 'Agenda', value: 'agendaNumber', width: '5%' },
-                { text: 'Tgl.Penermaan', value: 'receiptDate', width: '5%' },
+                { text: 'Tgl.Penerimaan', value: 'receiptDate', width: '5%' },
                 { text: 'No Surat', value: 'number', width: '5%' },
                 { text: 'Tgl. Surat', value: 'realDate', width: '5%' },
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
