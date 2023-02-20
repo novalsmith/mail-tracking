@@ -148,11 +148,11 @@
                 <template v-slot:item.statusUnknown="{ item }">
 
                     <!-- <p v-else :class="'blue--text'">Tidak</p> -->
-                    <v-chip small v-if="item.isUnknown == 'Y'" color="info">
+                    <v-chip small v-if="item.isUnknown == 'Y'" color="orange" dark>
                         Ya
                     </v-chip>
-                    <v-chip small v-else color="default">
-                        Bukan
+                    <v-chip small v-else color="cyan darken2" dark>
+                        Inbox
                     </v-chip>
                 </template>
             </v-data-table>
@@ -444,7 +444,7 @@ export default {
                 { text: 'Isi Ringkasan', value: 'note' },
                 { text: 'Keterangan', value: 'ket', width: '10%' },
                 { text: 'Uploader', value: 'unitTo', width: '5%' },
-                { text: 'Unknown?', value: 'statusUnknown', width: '5%' },
+                { text: 'Menu', value: 'statusUnknown', width: '5%' },
 
             ],
             headersReview: [
