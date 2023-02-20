@@ -149,7 +149,7 @@
 
                     <!-- <p v-else :class="'blue--text'">Tidak</p> -->
                     <v-chip small v-if="item.isUnknown == 'Y'" color="orange" dark>
-                        Unknown Box <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                        Unknown Box
                     </v-chip>
                     <v-chip small v-else color="cyan darken2" dark>
                         Inbox
