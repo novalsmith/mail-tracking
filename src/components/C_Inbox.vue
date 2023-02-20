@@ -216,7 +216,8 @@
                                     </div>
                                 </v-col>
                                 <v-col md="12">
-                                    <v-btn class="mr-4 white--text" color="cyan darken-2" @click="submit">
+                                    <v-btn :disabled="disabledModalButtonSave" class="mr-4 white--text"
+                                        color="cyan darken-2" @click="submit">
                                         <v-icon>mdi-check</v-icon> Submit
                                     </v-btn>
                                     <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
@@ -401,6 +402,7 @@ export default {
                     name: "Bukan"
                 }
             ],
+            disabledModalButtonSave: false,
 
         }
     },
@@ -410,6 +412,7 @@ export default {
             var listData = [];
             var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
             var newNumber = maxDataFromLocal + 1;
+            this.disabledModalButtonSave = true;
             if (this.recipient) {
                 this.recipient.forEach((element, key) => {
                     console.log(element);
@@ -447,6 +450,7 @@ export default {
                 await this.getSettings(this.detailDataRow.agendaNumber);
                 this.dialogDetail = false;
                 this.getInbox();
+                this.disabledModalButtonSave = false;
 
             } catch (error) {
                 console.log(error);
