@@ -152,7 +152,7 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Agenda - {{ detailDataRow.agendaNumber }} - Perihal - {{
+                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} - Perihal - {{
                         detailDataRow.note
                     }}</v-toolbar-title>
                     <v-spacer></v-spacer>
