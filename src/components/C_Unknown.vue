@@ -123,8 +123,6 @@
                 </template>
 
                 <template v-slot:item.unitTo="{ item, index }">
-
-                    <!-- <v-btn v-if="item.unitTo ?? ''" small color="cyan darken-2" dark> {{ item.unitTo }}</v-btn> -->
                     <v-chip v-if="item.unitTo" color="cyan darken-2" dark>
                         {{ item.unitTo }} <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
                     </v-chip>
@@ -154,12 +152,20 @@
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
+                            <template v-slot:item.unit="{ item, index }">
+                                <v-chip v-if="item.level == 2 || item.level == 3" color="cyan darken-2" dark>
+                                    {{ item.positionName }}
+                                </v-chip>
+                            <!-- <v-chip v-else color="orange" dark>
+                                    {{ item.unitTo }} Unknown <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                                    </v-chip> -->
+                            </template>
                             <template v-slot:item.takeIt="{ item }">
 
                             <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
                                     color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                                                                </v-btn> -->
+                                                                                        </v-btn> -->
 
 
                                 <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
@@ -172,6 +178,7 @@
                                 </v-btn>
 
                             </template>
+
 
                         </v-data-table>
                     </v-card-text>
