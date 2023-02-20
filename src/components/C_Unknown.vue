@@ -159,7 +159,7 @@
                             <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
                                     color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                                                            </v-btn> -->
+                                                                                </v-btn> -->
 
 
                                 <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
@@ -260,7 +260,7 @@ export default {
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
                 { text: 'Isi Ringkasan', value: 'note', with: '10%' },
-                { text: 'Unit Tujuan', value: 'unitTo', with: '10%' },
+                { text: 'Tujuan', value: 'unitTo', with: '10%' },
 
             ],
             searchUnknown: "",
