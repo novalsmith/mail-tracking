@@ -159,7 +159,7 @@
                             <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
                                     color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                                                                    </v-btn> -->
+                                                                                        </v-btn> -->
 
 
                                 <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
@@ -292,7 +292,7 @@ export default {
                 this.isLoadingUnknown = true;
                 if (this.userDefault) {
                     var params = {
-                        params: { roleCode: this.userDefault.roleCode }
+                        params: { roleCode: this.userDefault.roleCode, isAdmin: this.userDefault.roleLevel }
                     };
 
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "parent", params);
