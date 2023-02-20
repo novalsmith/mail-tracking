@@ -417,7 +417,7 @@ export default {
                         trackingid: this.detailDataRow.trackingid,
                         // agendaNumber: this.detailDataRow.agendaNumber,
                         actionType: this.detailDataRow.type,
-                        from: this.detailDataRow.from,
+                        from: this.listLocalUserData.roleCode,
                         to: element.value,
                         // number: this.detailDataRow.number,
                         note: this.description,
@@ -446,6 +446,7 @@ export default {
                 this.isShowAlert = true;
                 await this.getSettings(this.detailDataRow.agendaNumber);
                 this.dialogDetail = false;
+                this.getInbox();
 
             } catch (error) {
                 console.log(error);
