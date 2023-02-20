@@ -8,6 +8,15 @@
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
+                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
+                    color="cyan darken-2 mr-2" class="white--text">
+                    <v-icon>mdi-upload</v-icon>
+                    Upload</v-btn>
+                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
+                    color="cyan darken-2 mr-2" class="white--text">
+                    <v-icon>mdi-file-excel-outline</v-icon>
+                    Original File</v-btn>
+                <v-divider vertical class="mx-2"></v-divider>
                 <v-btn class="mr-4 white--text" color="cyan darken-2" small dark @click="advanceSearch(false)"
                     v-if="isAdvanceSearch">
                     <v-icon>mdi-arrow-up-thin</v-icon>
@@ -22,36 +31,47 @@
             <v-form>
                 <v-container>
                     <v-row>
-
-                        <v-col cols="12" md="4">
-                            <v-select clearable :items="latterType" item-text="name" item-value="code"
-                                v-model="filter.sifatSurat" dense outlined label="Sifat Surat" multiple chips>
-                                <template v-slot:prepend-item>
-                                    <v-list-item ripple @mousedown.prevent @click="toggle">
-                                        <v-list-item-action>
-                                            <v-icon
-                                                :color="filter.sifatSurat.length > 0 ? 'cyan darken-2' : 'cyan darken-2'">
-                                                {{ icon }}
-                                            </v-icon>
-                                        </v-list-item-action>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Select All
-                                            </v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-divider class="mt-2"></v-divider>
-                                </template>
-                            </v-select>
-                        </v-col>
-
-                        <v-col cols="12" md="4">
-                            <v-text-field dense outlined clearable v-model="filter.noAgenda" label="Nomor Agenda"
+                        <v-col cols="12" md="3">
+                            <v-text-field dense outlined v-model="filter.noAgenda" label="Nomor Agenda"
                                 required></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="4">
+                        <v-col cols="12" md="3">
                             <v-text-field dense label="Nomor Surat" v-model="filter.noSurat" outlined clearable
                                 required></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglTerima" :return-value.sync="filter.modalDateTglTerima"
+                                persistent width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Terima" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionTerima" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglTerima.save(filter.modalDateTglTerima)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglSurat" :return-value.sync="filter.modalDateTglSurat" persistent
+                                width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Surat" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeSuratText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionSurat" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglSurat.save(filter.modalDateTglSurat)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
                         </v-col>
                         <!-- show if is advanced search -->
                         <v-container v-if="isAdvanceSearch">
@@ -61,35 +81,34 @@
                                         required></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.kepada" dense outlined
-                                        label="Kepada" multiple chips></v-combobox>
+                                    <v-text-field dense label="Kepada" v-model="filter.kepada" outlined clearable
+                                        required></v-text-field>
+                                </v-col>
+
+                                <v-col md="4">
+                                    <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
+                                        item-text="name" item-value="id" label="Unknown?"></v-select>
+                                </v-col>
+
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field dense label="Isi Ringkasan" v-model="filter.isiRingkasan" outlined
+                                        clearable required></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+
+                                    <v-text-field dense outlined clearable v-model="filter.sifatSurat" label="Sifat Surat"
+                                        required></v-text-field>
+
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox v-model="filter.keterangan" dense outlined label="Keterangan/Catatan"
-                                        multiple chips></v-combobox>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
-                                        label="Tgl. Penerimaan - Start" required></v-text-field>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
-                                        label="Tgl. Penerimaan - End" required></v-text-field>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratStart"
-                                        label="Tgl. Surat - Start"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratEnd"
-                                        label="Tgl. Surat - End"></v-text-field>
+                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Keterangan"
+                                        required></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
-                        <!-- show if is advanced search -->
                     </v-row>
                 </v-container>
             </v-form>
@@ -103,9 +122,8 @@
             </v-card-actions>
 
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
-                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
-                    transition="scale-transition">
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color" v-model="isShowAlert"
+                    elevation="2" icon="mdi-information-outline" border="left" dismissible transition="scale-transition">
                     {{ responseAlert.message }}
                 </v-alert>
             </v-container>
@@ -160,12 +178,12 @@
                                         required></v-text-field>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction"
-                                        persistent width="290px">
+                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction" persistent
+                                        width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field outlined dense v-model="dateAction"
-                                                label="Tanggal Tindak Lanjut" prepend-icon="mdi-calendar" readonly
-                                                v-bind="attrs" v-on="on"></v-text-field>
+                                            <v-text-field outlined dense v-model="dateAction" label="Tanggal Tindak Lanjut"
+                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
+                                                v-on="on"></v-text-field>
                                         </template>
                                         <v-date-picker dense v-model="dateAction" type="date" scrollable>
                                             <v-spacer></v-spacer>
@@ -188,13 +206,12 @@
                                     <div v-if="isReciverShow">
                                         <v-combobox
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
-                                            dense outlined v-model="recipient" label="Kepada" multiple
-                                            chips></v-combobox>
+                                            dense outlined v-model="recipient" label="Kepada" multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea v-model="description" dense outlined name="input-7-4"
-                                            label="Keterangan" value=""></v-textarea>
+                                        <v-textarea v-model="description" dense outlined name="input-7-4" label="Keterangan"
+                                            value=""></v-textarea>
 
                                     </div>
                                 </v-col>
@@ -248,8 +265,8 @@
 
                                             <v-list-item v-for="items in detailDataList.logData">
                                                 <v-list-item-content v-if="items.createdDate != null">
-                                                    <v-list-item-title> <v-btn dark x-small color="cyan darken-2"
-                                                            outlined fab>{{
+                                                    <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined
+                                                            fab>{{
                                                                 items.sequence
                                                             }} </v-btn> {{
     items.createdBy
@@ -291,11 +308,6 @@ import moment from 'moment';
 
 var maxlength = 18;
 export default {
-    // mixins: [validationMixin],
-    // validations: {
-    //     dari: { required, maxLength: maxLength(maxlength) },
-    //     password: { required, maxLength: maxLength(maxlength) },
-    // },
     data() {
         return {
             tabs: null,
@@ -335,16 +347,24 @@ export default {
                 color: ""
             },
             filter: {
-                sifatSurat: [],
+                range: true,
+                sifatSurat: "",
                 noAgenda: "",
                 noSurat: "",
                 dari: "",
-                kepada: [],
-                keterangan: [],
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
                 tglTerimaStart: "",
                 tglTerimaEnd: "",
                 tglSuratStart: "",
-                tglSuratEnd: ""
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+                searchingParams: [],
+                unknownModelData: ""
             },
             headers: [
                 { text: 'No', value: 'num' },
@@ -355,7 +375,8 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
-                { text: 'Isi Ringkasan', value: 'note' }
+                { text: 'Isi Ringkasan', value: 'note' },
+                { text: 'Assigned From', value: 'assignedFrom' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -363,7 +384,23 @@ export default {
             description: "",
             recipient: "",
             selectedType: "",
-            listLocalUserData: []
+            listLocalUserData: [],
+            userLocalData: [],
+            parsed: false,
+            unknownData: [
+                {
+                    id: "",
+                    name: "Semua"
+                },
+                {
+                    id: "Y",
+                    name: "Ya"
+                },
+                {
+                    id: "N",
+                    name: "Bukan"
+                }
+            ],
 
         }
     },
@@ -374,19 +411,22 @@ export default {
             var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
             var newNumber = maxDataFromLocal + 1;
             if (this.recipient) {
-                this.recipient.forEach((key, element) => {
+                this.recipient.forEach((element, key) => {
+                    console.log(element);
                     var newData = {
-                        trackingid: (String(moment()) + key + Math.random().toString(36).slice(5)).toLowerCase(),
-                        agendaNumber: this.detailDataRow.agendaNumber, receiptDate: this.detailDataRow.receiptDate, realDate: this.detailDataRow.realDate, type: this.detailDataRow.type,
-                        from: this.detailDataRow.from, to: element.value, isUnknown: this.detailDataRow.isUnknown, description: this.detailDataRow.description,
-                        number: this.detailDataRow.number,
-                        // note: this.description,
+                        trackingid: this.detailDataRow.trackingid,
+                        // agendaNumber: this.detailDataRow.agendaNumber,
+                        actionType: this.detailDataRow.type,
+                        from: this.detailDataRow.from,
+                        to: element.value,
+                        // number: this.detailDataRow.number,
+                        note: this.description,
                         createdBy: this.listLocalUserData.employeeId,
                         createdDate: new moment(this.dateAction).locale('id'),
-                        dataType: "Form",
-                        actionFollowUp: this.selectedType,
-                        sequence: newNumber, // auto increment
-                        actionFollowUpDescription: this.description
+                        actionDate: new moment(this.dateAction).locale('id'),
+                        // actionFollowUp: this.selectedType,
+                        // sequence: newNumber, // auto increment
+                        // actionFollowUpDescription: this.description
                     }
                     newNumber++;
                     listData.push(newData);
@@ -448,26 +488,84 @@ export default {
             }
 
         },
+        async clear() {
+            var remappingParam = {
+                sifatSurat: "",
+                noAgenda: "",
+                noSurat: "",
+                dari: "",
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
+                tglTerimaStart: "",
+                tglTerimaEnd: "",
+                tglSuratStart: "",
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+            };
+            this.filter = remappingParam;
+        },
+        async searching() {
+
+            var dateActionTerimaStart = "";
+            var dateActionTerimaEnd = "";
+
+            var dateActionSuratStart = "";
+            var dateActionSuratEnd = "";
+
+            if (this.filter.dateActionTerima.length == 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
+            }
+            if (this.filter.dateActionTerima.length > 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
+                dateActionTerimaEnd = this.filter.dateActionTerima[1];
+            }
+
+            if (this.filter.dateActionSurat.length == 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+            }
+            if (this.filter.dateActionSurat.length > 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+                dateActionSuratEnd = this.filter.dateActionSurat[1];
+            }
+
+            var remappingParam = {
+                uploader: this.listLocalUserData.roleCode,
+                isAdvancedSearch: this.isAdvanceSearch,
+                type: this.filter.sifatSurat,
+                number: this.filter.noSurat,
+                agendaNumber: this.filter.noAgenda,
+                from: this.filter.dari,
+                to: this.filter.kepada,
+                ket: this.filter.ket,
+                dateActionTerimaStart: dateActionTerimaStart,
+                dateActionTerimaEnd: dateActionTerimaEnd,
+                dateActionSuratStart: dateActionSuratStart,
+                dateActionSuratEnd: dateActionSuratEnd,
+                note: this.filter.isiRingkasan,
+                isUnknown: this.filter.unknownModelData
+            };
+            this.filter.searchingParams = remappingParam;
+            console.log(this.filter.searchingParams);
+            await this.getInbox();
+        },
         async getInbox() {
             try {
                 this.isLoading = true;
-                console.log(this.listLocalUserData);
-                if (this.listLocalUserData) {
-                    var params = {
-                        "params": [this.listLocalUserData.roleCode]
-                    };
-
-                    var response = await axios.post(process.env.VUE_APP_SERVICE_URL + "inbox/show", params);
-                    this.inboxListData = !!response ? response.data : [];
-                    const state = {
-                        data: !!response ? response.data : []
-                    }
-                    this.$store.dispatch('inboxs', state);
-                    this.inboxListData.forEach((item, i) => {
-                        item.indexNumber = i + 1;
-                    });
-                    await this.getEmployeeParentChild();
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox", { params: { searchingParams: this.filter.searchingParams } });
+                this.inboxListData = !!response ? response.data : [];
+                const state = {
+                    data: !!response ? response.data : []
                 }
+                this.$store.dispatch('inboxs', state);
+                this.inboxListData.forEach((item, i) => {
+                    item.indexNumber = i + 1;
+                });
+                await this.getEmployeeParentChild();
+
                 this.isLoading = false;
                 this.isShowTable = true;
 
@@ -504,39 +602,7 @@ export default {
             this.selectedType = row.actionFollowUp;
             await this.getSettings(row.agendaNumber);
         },
-        async searching() {
-            this.isShowTable = true;
-            var mappArraySifatSurat = [];
-            this.filter.sifatSurat.forEach(element => {
-                mappArraySifatSurat.push(element);
-            });
-            var mappArrayKepada = [];
-            this.filter.kepada.forEach(element => {
-                mappArrayKepada.push(element);
-            });
 
-            var mappArrayKet = [];
-            this.filter.keterangan.forEach(element => {
-                mappArrayKet.push(element);
-            });
-            var remappingParam = {
-                isAdvancedSearch: this.isAdvanceSearch,
-                sifatSurat: mappArraySifatSurat,
-                noSurat: this.filter.noSurat,
-                noAgenda: this.filter.noAgenda,
-                dari: this.filter.dari,
-                kepada: mappArrayKepada,
-                keterangan: mappArrayKet,
-                tglTerimaStart: this.tglTerimaStart,
-                tglTerimaEnd: this.tglTerimaEnd,
-                tglSuratStart: this.tglSuratStart,
-                tglSuratEnd: this.tglSuratEnd
-            }
-            await this.getInbox();
-        },
-        clear() {
-            this.isShowTable = false;
-        },
         selectedTypeEvnt() {
             console.log(this.selectedType);
             this.recipient = [];
@@ -587,7 +653,12 @@ export default {
         likesSomeFruit() {
             return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
         },
-
+        dateRangeText() {
+            return this.filter.dateActionTerima.join(' ~ ')
+        },
+        dateRangeSuratText() {
+            return this.filter.dateActionSurat.join(' ~ ')
+        },
     }
 }
 </script> 

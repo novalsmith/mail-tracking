@@ -63,22 +63,23 @@ class Tracking extends BaseController
 			// return $this->respond("Please use .xls or .xlxs",500);
 		}
 		$spreadsheet = $render->load($file_excel);
-		$newName = $file_excel->getName();
-		$file_excel->move('../public/nadineFiles', $newName);
+		$fileName = $file_excel->getName();
+		$file_excel->move('../public/nadineFiles', $fileName);
 		$chunkSize = 50;
 		$startRow = 0;
 		$maxRows = 3000;
 		$data = $spreadsheet->getActiveSheet()->toArray();
-		// if(count($data)-1 > $maxRows){
-		// 	$dataError = [
-		// 		"message" => "Sorry you have limit $maxRows records, please try again. "
-		// 	];
-		// 	return $this->respond($dataError,404);
-		// } 
+		$validation = $spreadsheet->getActiveSheet()->getCell('J1');
+		if(empty($validation->getValue())){
+			$dataError = [
+				"message" => "Maaf, file excel $fileName tidak memiliki Kolom 'Nomor'. Silahkan periksa lagi template anda dan coba lagi."
+			];
+			return $this->respond($dataError,404);
+		} 
 		$resultExcelData = [];
 		$resultExcelDataDuplicate = [];
 		$unitData = "";
-		$unitTo = explode ("_", $newName)[0];
+		$unitTo = explode ("_", $fileName)[0];
 		// Define how many rows we want to read for each "chunk"
 		
 			foreach(array_chunk($data,count($data),true) as $rows) {
@@ -96,26 +97,34 @@ class Tracking extends BaseController
 					$from =  $row[6];
 					$to =  $row[7];
 					$desc =  $row[8];
+					$indexNumber =  $row[9];
 					$status =  "success";
 					$message = "";
 	 
-					if (empty($number)) {
-						if(!empty($message)){
-							$message .= ", ";
-						}
-						$message .= "Nomor Surat tidak boleh kosong";
-						$status = "error";
-					}else{
+					// if (empty($number)) {
+					// 	if(!empty($message)){
+					// 		$message .= ", ";
+					// 	}
+					// 	$message .= "Nomor Surat tidak boleh kosong";
+					// 	$status = "error";
+					// }else{
 
 						// Do for all validation when doesn't have duplicate data
-						// $numberData = $this->model->validateDumplicate($number,$unitTo);
+						// $numberData = $this->model->validateDumplicate($number,$fileName, $indexNumber);
 						// if(!empty($numberData)){
 						// 	if(!empty($message)){
 						// 		$message .= ", ";
 						// 	}
-						// 	$message .= "Nomor surat $number sudah ada (Duplikasi)";
+						// 	$message .= "Duplikasi - Nomor surat $number, pada file $fileName sudah ada";
 						// 	$status = "error";
 						// }else{
+							if (empty($indexNumber)) {
+								if(!empty($message)){
+									$message .= ", ";
+								}
+								$message .= "No tidak boleh kosong";
+								$status = "error";
+							}
 							if (empty($to)) {
 								if(!empty($message)){
 									$message .= ", ";
@@ -205,8 +214,7 @@ class Tracking extends BaseController
 									$status = "error";
 								}
 							} 
-						// }
-					} 
+				 
 					$simpandata = [
 						'agendaNumber' =>  $agendaNumber , 
 						'receiptDate' => $receiptDate, 
@@ -218,6 +226,8 @@ class Tracking extends BaseController
 						'unitTo' =>  $unitTo,					 
 						'to'=> $to,
 						'ket'=> $desc,
+						'fileName'=> $fileName,
+						'indexNumber'=> $indexNumber,
 						'status' => $status,
 						"message" => $message
 					];
@@ -260,18 +270,19 @@ class Tracking extends BaseController
 			// 	}
 				 
 			// }
-			$datas = $this->createToTemp($resultExcelData);
+			 $this->createToTemp($resultExcelData);
 			$responseData = [
 				// "a"=> count($a),
 				// "bb"=> count($resultExcelData),
 				// "duplicates" => $newData,
-				"responseData" => $this->model->getTrackingTemp(),
+				// "responseData" => $this->model->getTrackingTemp(),
 				// "merging" => array_merge($newData,$resultExcelData),
+				"responseData" => $this->model->validationUploadTracking(),
 				"totalOriginalData" => (count($data)-1)
 			];
-			$this->model->deleteData();
+			// $this->model->deleteData();
 			return $this->respond($responseData, 200);
-			}
+		}
     }
 
 	
@@ -315,7 +326,7 @@ class Tracking extends BaseController
 					}
 				// }
 			}
-			$modelTracking->updateData();
+			// $modelTracking->updateData();
 
 			// if(!empty($status)){
 				return $this->respond($resultExcelData, 200);

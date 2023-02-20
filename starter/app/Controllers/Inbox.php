@@ -13,11 +13,14 @@ class Inbox extends BaseController
 		$this->model = new ModelInbox();
 	}
 	 
-	public function showData()
+	public function index()
 	{
-		$params = $this->request->getVar('params');
- 		$data = $this->model->getInboxByUnit($params);
-	    return $this->respond($data, 200);
+		// $params = $this->request->getVar('params');
+ 		// $data = $this->model->getInboxByUnit($params);
+	    // return $this->respond($data, 200);
+		$searchingParams = $this->request->getVar('searchingParams');
+		$data = $this->model->getInboxByUnit($searchingParams);
+		return $this->respond($data, 200);
 	}
 	public function log()
 	{

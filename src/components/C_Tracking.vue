@@ -42,8 +42,8 @@
                             <v-dialog ref="dialogmodalDateTglTerima" :return-value.sync="filter.modalDateTglTerima"
                                 persistent width="290px">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field outlined dense label="Tgl. Penerimaan" prepend-icon="mdi-calendar"
-                                        readonly v-bind="attrs" v-on="on" v-model="dateRangeText"></v-text-field>
+                                    <v-text-field outlined dense label="Tgl. Terima" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeText"></v-text-field>
                                 </template>
                                 <v-date-picker dense v-model="filter.dateActionTerima" range type="date" scrollable>
                                     <v-spacer></v-spacer>
@@ -56,8 +56,8 @@
                             </v-dialog>
                         </v-col>
                         <v-col cols="12" md="3">
-                            <v-dialog ref="dialogmodalDateTglSurat" :return-value.sync="filter.modalDateTglSurat"
-                                persistent width="290px">
+                            <v-dialog ref="dialogmodalDateTglSurat" :return-value.sync="filter.modalDateTglSurat" persistent
+                                width="290px">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-text-field outlined dense label="Tgl. Surat" prepend-icon="mdi-calendar" readonly
                                         v-bind="attrs" v-on="on" v-model="dateRangeSuratText"></v-text-field>
@@ -98,8 +98,8 @@
 
                                 <v-col cols="12" md="4">
 
-                                    <v-text-field dense outlined clearable v-model="filter.sifatSurat"
-                                        label="Sifat Surat" required></v-text-field>
+                                    <v-text-field dense outlined clearable v-model="filter.sifatSurat" label="Sifat Surat"
+                                        required></v-text-field>
 
                                 </v-col>
                                 <v-col cols="12" md="4">
@@ -121,9 +121,8 @@
             </v-card-actions>
 
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
-                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
-                    transition="scale-transition">
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color" v-model="isShowAlert"
+                    elevation="2" icon="mdi-information-outline" border="left" dismissible transition="scale-transition">
                     {{ responseAlert.message }}
                 </v-alert>
             </v-container>
@@ -138,7 +137,7 @@
                     nextIcon: 'mdi-plus'
                 }">
                 <template v-slot:item.num="{ index, item }">
-                    {{ index+ 1 }}
+                    {{ index + 1 }}
                 </template>
                 <template v-slot:item.to="{ item }">
                     <ul>
@@ -149,10 +148,10 @@
                 <template v-slot:item.statusUnknown="{ item }">
 
                     <!-- <p v-else :class="'blue--text'">Tidak</p> -->
-                    <v-chip v-if="item.isUnknown == 'Y'" color="info">
+                    <v-chip small v-if="item.isUnknown == 'Y'" color="info">
                         Ya
                     </v-chip>
-                    <v-chip v-else color="default">
+                    <v-chip small v-else color="default">
                         Bukan
                     </v-chip>
                 </template>
@@ -206,8 +205,7 @@
                         </form>
 
                     </v-main>
-                    <v-progress-linear v-show="loadingUploadButton" indeterminate
-                        color="cyan darken-2"></v-progress-linear>
+                    <v-progress-linear v-show="loadingUploadButton" indeterminate color="cyan darken-2"></v-progress-linear>
                     <v-divider></v-divider>
                     <v-card-title>
                         Status
@@ -223,8 +221,7 @@
                                 {{ responseSummaryDataReview.totalUploadedData }} Total Data</v-chip>
 
                             <v-chip class="mx-3" :outlined="uploadStatus.error" color="red" dark
-                                @click="filterUploadedData('error')"> <v-icon
-                                    class="mr-1">mdi-close-circle-outline</v-icon>
+                                @click="filterUploadedData('error')"> <v-icon class="mr-1">mdi-close-circle-outline</v-icon>
                                 {{ responseSummaryDataReview.totalErrors }} Errors</v-chip>
 
                             <v-chip class="mx-3" :outlined="uploadStatus.success" color="cyan darken-2" dark
@@ -253,7 +250,7 @@
                             nextIcon: 'mdi-plus'
                         }">
                         <template v-slot:item.num="{ index, item }">
-                            {{ index+ 1 }}
+                            {{ index + 1 }}
                         </template>
                         <template v-slot:item.status="{ index, item }">
                             <span v-if="item.status == 'unknown'"><v-icon color="blue">mdi-information-outline</v-icon>
@@ -404,7 +401,7 @@ export default {
                 modalDateTglTerima: null,
                 modalDateTglSurat: null,
                 searchingParams: [],
-                unknownModelData: []
+                unknownModelData: ""
             },
             files: [],
             alertNotready: false,
@@ -560,6 +557,8 @@ export default {
                 dateActionSuratEnd = this.filter.dateActionSurat[1];
             }
 
+            console.log(this.filter.unknownModelData);
+
             var remappingParam = {
                 isAdvancedSearch: this.isAdvanceSearch,
                 type: this.filter.sifatSurat,
@@ -677,14 +676,17 @@ export default {
                     from: e.from,
                     fromPrefix: (e.from.toLowerCase()).replaceAll(' ', ''),
                     to: e.to,
-                    unitTo: (e.status === 'unknown' ? null : e.unitTo),
-                    isUnknown: (e.status === 'unknown' ? 'Y' : 'N'), description: e.note,
+                    unitTo: e.unitTo,
+                    isUnknown: (e.status === 'unknown' ? 'Y' : 'N'),
+                    description: e.note,
                     number: e.number,
                     note: e.note,
                     createdBy: createdBy,
                     createdDate: createdDate,
                     dataType: "Upload",
-                    ket: e.desc
+                    ket: e.ket,
+                    fileName: e.fileName,
+                    indexNumber: e.indexNumber
                 }
             });
             // var listMultipleData = [];

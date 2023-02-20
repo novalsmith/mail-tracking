@@ -12,11 +12,32 @@ class ModelInbox extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    function getInboxByUnit($param)
+    function getInboxByUnit($searchingParams)
     {
-        $builder = $this->table("v_inbox");
-        $builder->whereIn("uploader", $param);
-       return  $builder->get()->getResult();
+    //     $builder = $this->table("v_inbox");
+    //     $builder->whereIn("uploader", $param);
+    //    return  $builder->get()->getResult();
+
+        $db = \Config\Database::connect();
+        $params = [
+            ($searchingParams['uploader'] ?? ''),
+            ($searchingParams["agendaNumber"] ?? ''),
+            ($searchingParams["number"] ?? ''),
+            ($searchingParams["type"] ?? ''),
+            ($searchingParams["from"] ?? ''),
+            ($searchingParams["to"] ?? ''),
+            ($searchingParams["ket"] ?? ''),
+            ($searchingParams["note"] ?? ''), 
+            ($searchingParams["dateActionTerimaStart"] ?? ''),
+            ($searchingParams["dateActionTerimaEnd"] ?? ''),
+            ($searchingParams["dateActionSuratStart"] ?? ''),
+            ($searchingParams["dateActionSuratEnd"] ?? '')
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getInbox(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        return $data;
        
     }
     public function getLog($agendaNumber)
@@ -41,7 +62,7 @@ class ModelInbox extends Model
     {
         $isSuccess = false;
         $db = \Config\Database::connect();
-        $builderTable = $db->table('tracking'); 
+        $builderTable = $db->table('formtransaction'); 
         $response = $builderTable->insertBatch($data);
         if($response){
             $isSuccess = true;
