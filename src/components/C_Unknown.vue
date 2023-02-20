@@ -103,17 +103,15 @@
             </v-card-actions>
 
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
-                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
-                    transition="scale-transition">
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color" v-model="isShowAlert"
+                    elevation="2" icon="mdi-information-outline" border="left" dismissible transition="scale-transition">
                     {{ responseAlert.message }}
                 </v-alert>
             </v-container>
 
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
-                class="mx-3 table-style" :items="listUnknownData != null ? listUnknownData : []"
-                :loading="isLoadingUnknown" :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
-                @click:row="takeItAction" :footer-props="{
+                class="mx-3 table-style" :items="listUnknownData != null ? listUnknownData : []" :loading="isLoadingUnknown"
+                :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''" @click:row="takeItAction" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -121,7 +119,7 @@
                     nextIcon: 'mdi-plus'
                 }">
                 <template v-slot:item.num="{ item, index }">
-                    {{ index+ 1}}
+                    {{ index + 1 }}
                 </template>
 
                 <template v-slot:item.unitTo="{ item, index }">
@@ -141,7 +139,7 @@
         </v-card>
 
         <v-row justify="center">
-            <v-dialog v-model="dialogUnknown" persistent max-width="500px">
+            <v-dialog v-model="dialogUnknown" persistent max-width="700px">
                 <v-card>
                     <v-card-title>
                         <span class="text-h5">Unit {{ userDefault.roleCode }}</span>
@@ -157,19 +155,22 @@
                                 {{ index + 1 }}
                             </template>
                             <template v-slot:item.takeIt="{ item }">
-                                <v-btn :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
-                                    color="cyan darken-2" class="white--text mr-2">
-                                    OK <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
-                                </v-btn>
-                                <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
+
+                            <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
                                     color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                </v-btn> -->
+                                                                            </v-btn> -->
 
-                                <v-btn v-if="item.unitTo != null" :disabled="disabledUnknownButton"
+
+                                <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
                                     @click="moveToInbox(item, true)" small color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
                                 </v-btn>
+                                <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
+                                    color="cyan darken-2" class="white--text mr-2">
+                                    OK <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                                </v-btn>
+
                             </template>
 
                         </v-data-table>
@@ -269,8 +270,8 @@ export default {
             },
             headersUnknown: [
                 { text: 'No', value: 'num', with: '10%' },
-                { text: 'Unit', value: 'code', with: '90%' },
-                { text: 'Pindahkan', value: 'takeIt', with: '10%' }
+                { text: 'Unit', value: 'positionName', with: '60%' },
+                { text: 'Pindahkan', value: 'takeIt', with: '20%' }
 
             ],
             headerprops: {
@@ -404,8 +405,8 @@ export default {
                 {
                     trackingid: row.trackingid,
                     unitTo: isCancel ? null : item.code,
-                    updateDate: moment().format('YYYY-MM-DD'),
-                    updateBy: row.createdBy
+                    updatedDate: moment().format('YYYY-MM-DD'),
+                    updatedBy: row.createdBy
                 }
             ]
             console.log(params);

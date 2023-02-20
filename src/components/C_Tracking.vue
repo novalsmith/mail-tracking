@@ -676,7 +676,7 @@ export default {
                     from: e.from,
                     fromPrefix: (e.from.toLowerCase()).replaceAll(' ', ''),
                     to: e.to,
-                    unitTo: e.unitTo,
+                    unitTo: (e.status === 'unknown' ? "" : e.unitTo),
                     isUnknown: (e.status === 'unknown' ? 'Y' : 'N'),
                     description: e.note,
                     number: e.number,

@@ -48,8 +48,8 @@ class Unknown extends BaseController
 			$params = [
 				"trackingid" => $listData[0]->trackingid,
 				"unitTo" => $listData[0]->unitTo,
-				"updatedDate" => $listData[0]->updateDate,
-				"updatedBy" => $listData[0]->updateBy
+				"updatedDate" => $listData[0]->updatedDate,
+				"updatedBy" => $listData[0]->updatedBy
 			];		
 			 
 			$trackingData = $this->model->updateData($trackingId,$params);
