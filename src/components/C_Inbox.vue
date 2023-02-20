@@ -514,6 +514,11 @@ export default {
             };
             this.filter = remappingParam;
         },
+        clearFormDialog() {
+            this.selectedType = "";
+            this.description = "";
+            this.recipient = "";
+        },
         async searching() {
 
             var dateActionTerimaStart = "";
@@ -596,6 +601,7 @@ export default {
             }
         },
         async rowClick(row) {
+
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
             console.log(row);
@@ -607,6 +613,8 @@ export default {
             // this.description = row.note;
             this.selectedType = row.actionFollowUp;
             await this.getSettings(row.agendaNumber);
+            this.clearFormDialog();
+
         },
 
         selectedTypeEvnt() {
