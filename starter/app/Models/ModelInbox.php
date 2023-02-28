@@ -20,7 +20,7 @@ class ModelInbox extends Model
 
         $db = \Config\Database::connect();
         $params = [
-            ($searchingParams['uploader'] ?? ''),
+            ($searchingParams['employeeId'] ?? ''),
             ($searchingParams["agendaNumber"] ?? ''),
             ($searchingParams["number"] ?? ''),
             ($searchingParams["type"] ?? ''),

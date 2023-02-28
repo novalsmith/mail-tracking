@@ -686,7 +686,8 @@ export default {
                     dataType: "Upload",
                     ket: e.ket,
                     fileName: e.fileName,
-                    indexNumber: e.indexNumber
+                    indexNumber: e.indexNumber,
+                    unitToEmployeeId: e.unitToEmployeeId
                 }
             });
             // var listMultipleData = [];

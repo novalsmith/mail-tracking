@@ -264,7 +264,7 @@
                                         <v-list three-line subheader class="my-5">
                                             <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
 
-                                            <v-list-item v-for="items in detailDataList.logData">
+                                            <v-list-item v-for="(items, key) in detailDataList.logData" :key="key">
                                                 <v-list-item-content v-if="items.createdDate != null">
                                                     <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined
                                                             fab>{{
@@ -544,7 +544,7 @@ export default {
             }
 
             var remappingParam = {
-                uploader: this.listLocalUserData.roleCode,
+                employeeId: this.listLocalUserData.employeeId,
                 isAdvancedSearch: this.isAdvanceSearch,
                 type: this.filter.sifatSurat,
                 number: this.filter.noSurat,
@@ -645,7 +645,7 @@ export default {
         var data = JSON.parse(localStorage.getItem('userData'));
         this.listLocalUserData = data.user;
         this.getSettings();
-        await this.getInbox();
+        await this.searching();
 
     },
     computed: {

@@ -103,9 +103,8 @@
             </v-card-actions>
 
             <v-container>
-                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
-                    v-model="isShowAlert" elevation="2" icon="mdi-information-outline" border="left" dismissible
-                    transition="scale-transition">
+                <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color" v-model="isShowAlert"
+                    elevation="2" icon="mdi-information-outline" border="left" dismissible transition="scale-transition">
                     {{ responseAlert.message }}
                 </v-alert>
             </v-container>
@@ -115,7 +114,7 @@
                 :loading-text="isLoading ? 'Loading... Please wait' : ''">
                 <template v-slot:item="{ item, index }">
                     <tr class="rowColor" @click="rowClick(item)">
-                        <td>{{ index + 1}}</td>
+                        <td>{{ index + 1 }}</td>
                         <td>{{ item.agendaNumber }}</td>
                         <td>{{ item.number }}</td>
                         <td>{{ item.receiptDate }}</td>
@@ -180,8 +179,7 @@
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple
-                                            chips></v-combobox>
+                                        <v-combobox :items="listItemsReciver" label="Kepada" multiple chips></v-combobox>
                                     </div>
 
                                     <div>
@@ -205,7 +203,7 @@
                     <v-list three-line subheader class="my-5">
                         <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
 
-                        <v-list-item v-for="items in detailDataList">
+                        <v-list-item v-for="(items, key) in detailDataList" :key="key">
                             <v-list-item-content v-if="items.createdDate != null">
                                 <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined fab>{{
                                     items.sequence
