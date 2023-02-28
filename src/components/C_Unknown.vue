@@ -139,7 +139,7 @@
         </v-card>
 
         <v-row justify="center">
-            <v-dialog v-model="dialogUnknown" persistent max-width="700px">
+            <v-dialog v-model="dialogUnknown" max-width="700px">
                 <v-card>
                     <v-card-title>
                         <span class="text-h5">Unit {{ userDefault.roleCode }}</span>
@@ -154,12 +154,23 @@
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
+                            <template v-slot:item.positionName="{ item }">
+                                
+                                <tr :class="item.level == '2' || item.level == '3' ? 'font-weight-bold' : ''"
+                                    @click="toggleColor(isSelected, select, $event)">
+                                    <td>
+                                        {{ item.positionName }}
+                                    </td>
+
+                                </tr>
+                            </template>
+
                             <template v-slot:item.takeIt="{ item }">
 
                             <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
                                     color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                                                                        </v-btn> -->
+                                                                                                                    </v-btn> -->
 
 
                                 <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
@@ -288,7 +299,7 @@ export default {
     methods: {
         async getUnitParent() {
             try {
-                console.log(this.userDefault);
+                // console.log();
                 this.isLoadingUnknown = true;
                 if (this.userDefault) {
                     var params = {
@@ -389,6 +400,9 @@ export default {
                 }
             })
         },
+        toggleColor(isSelected, select, e) {
+            select(!isSelected)
+        },
         async takeItAction(row) {
             await this.getUnitParent();
             this.dialogUnknown = true;
@@ -485,6 +499,11 @@ export default {
     -webkit-text-stroke: 0.8px #fff;
 } */
 .table-style>>>tbody tr:hover {
+    cursor: pointer;
+    background: #0097A7 !important;
+    color: white;
+}
+.activeParent {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;

@@ -80,10 +80,9 @@ export default {
   created() {
     this.getMenuData();
     var listData = JSON.parse(localStorage.getItem('userData'));
-    var isLogin = JSON.parse(localStorage.getItem('token'));
+    var isLogin = localStorage.getItem('token');
     this.users = listData != undefined && listData.user ? listData.user : [];
     this.isLogin = isLogin;
-    console.log(isLogin);
 
   },
   methods: {
