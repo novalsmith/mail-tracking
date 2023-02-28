@@ -1,7 +1,7 @@
 <template>
   <v-footer padless color="transparent">
     <!-- menus -->
-    <div v-if="!settings.screenSize.type.islg">
+    <div v-if="isLogin == '' && !settings.screenSize.type.islg">
       <v-navigation-drawer v-model="drawer" fixed left class="rounded-r-lg" style="position: fixed; z-index: 888;">
         <v-row class="my-1 mx-1">
           <v-col md="10">
@@ -68,7 +68,8 @@ export default {
     widgets: false,
     headerTitleValue: "",
     users: [],
-    menu: {}
+    menu: {},
+    isLogin: ""
   }),
   watch: {
     group() {
@@ -79,7 +80,11 @@ export default {
   created() {
     this.getMenuData();
     var listData = JSON.parse(localStorage.getItem('userData'));
+    var isLogin = JSON.parse(localStorage.getItem('token'));
     this.users = listData != undefined && listData.user ? listData.user : [];
+    this.isLogin = isLogin;
+    console.log(isLogin);
+
   },
   methods: {
     searchingButton() {
