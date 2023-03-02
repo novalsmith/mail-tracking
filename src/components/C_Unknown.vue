@@ -150,11 +150,11 @@
                         <v-data-table ref="unknownTable" :items-per-page="5" :loading="isLoadingUnknown"
                             :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
                             :footer-props="{ 'items-per-page-options': [5, 10, 50, 100, -1] }" :headers="headersUnknown"
-                            :items="listUnitUnknown" :search="searchUnknown">
+                            :items="listUnitUnknown" :search="searchUnknown" :item-class="itemRowBackground">
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
-                            <template v-slot:item.positionName="{ item }">
+                            <!-- <template v-slot:item.positionName="{ item }">
                                 
                                 <tr :class="item.level == '2' || item.level == '3' ? 'font-weight-bold' : ''"
                                     @click="toggleColor(isSelected, select, $event)">
@@ -163,7 +163,7 @@
                                     </td>
 
                                 </tr>
-                            </template>
+                            </template> -->
 
                             <template v-slot:item.takeIt="{ item }">
 
@@ -460,6 +460,16 @@ export default {
             }
 
 
+        },
+        itemRowBackground(item){
+            // <tr :class="item.level == '2' || item.level == '3' ? 'font-weight-bold' : ''"
+            //                         @click="toggleColor(isSelected, select, $event)">
+            //                         <td>
+            //                             {{ item.positionName }}
+            //                         </td>
+
+            //                     </tr>
+            return item.level == '2' || item.level == '3' ? 'font-weight-medium cyan lighten-5' : '';
         }
     },
     async created() {
