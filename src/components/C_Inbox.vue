@@ -152,9 +152,7 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} - Perihal - {{
-                        detailDataRow.description
-                    }}</v-toolbar-title>
+                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} </v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
@@ -252,7 +250,67 @@
                             <v-tab-item value="mobile-tabs-5-1">
                                 <v-card flat>
                                     <v-card-text>
-                                        <h3>Detail Surat</h3>
+                                        <v-list three-line subheader class="my-5">
+
+                                            <v-list-item>
+                                                <v-list-item-content>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Nomor Agenda
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.agendaNumber }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Nomor Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Tgl.enerimaan
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.receiptDate }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Tgl.Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.realDate }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Sifat Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.type }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.from }}
+                                                        </v-list-item-title>
+                                                    </div>
+
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.to }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Isi Ringkasan
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.description }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.actionType }}
+                                                        </v-list-item-title>
+                                                    </div>
+
+
+                                                </v-list-item-content>
+                                            </v-list-item>
+
+                                        </v-list>
                                     </v-card-text>
                                 </v-card>
                             </v-tab-item>

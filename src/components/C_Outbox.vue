@@ -149,82 +149,11 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} - Perihal - {{
-                        detailDataRow.description
-                    }}</v-toolbar-title>
+                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} </v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
                 <v-container>
-                    <v-main class="my-5">
-                        <v-col md="12" v-if="isShowAlertDialogDetail">
-                            <v-alert text dense close-icon="mdi-close-circle-outline" :color="responseAlert.color"
-                                elevation="2" icon="mdi-information-outline" border="left" dismissible
-                                transition="scale-transition">
-                                {{ responseAlert.message }}
-                            </v-alert>
-
-                        </v-col>
-                        <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Transaksi Surat</h3>
-                        <form class="my-10">
-
-
-                            <v-row>
-                                <v-col md="4">
-                                    <v-text-field :disabled="true" dense outlined v-model="userDefault" label="Dari"
-                                        required></v-text-field>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction" persistent
-                                        width="290px">
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field outlined dense v-model="dateAction" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                v-on="on"></v-text-field>
-                                        </template>
-                                        <v-date-picker dense v-model="dateAction" type="date" scrollable>
-                                            <v-spacer></v-spacer>
-                                            <v-btn text color="primary" @click="modalDate = false">
-                                                Cancel
-                                            </v-btn>
-                                            <v-btn text color="primary" @click="$refs.dialog.save(dateAction)">
-                                                OK
-                                            </v-btn>
-                                        </v-date-picker>
-                                    </v-dialog>
-                                </v-col>
-                                <v-col md="4">
-                                    <v-select :items="actionFollowUp" item-text="name" item-value="code"
-                                        v-model="selectedType" dense outlined @change="selectedTypeEvnt"
-                                        label="Tindak Lanjut"></v-select>
-                                </v-col>
-                                <v-col md="12">
-
-                                    <div v-if="isReciverShow">
-                                        <v-combobox
-                                            :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
-                                            dense outlined v-model="recipient" label="Kepada" multiple chips></v-combobox>
-                                    </div>
-
-                                    <div>
-                                        <v-textarea v-model="description" dense outlined name="input-7-4" label="Keterangan"
-                                            value=""></v-textarea>
-
-                                    </div>
-                                </v-col>
-                                <v-col md="12">
-                                    <v-btn :disabled="disabledModalButtonSave" class="mr-4 white--text"
-                                        color="cyan darken-2" @click="submit">
-                                        <v-icon>mdi-check</v-icon> Submit
-                                    </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
-                                        <v-icon>mdi-cached</v-icon> Clear
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-
-                        </form>
-                    </v-main>
                     <v-divider></v-divider>
 
 
@@ -235,7 +164,8 @@
                                 <v-tabs v-model="tabs" fixed-tabs>
                                     <v-tabs-slider></v-tabs-slider>
                                     <v-tab href="#mobile-tabs-5-1" class="primary--text">
-                                        <v-icon class="mx-2">mdi-file-document</v-icon> Detail Surat
+                                        <v-icon class="mx-2">mdi-file-document</v-icon>
+                                        Detail Surat
                                     </v-tab>
 
                                     <v-tab href="#mobile-tabs-5-2" class="primary--text">
@@ -249,7 +179,67 @@
                             <v-tab-item value="mobile-tabs-5-1">
                                 <v-card flat>
                                     <v-card-text>
-                                        <h3>Detail Surat</h3>
+                                        <v-list three-line subheader class="my-5">
+
+                                            <v-list-item>
+                                                <v-list-item-content>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Nomor Agenda
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.agendaNumber }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Nomor Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Tgl.enerimaan
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.receiptDate }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Tgl.Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.realDate }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1">Sifat Surat
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.type }}
+                                                        </v-list-item-title>
+                                                    </div> 
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.from }}
+                                                        </v-list-item-title>
+                                                    </div>
+
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.to }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Isi Ringkasan
+                                                        </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.description }}
+                                                        </v-list-item-title>
+                                                    </div>
+                                                    <div class="my-3">
+                                                        <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
+                                                        <v-list-item-title> {{ detailDataRow.actionType }}
+                                                        </v-list-item-title>
+                                                    </div>
+
+
+                                                </v-list-item-content>
+                                            </v-list-item>
+
+                                        </v-list>
                                     </v-card-text>
                                 </v-card>
                             </v-tab-item>
@@ -679,5 +669,4 @@ export default {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
-}
-</style>
+}</style>
