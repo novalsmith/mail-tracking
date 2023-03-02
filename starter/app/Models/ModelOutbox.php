@@ -12,13 +12,30 @@ class ModelOutbox extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    function getOutboxByUnit($code)
+    function getOutboxByUnit($searchingParams)
     {
-        $builder = $this->table("v_outbox");
-        $builder->where("code", $code);
-       return  $builder->get()->getResult();
+        $db = \Config\Database::connect();
+        $params = [
+            ($searchingParams['employeeId'] ?? ''),
+            ($searchingParams["agendaNumber"] ?? ''),
+            ($searchingParams["number"] ?? ''),
+            ($searchingParams["type"] ?? ''),
+            ($searchingParams["from"] ?? ''),
+            ($searchingParams["to"] ?? ''),
+            ($searchingParams["ket"] ?? ''),
+            ($searchingParams["note"] ?? ''), 
+            ($searchingParams["dateActionTerimaStart"] ?? ''),
+            ($searchingParams["dateActionTerimaEnd"] ?? ''),
+            ($searchingParams["dateActionSuratStart"] ?? ''),
+            ($searchingParams["dateActionSuratEnd"] ?? '')
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getOutbox(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        return $data;
        
-    }
+    } 
     public function getLog($agendaNumber)
     {
         $dbs = \Config\Database::connect();

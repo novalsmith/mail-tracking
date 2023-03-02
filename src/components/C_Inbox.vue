@@ -153,7 +153,7 @@
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} - Perihal - {{
-                        detailDataRow.note
+                        detailDataRow.description
                     }}</v-toolbar-title>
                     <v-spacer></v-spacer>
 
@@ -376,7 +376,7 @@ export default {
                 { text: 'Sifat Surat', value: 'type' },
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
-                { text: 'Isi Ringkasan', value: 'note' },
+                { text: 'Isi Ringkasan', value: 'description' },
                 { text: 'Assigned From', value: 'assignedFrom' }
             ],
             headerprops: {
@@ -419,7 +419,7 @@ export default {
                     var newData = {
                         trackingid: this.detailDataRow.trackingid,
                         // agendaNumber: this.detailDataRow.agendaNumber,
-                        actionType: this.detailDataRow.type,
+                        actionType: this.selectedType,
                         from: this.listLocalUserData.roleCode,
                         to: element.value,
                         // number: this.detailDataRow.number,

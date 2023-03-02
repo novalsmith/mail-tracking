@@ -15,9 +15,12 @@ class Outbox extends BaseController
 	 
 	public function index()
 	{
-		$code = $this->request->getVar('code');
- 		$data = $this->model->getOutboxByUnit($code);
-	    return $this->respond($data, 200);
+		// $code = $this->request->getVar('code');
+ 		// $data = $this->model->getOutboxByUnit($code);
+	    // return $this->respond($data, 200);
+		$searchingParams = $this->request->getVar('searchingParams');
+		$data = $this->model->getOutboxByUnit($searchingParams);
+		return $this->respond($data, 200);
 	}
 	public function log()
 	{

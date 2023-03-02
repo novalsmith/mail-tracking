@@ -13,11 +13,7 @@ class ModelInbox extends Model
     'realDate','type','note','from','to','description'];
 
     function getInboxByUnit($searchingParams)
-    {
-    //     $builder = $this->table("v_inbox");
-    //     $builder->whereIn("uploader", $param);
-    //    return  $builder->get()->getResult();
-
+    { 
         $db = \Config\Database::connect();
         $params = [
             ($searchingParams['employeeId'] ?? ''),
