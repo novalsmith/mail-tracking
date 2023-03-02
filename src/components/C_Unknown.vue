@@ -154,24 +154,8 @@
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
-                            <!-- <template v-slot:item.positionName="{ item }">
-                                
-                                <tr :class="item.level == '2' || item.level == '3' ? 'font-weight-bold' : ''"
-                                    @click="toggleColor(isSelected, select, $event)">
-                                    <td>
-                                        {{ item.positionName }}
-                                    </td>
-
-                                </tr>
-                            </template> -->
 
                             <template v-slot:item.takeIt="{ item }">
-
-                            <!-- <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item)" small
-                                    color="orange" class="white--text">
-                                    Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
-                                                                                                                    </v-btn> -->
-
 
                                 <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
                                     @click="moveToInbox(item, true)" small color="orange" class="white--text">
@@ -202,18 +186,9 @@
 
 <script>
 import axios from 'axios';
-import { validationMixin } from 'vuelidate'
-import { required, maxLength } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex';
 import moment from 'moment';
-
-var maxlength = 18;
 export default {
-    // mixins: [validationMixin],
-    // validations: {
-    //     dari: { required, maxLength: maxLength(maxlength) },
-    //     password: { required, maxLength: maxLength(maxlength) },
-    // },
     data() {
         return {
             isAdvanceSearch: false,
@@ -461,14 +436,8 @@ export default {
 
 
         },
-        itemRowBackground(item){
-            // <tr :class="item.level == '2' || item.level == '3' ? 'font-weight-bold' : ''"
-            //                         @click="toggleColor(isSelected, select, $event)">
-            //                         <td>
-            //                             {{ item.positionName }}
-            //                         </td>
+        itemRowBackground(item) {
 
-            //                     </tr>
             return item.level == '2' || item.level == '3' ? 'font-weight-medium cyan lighten-5' : '';
         }
     },
@@ -500,19 +469,12 @@ export default {
 </script> 
 
 <style lang="css" scoped>
-/* .table-style>>>tbody tr:hover {
-    cursor: pointer;
-    background: #0097A7 !important;
-    color: white;
-} */
-/* h1 {
-    -webkit-text-stroke: 0.8px #fff;
-} */
 .table-style>>>tbody tr:hover {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
 }
+
 .activeParent {
     cursor: pointer;
     background: #0097A7 !important;
