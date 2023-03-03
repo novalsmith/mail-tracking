@@ -141,7 +141,7 @@
         <v-row justify="center">
             <v-dialog v-model="dialogUnknown" max-width="700px">
                 <v-card>
-                    <v-card-title>
+                    <v-card-title class="dragable">
                         <span class="text-h5">Unit {{ userDefault.roleCode }}</span>
                     </v-card-title>
                     <v-card-text>
@@ -462,9 +462,12 @@ export default {
         },
         likesSomeFruit() {
             return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
-        },
+        }
+    },
 
-    }
+    mounted() {
+        this.activateMultipleDraggableDialogs();
+    },
 }
 </script> 
 
@@ -479,5 +482,9 @@ export default {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
+}
+
+.dragable {
+    cursor: all-scroll !important;
 }
 </style>

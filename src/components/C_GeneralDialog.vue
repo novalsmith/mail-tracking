@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="this.$store.state.settings['dialogData'].isShowDialog" scrollable persistent width="600px">
     <v-card>
-      <v-card-title>{{this.$store.state.settings['dialogData'].data?.title}}
+      <v-card-title>{{ this.$store.state.settings['dialogData'].data?.title }}
         <v-spacer></v-spacer>
         <v-btn :color="settings.color" icon class="white--text" @click="closeDialog()">
           <v-icon>
@@ -120,9 +120,6 @@ export default {
 
     }
   },
-  mounted() {
-    // this.initData();
-  },
   computed: {
     ...mapState(['settings'])
 
@@ -130,4 +127,4 @@ export default {
   components: {
   }
 }
-</script>
+</script> 

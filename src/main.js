@@ -9,6 +9,7 @@ import httpClientAxios from './auth/http-common'
 import Modal from './components/C_GeneralDialog.vue'
 import VuePapaParse from 'vue-papa-parse'
 import './registerServiceWorker'
+import mixins from 'vuetify-multiple-draggable-dialogs';
 
 Vue.config.productionTip = false
 
@@ -27,6 +28,7 @@ Vue.config.productionTip = false
 //     }
 //   }
 // });
+Vue.mixin(mixins);
 
 new Vue({
   axios,

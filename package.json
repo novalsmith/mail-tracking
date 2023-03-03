@@ -27,6 +27,7 @@
     "vuetify": "^2.6.0",
     "vuetify-daterange-picker": "^2.6.2",
     "vuetify-media-player": "^0.8.1",
+    "vuetify-multiple-draggable-dialogs": "^1.1.4",
     "vuex": "^3.6.2"
   },
   "devDependencies": {

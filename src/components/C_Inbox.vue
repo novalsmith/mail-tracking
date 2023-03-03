@@ -501,6 +501,7 @@ export default {
                 this.loadingUploadButton = true;
                 formdata.append("listData", JSON.stringify(listData));
                 await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                this.dialogDetail = false;
                 this.responseAlert.color = 'cyan darken-2';
                 this.responseAlert.message = "Data berhasil tersimpan dan masuk ke Outbox";
                 this.loadingUploadButton = false;
