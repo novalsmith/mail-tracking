@@ -27,7 +27,7 @@ class Unknown extends BaseController
 	    return $this->respond($data , 200);
 	} 
 	
-	public function create()
+	public function createss()
 	{
 		$modelTracking = new ModelTracking(); 
 		$data = $this->request->getPost('listData');
@@ -74,5 +74,26 @@ class Unknown extends BaseController
 	public function delete($id = null)
 	{
 		 // toto
+	}
+
+	public function create()
+	{
+		$data = $this->request->getPost('listData');
+		$isSuccess = false;
+		if (!empty($data)) {
+			$rows = json_decode($data); 
+			// foreach(array_chunk($countData,count($countData),true) as $rows) {
+				$trackingData = $this->model->saveData($rows);
+				if($trackingData){
+					$response = [
+						'status' => 200,
+						'error' => null,
+						'messages' => "Data Berhasil tersimpan"
+					];
+					return $this->respond($response);
+				}
+			// }
+		} 
+		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
 	}
 }

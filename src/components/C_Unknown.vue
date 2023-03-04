@@ -307,7 +307,7 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        getSettings() {
+        async getSettings() {
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user;
         },
@@ -349,8 +349,37 @@ export default {
             }
             // this.getUnknown();
         },
-        submit() {
-            this.$v.$touch()
+        async submit() {
+
+            try {
+
+
+                var listData = {
+                    trackingid: row.trackingid,
+                    from: this.listLocalUserData.roleCode,
+                    to: item.code,
+                    note: this.description,
+                    createdBy: this.listLocalUserData.employeeId,
+                    createdDate: new moment(this.dateAction).locale('id')
+                }
+                var formdata = new FormData();
+                this.loadingUploadButton = true;
+                formdata.append("listData", JSON.stringify(listData));
+                await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
+                this.dialogDetail = false;
+                this.responseAlert.color = 'cyan darken-2';
+                this.responseAlert.message = "Data berhasil tersimpan dan masuk ke Outbox";
+                this.loadingUploadButton = false;
+                this.isShowAlert = true;
+                await this.getSettings(this.detailDataRow.agendaNumber);
+                this.dialogDetail = false;
+                this.getInbox();
+                this.disabledModalButtonSave = false;
+
+            } catch (error) {
+                console.log(error);
+            }
+
         },
         clear() {
             this.isShowTable = false;
@@ -393,9 +422,11 @@ export default {
             var params = [
                 {
                     trackingid: row.trackingid,
-                    unitTo: isCancel ? null : item.code,
-                    updatedDate: moment().format('YYYY-MM-DD'),
-                    updatedBy: row.createdBy
+                    to: isCancel ? null : item.code,
+                    from:row.createdBy,
+                    createdDate: moment().format('YYYY-MM-DD'),
+                    createdBy: row.createdBy
+               
                 }
             ]
             console.log(params);
@@ -405,7 +436,7 @@ export default {
                     var formdata = new FormData();
                     this.disabledUnknownButton = true;
                     formdata.append("listData", JSON.stringify(params));
-                    formdata.append("trackingid", row.trackingid);
+                    // formdata.append("trackingid", row.trackingid);
 
                     var ResonseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'unknown/create', formdata);          // var unknown = data.filter((e) => e.status === 'info').map((e) => {
                     console.log(ResonseData);
@@ -442,7 +473,7 @@ export default {
         }
     },
     async created() {
-        this.getSettings();
+        await this.getSettings();
         await this.getUnknown();
         await this.getUnitParent();
 

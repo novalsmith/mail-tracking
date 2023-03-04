@@ -121,5 +121,17 @@ class ModelUnknown extends Model
         }
         return  $isSuccess;
     }
+
+    public function saveData($data)
+    {
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $builderTable = $db->table('unknown_transaction'); 
+        $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        return  $isSuccess;
+    }
  
 }
