@@ -274,7 +274,7 @@ export default {
     methods: {
         async getUnitParent() {
             try {
-                // console.log();
+
                 this.isLoadingUnknown = true;
                 if (this.userDefault) {
                     var params = {
@@ -283,6 +283,15 @@ export default {
 
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown/parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
+                    if (!!this.listUnitUnknown) {
+                        console.log(this.listUnitUnknown);
+                        console.log(this.detailUnknownData);
+                        var listData = this.listUnitUnknown.filter((e) => e.number.toLowerCase() == this.detailUnknownData.number.toLowerCase())
+                            .map((e) => { return e });
+                        console.log(listData);
+                        this.listUnitUnknown = (listData.length == 0 ? this.listUnitUnknown : listData);
+
+                    }
 
                     this.isLoadingUnknown = false;
                 }
@@ -408,9 +417,9 @@ export default {
             select(!isSelected)
         },
         async takeItAction(row) {
+            this.detailUnknownData = row;
             await this.getUnitParent();
             this.dialogUnknown = true;
-            this.detailUnknownData = row;
             this.searchUnknown = row.unitTo;
 
 
