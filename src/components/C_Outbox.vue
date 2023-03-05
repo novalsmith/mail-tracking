@@ -195,7 +195,7 @@
                                                         <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
                                                     </div>
                                                     <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.Penerimaan
+                                                        <v-list-item-subtitle class="my-1">Tgl.enerimaan
                                                         </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.receiptDate }}
                                                         </v-list-item-title>
@@ -211,7 +211,7 @@
                                                         </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.type }}
                                                         </v-list-item-title>
-                                                    </div>
+                                                    </div> 
                                                     <div class="my-3">
                                                         <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.from }}
@@ -364,7 +364,8 @@ export default {
                 { text: 'Dari', value: 'from' },
                 { text: 'Kepada', value: 'to' },
                 { text: 'Isi Ringkasan', value: 'description' },
-                { text: 'Tindakan', value: 'actionType' }
+                { text: 'Tindakan', value: 'actionType' },
+                { text: 'Assigned To', value: 'assignedTo' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -668,5 +669,4 @@ export default {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
-}
-</style>
+}</style>
