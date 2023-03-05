@@ -19,11 +19,11 @@ class Unknown extends BaseController
 		$data = $this->model->getUnknown();
 	    return $this->respond($data, 200);
 	} 
-	public function unitParent()
+	public function parent()
 	{
 		$unit = $this->request->getVar('roleCode');
 		$level = $this->request->getVar('isAdmin');
-		$data = $this->model->getUnitParent($unit,$level); 
+		$data = $this->model->getparent($unit,$level); 
 	    return $this->respond($data , 200);
 	} 
 	

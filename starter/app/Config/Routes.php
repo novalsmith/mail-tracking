@@ -49,7 +49,7 @@ $routes->get('/removefile', 'Tracking::removeUnusedFile');
 $routes->presenter('inbox'); 
 $routes->post('/inbox/log', 'Inbox::log');
 $routes->post('/inbox/show', 'Inbox::showData');
-$routes->get('/parent', 'Unknown::unitParent');
+$routes->get('/unknown/parent', 'Unknown::parent');
 $routes->presenter('unknown');
 $routes->presenter('outbox');
 

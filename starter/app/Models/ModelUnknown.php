@@ -97,7 +97,7 @@ class ModelUnknown extends Model
         return $data->get()->getResult(); 
     }
 
-    function getUnitParent($unit,$isAdmin){
+    function getparent($unit,$isAdmin){
         $dbs = \Config\Database::connect();  
         $builderTable = $dbs->table('v_unknown_unit');
         if($isAdmin != 0){

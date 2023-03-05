@@ -156,9 +156,9 @@
                             </template>
 
                             <template v-slot:item.takeIt="{ item }">
-
-                                <v-btn v-if="!!item.unitTo" :disabled="disabledUnknownButton"
-                                    @click="moveToInbox(item, true)" small color="orange" class="white--text">
+                                <v-btn v-if="!!item.unitTo && item.number == detailUnknownData.number"
+                                    :disabled="disabledUnknownButton" @click="moveToInbox(item, true)" small color="orange"
+                                    class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
                                 </v-btn>
                                 <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
@@ -281,7 +281,7 @@ export default {
                         params: { roleCode: this.userDefault.roleCode, isAdmin: this.userDefault.roleLevel }
                     };
 
-                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "parent", params);
+                    var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown/parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
 
                     this.isLoadingUnknown = false;
@@ -423,10 +423,10 @@ export default {
                 {
                     trackingid: row.trackingid,
                     to: isCancel ? null : item.code,
-                    from:row.createdBy,
+                    from: row.createdBy,
                     createdDate: moment().format('YYYY-MM-DD'),
                     createdBy: row.createdBy
-               
+
                 }
             ]
             console.log(params);
