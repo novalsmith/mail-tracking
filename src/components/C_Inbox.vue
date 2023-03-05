@@ -266,7 +266,7 @@
                                                         <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
                                                     </div>
                                                     <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.enerimaan
+                                                        <v-list-item-subtitle class="my-1">Tgl.Penerimaan
                                                         </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.receiptDate }}
                                                         </v-list-item-title>
