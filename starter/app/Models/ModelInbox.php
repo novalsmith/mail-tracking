@@ -27,10 +27,12 @@ class ModelInbox extends Model
             ($searchingParams["dateActionTerimaStart"] ?? ''),
             ($searchingParams["dateActionTerimaEnd"] ?? ''),
             ($searchingParams["dateActionSuratStart"] ?? ''),
-            ($searchingParams["dateActionSuratEnd"] ?? '')
+            ($searchingParams["dateActionSuratEnd"] ?? ''),
+            ($searchingParams["unitTo"] ?? '')
+            
         ];
         // Calling from Stored Procedure
-        $procedure = "CALL getInbox(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $procedure = "CALL getInbox(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $builder = $this->db->query($procedure, $params); 
         $data =  $builder->getResult(); 
         return $data;

@@ -150,15 +150,14 @@
                         <v-data-table ref="unknownTable" :items-per-page="5" :loading="isLoadingUnknown"
                             :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
                             :footer-props="{ 'items-per-page-options': [5, 10, 50, 100, -1] }" :headers="headersUnknown"
-                            :items="listUnitUnknown" :search="searchUnknown" :item-class="itemRowBackground">
+                            :items="listUnitUnknown.data" :search="searchUnknown" :item-class="itemRowBackground">
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
 
                             <template v-slot:item.takeIt="{ item }">
-                                <v-btn v-if="!!item.unitTo && item.number == detailUnknownData.number"
-                                    :disabled="disabledUnknownButton" @click="moveToInbox(item, true)" small color="orange"
-                                    class="white--text">
+                                <v-btn v-if="listUnitUnknown.isEdit" :disabled="disabledUnknownButton"
+                                    @click="moveToInbox(item, true)" small color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
                                 </v-btn>
                                 <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
@@ -180,7 +179,6 @@
                 </v-card>
             </v-dialog>
         </v-row>
-
     </v-container>
 </template>
 
@@ -267,20 +265,22 @@ export default {
             detailUnknownData: [],
             disabledUnknownButton: false,
             loadingUploadButton: false
-
-
         }
     },
     methods: {
         async getUnitParent() {
+            console.log(this.detailUnknownData);
             try {
-
                 this.isLoadingUnknown = true;
                 if (this.userDefault) {
                     var params = {
-                        params: { roleCode: this.userDefault.roleCode, isAdmin: this.userDefault.roleLevel }
+                        params: {
+                            roleCode: this.userDefault.roleCode,
+                            isAdmin: this.userDefault.roleLevel,
+                            number: this.detailUnknownData.number,
+                            unitTo: this.detailUnknownData.unitTo ?? ""
+                        }
                     };
-
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown/parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
                     if (!!this.listUnitUnknown) {
@@ -327,6 +327,7 @@ export default {
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             this.detailDataList = filteredList;
             this.dialogDetail = true;
+            console.log(this.detailDataRow);
         },
         async searching() {
             this.isShowTable = true;
@@ -359,10 +360,7 @@ export default {
             // this.getUnknown();
         },
         async submit() {
-
             try {
-
-
                 var listData = {
                     trackingid: row.trackingid,
                     from: this.listLocalUserData.roleCode,
@@ -388,7 +386,6 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-
         },
         clear() {
             this.isShowTable = false;
@@ -421,11 +418,8 @@ export default {
             await this.getUnitParent();
             this.dialogUnknown = true;
             this.searchUnknown = row.unitTo;
-
-
         },
         async moveToInbox(item, isCancel) {
-
             var row = this.detailUnknownData;
             console.log(row);
             var params = [
@@ -434,27 +428,23 @@ export default {
                     to: isCancel ? null : item.code,
                     from: row.createdBy,
                     createdDate: moment().format('YYYY-MM-DD'),
-                    createdBy: row.createdBy
-
+                    createdBy: row.createdBy,
+                    updatedDate: moment().format('YYYY-MM-DD'),
+                    updatedBy: row.createdBy
                 }
-            ]
-            console.log(params);
+            ];
 
             try {
                 if (params) {
                     var formdata = new FormData();
                     this.disabledUnknownButton = true;
                     formdata.append("listData", JSON.stringify(params));
-                    // formdata.append("trackingid", row.trackingid);
-
-                    var ResonseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'unknown/create', formdata);          // var unknown = data.filter((e) => e.status === 'info').map((e) => {
-                    console.log(ResonseData);
-
+                    var url = (isCancel ? 'unknown/delete' : 'unknown/create');
+                    await axios.post(process.env.VUE_APP_SERVICE_URL + url, formdata);
                     this.isShowAlert = true;
                     this.responseAlert.color = 'cyan darken-2';
                     this.responseAlert.message = "Data Berhasil Dipindahkan ke Unit " + item.code;
                     this.dialogUnknown = false;
-
                 } else {
                     this.isShowAlert = true;
                     this.responseAlert.color = 'error';
@@ -473,11 +463,8 @@ export default {
                 this.responseAlert.color = 'error';
                 this.responseAlert.message = error.response.data.message;
             }
-
-
         },
         itemRowBackground(item) {
-
             return item.level == '2' || item.level == '3' ? 'font-weight-medium cyan lighten-5' : '';
         }
     },
@@ -485,7 +472,6 @@ export default {
         await this.getSettings();
         await this.getUnknown();
         await this.getUnitParent();
-
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
@@ -504,7 +490,6 @@ export default {
             return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
         }
     },
-
     mounted() {
         this.activateMultipleDraggableDialogs();
     },

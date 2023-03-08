@@ -616,7 +616,8 @@ export default {
                 dateActionSuratStart: dateActionSuratStart,
                 dateActionSuratEnd: dateActionSuratEnd,
                 note: this.filter.isiRingkasan,
-                isUnknown: this.filter.unknownModelData
+                isUnknown: this.filter.unknownModelData,
+                unitTo: this.listLocalUserData.roleCode
             };
             this.filter.searchingParams = remappingParam;
             console.log(this.filter.searchingParams);
@@ -647,7 +648,6 @@ export default {
             }
         },
         async getSettings(agendaNumber) {
-
             try {
                 var formdata = new FormData();
                 this.loadingUploadButton = true;

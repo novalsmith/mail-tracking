@@ -14,7 +14,7 @@ class ModelUnknown extends Model
 
     function getUnknown()
     {
-        $builder = $this->table("v_inbox");
+        $builder = $this->table("v_unknown");
        $data =  $builder->get()->getResult(); 
         return $data;
     }
@@ -93,7 +93,7 @@ class ModelUnknown extends Model
         $dbs = \Config\Database::connect();  
         $builder = $dbs->table("v_tracking");
         // $builder->where('trackingid',$param->trackingid);
-       $data =  $builder->where('unitTo <>',$param->unitTo);
+       $data =  $builder->where('unitTo <>',$param->to);
         return $data->get()->getResult(); 
     }
 
@@ -101,9 +101,17 @@ class ModelUnknown extends Model
         $dbs = \Config\Database::connect();  
         $builderTable = $dbs->table('v_unknown_unit');
         if($isAdmin != 0){
-            $builderTable->where("parent", $unit); 
+            $builderTable->where("parent", $unit);  
         }
-        
+       $data =  $builderTable->get()->getResult(); 
+        return $data;
+    }
+
+    function getparentByNumberUnit($number, $unitTo){
+        $dbs = \Config\Database::connect();  
+        $builderTable = $dbs->table('v_unknown_unit');
+        $builderTable->where("unitTo", $unitTo); 
+        $builderTable->where("number", $number); 
 
        $data =  $builderTable->get()->getResult(); 
         return $data;
@@ -128,6 +136,19 @@ class ModelUnknown extends Model
         $db = \Config\Database::connect();
         $builderTable = $db->table('unknown_transaction'); 
         $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        return  $isSuccess;
+    }
+
+    public function deleteData($id)
+    {
+        $db = \Config\Database::connect();
+        $builderTable = $db->table('unknown_transaction'); 
+        $response =  $builderTable->where('trackingid', $id)->delete();
+        $isSuccess = false;
+       
         if($response){
             $isSuccess = true;
         }
