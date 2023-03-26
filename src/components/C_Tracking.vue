@@ -127,9 +127,9 @@
                 </v-alert>
             </v-container>
 
-            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3" :items="listData"
-                :search="search" :loading="isLoading" :loading-text="isLoading ? 'Loading... Please wait' : ''"
-                :footer-props="{
+            <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3 table-style"
+                :items="listData" :search="search" :loading="isLoading"
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -145,13 +145,13 @@
                             {{ values }}</li>
                     </ul>
                 </template>
-                <template v-slot:item.statusUnknown="{ item }">
+                <template v-slot:item.isUnknown="{ item }">
 
                     <!-- <p v-else :class="'blue--text'">Tidak</p> -->
                     <v-chip small v-if="item.isUnknown == 'Y'" color="orange" dark>
                         Unknown Box
                     </v-chip>
-                    <v-chip small v-else color="cyan darken2" dark>
+                    <v-chip small v-else color="cyan darken-2" dark>
                         Inbox
                     </v-chip>
                 </template>
@@ -174,7 +174,8 @@
                         <form class="my-5">
                             <v-row>
                                 <v-col md="4">
-                                    <v-file-input label="Browse File" v-model="uploadedValue"
+                                    <v-file-input :disabled="loadingUploadButton" label="Browse File"
+                                        v-model="uploadedValue"
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                         @change="handleFilesUpload" outlined chips truncate-length="50" dense
                                         prepend-icon="mdi-paperclip"></v-file-input>
@@ -278,13 +279,6 @@
                             <p class="my-2">
                                 {{ item.from }}
                             </p>
-                        </template>
-
-                        <template v-slot:item.to="{ item }">
-                            <ul>
-                                <li v-for="values in splitString(item.to)">
-                                    {{ values }}</li>
-                            </ul>
                         </template>
 
                     </v-data-table>
@@ -434,17 +428,17 @@ export default {
             ],
             headers: [
                 { text: 'No', value: 'num' },
-                { text: 'No.Agenda', value: 'agendaNumber' },
-                { text: 'Tgl.Penerimaan', value: 'receiptDate' },
-                { text: 'No.Surat', value: 'number' },
-                { text: 'Tgl.Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'type' },
-                { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'to', width: '15%' },
-                { text: 'Isi Ringkasan', value: 'note' },
-                { text: 'Keterangan', value: 'ket', width: '10%' },
-                { text: 'Uploader', value: 'unitTo', width: '5%' },
-                { text: 'Menu', value: 'statusUnknown', width: '5%' },
+                { text: 'No.Agenda', value: 'nomorAgenda' },
+                { text: 'Tgl.Penerimaan', value: 'tglPenerimaanDisplayText' },
+                { text: 'No.Surat', value: 'nomorSurat' },
+                { text: 'Tgl.Surat', value: 'tglSuratDisplayText' },
+                { text: 'Sifat Surat', value: 'sifatSurat' },
+                { text: 'Dari', value: 'dari' },
+                { text: 'Kepada', value: 'kepada', width: '15%' },
+                { text: 'Isi Ringkasan', value: 'isiRingkasan' },
+                { text: 'Keterangan', value: 'keterangan', width: '10%' },
+                { text: 'Uploader', value: 'unitUploader', width: '5%' },
+                { text: 'Menu', value: 'isUnknown', width: '5%' },
 
             ],
             headersReview: [
@@ -456,7 +450,7 @@ export default {
                 { text: 'Sifat Surat', value: 'type', width: '10%' },
                 { text: 'Dari', value: 'from', width: '15%' },
                 { text: 'Kepada', value: 'to', width: '15%' },
-                { text: 'Ket', value: 'desc', width: '5%' },
+                { text: 'Ket', value: 'ket', width: '5%' },
                 { text: 'Isi Ringkasan', value: 'note', width: '25%' },
                 { text: 'Status', value: 'status', width: '10%' },
                 { text: 'Detail', value: 'data-table-expand' },
@@ -473,7 +467,14 @@ export default {
                 success: true,
                 info: true
             },
-            isClearFile: true
+            isClearFile: true,
+            mappingMultipleRecipientParam: {
+                fileUpload: [],
+                nadineData: [],
+                inboxData: [],
+                unknownData: [],
+                historyData: []
+            }
         }
     },
     methods: {
@@ -622,11 +623,11 @@ export default {
         },
         async processUpload() {
             try {
-                var listData = this.mappingMultipleRecipient();
-                if (listData.length > 0) {
+                this.mappingMultipleRecipient(); // get all parameter
+                if (this.mappingMultipleRecipientParam.nadineData.length > 0) {
                     var formdata = new FormData();
                     this.loadingUploadButton = true;
-                    formdata.append("listData", JSON.stringify(listData));
+                    formdata.append("listData", JSON.stringify(this.mappingMultipleRecipientParam));
                     var ResonseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'tracking/create', formdata);          // var unknown = data.filter((e) => e.status === 'info').map((e) => {
                     console.log(ResonseData);
 
@@ -649,7 +650,7 @@ export default {
                 } else {
                     this.isShowAlertReview = true;
                     this.responseAlertReview.color = 'error';
-                    this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda..";
+                    this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda.";
                 }
 
                 // setTimeout(() => {
@@ -657,6 +658,9 @@ export default {
                 this.isLoadingReview = false;
                 // }, 5000);
             } catch (error) {
+                this.isShowAlertReview = true;
+                this.responseAlertReview.color = 'error';
+                this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;
                 this.isLoadingReview = false;
                 console.log(error);
             }
@@ -664,80 +668,86 @@ export default {
 
         mappingMultipleRecipient() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
-            var createdBy = this.userLocalData.employeeId;
-            var createdDate = new moment(new Date).locale('id');
+            var employeeId = this.userLocalData.employeeId;
+            var objectHistory = [];
+            var unitFilteUploader = data[0].unitTo;
+            this.mappingMultipleRecipientParam.fileUpload = {
+                fileUploadId: (String(employeeId + unitFilteUploader) + Math.random().toString(36).slice(3)).toLowerCase(),
+                fileName: this.uploadedValue.name,
+                unitUploader: unitFilteUploader,
+                uploadBy: employeeId,
+                uploadDate: new moment(new Date).locale('id')
+            };
 
-            var listData = data.filter((e) => e.status != "error").map((e) => {
+            this.mappingMultipleRecipientParam.nadineData = data.filter((e) => e.status != "error").map((e) => {
                 return {
-                    trackingid: (String(createdBy + e.unitTo) + Math.random().toString(36).slice(3)).toLowerCase(),
-                    unknownId: (String(createdBy) + Math.random().toString(36).slice(2)).toLowerCase(),
-                    agendaNumber: e.agendaNumber, receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                    realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'), type: e.type,
-                    from: e.from,
-                    fromPrefix: (e.from.toLowerCase()).replaceAll(' ', ''),
-                    to: e.to,
-                    unitTo: (e.status === 'unknown' ? "" : e.unitTo),
-                    isUnknown: (e.status === 'unknown' ? 'Y' : 'N'),
-                    description: e.note,
-                    number: e.number,
-                    note: e.note,
-                    createdBy: createdBy,
-                    createdDate: createdDate,
-                    dataType: "Upload",
-                    ket: e.ket,
-                    fileName: e.fileName,
-                    indexNumber: e.indexNumber,
-                    unitToEmployeeId: e.unitToEmployeeId
+                    trackingId: e.trackingId,
+                    fileUploadId: this.mappingMultipleRecipientParam.fileUpload.fileUploadId,
+                    nomorAgenda: e.agendaNumber,
+                    tglPenerimaan: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                    nomorSurat: e.number,
+                    tglSurat: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                    sifatSurat: e.type,
+                    isiRingkasan: e.note,
+                    dari: e.from,
+                    kepada: e.to,
+                    keterangan: e.ket,
+                    isiRingkasan: e.note,
+                    createdBy: employeeId,
+                    createdDate: new moment(new Date).locale('id')
                 }
             });
-            // var listMultipleData = [];
-            // var listSingleData = [];
-            // var maergeData = [];
 
-            // listData.forEach((e, index) => {
-            //     index = index + 1;
-            //     if (e.to.code.length > 0) {
-            //         e.to.code.forEach(element => {
-            //             var newData = {
-            //                 agendaNumber: e.agendaNumber,
-            //                 receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-            //                 realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-            //                 type: e.type,
-            //                 from: e.from, to: element.code, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
-            //                 number: e.number,
-            //                 ket: e.desc,
-            //                 note: e.note,
-            //                 createdBy: createdBy,
-            //                 createdDate: createdDate,
-            //                 dataType: "Upload",
-            //                 unitTo: e.unitTo,
-            //                 sequence: index // auto increment
+            this.mappingMultipleRecipientParam.inboxData = data.filter((e) => e.status == "success").map((e) => {
+                return {
+                    trackingId: e.trackingId,
+                    actionDate: new moment(new Date).locale('id'),
+                    actionType: 'NEW',
+                    from: employeeId,
+                    to: e.unitToEmployeeId,
+                    description: "Surat diUpload oleh " + unitFilteUploader,
+                    createdBy: employeeId,
+                    createdDate: new moment(new Date).locale('id')
+                }
+            });
 
-            //             }
-            //             listMultipleData.push(newData);
-            //         });
-            //     } else {
-            //         var newData = {
-            //             agendaNumber: e.agendaNumber,
-            //             receiptDate: moment(e.receiptDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-            //             realDate: moment(e.realDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-            //             type: e.type,
-            //             from: e.from, to: e.to.name, isUnknown: (e.status === 'info' ? 'Y' : 'N'), description: e.description,
-            //             number: e.number,
-            //             ket: e.desc,
-            //             createdBy: createdBy,
-            //             createdDate: createdDate,
-            //             dataType: "Upload",
-            //             note: e.note,
-            //             unitTo: e.unitTo,
-            //             sequence: 1 // auto increment
-            //         }
-            //         listSingleData.push(newData);
-            //     }
-            // });
+            this.mappingMultipleRecipientParam.unknownData = data.filter((e) => e.status == "unknown").map((e) => {
+                return {
+                    trackingId: e.trackingId,
+                    actionDate: new moment(new Date).locale('id'),
+                    actionType: 'NEW',
+                    from: employeeId,
+                    description: "Surat diUpload oleh " + unitFilteUploader,
+                    createdBy: employeeId,
+                    createdDate: new moment(new Date).locale('id')
+                }
+            });
 
-            // maergeData = listMultipleData.concat(listSingleData);
-            return listData;
+            // push inbox and unknown data into history
+            this.mappingMultipleRecipientParam.inboxData.forEach(e => {
+                objectHistory.push({
+                    trackingId: e.trackingId,
+                    menu: 'NADINE',
+                    type: 'NEW',
+                    description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Inbox",
+                    createdBy: employeeId,
+                    createdDate: new moment(new Date).locale('id')
+                });
+            });
+
+            this.mappingMultipleRecipientParam.unknownData.forEach(e => {
+                objectHistory.push({
+                    inboxId: this.detailDataRow.inboxId,
+                    trackingId: e.trackingId,
+                    menu: 'UNKNOWNBOX',
+                    type: 'NEW',
+                    description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Unknown",
+                    createdBy: employeeId,
+                    createdDate: new moment(new Date).locale('id')
+                });
+            });
+
+            this.mappingMultipleRecipientParam.historyData = objectHistory;
         },
         async clearUploadValue() {
             this.expanded = [];
@@ -817,7 +827,6 @@ export default {
                     item.indexNumber = i + 1;
                 });
             } catch (error) {
-                console.log(error.response.status);
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'red';
                 this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;

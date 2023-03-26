@@ -1,5 +1,4 @@
 <template>
-
     <v-row>
         <v-col lg="12">
             <h1 class="font-weight-medium" :color="color">Welcome to <br> Mail Track Minerba</h1>
@@ -8,8 +7,6 @@
 
         </v-col>
     </v-row>
-
-
 </template>
 
 <script>
@@ -23,6 +20,19 @@ export default {
         return {
             color: "grey darken-2"
         }
+    },
+    methods: {
+        async getData() {
+            try {
+                await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
+            } catch (error) {
+                console.log(error.response);
+                this.isLoading = false;
+            }
+        },
+    },
+    created() {
+        this.getData();
     }
 }
 </script>
@@ -42,6 +52,7 @@ p.description {
     /* color: #444444ba; */
 
 }
+
 /* h1 {
   -webkit-text-stroke: 0.8px #fff;
 } */

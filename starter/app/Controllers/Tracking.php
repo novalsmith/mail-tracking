@@ -5,6 +5,10 @@ namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ModelTracking;
 use App\Models\ModelUnit;
+use App\Models\ModelInbox;
+use App\Models\ModelUnknown;
+use App\Models\ModelHistory;
+use App\Models\ModelFileUpload; 
 
 class Tracking extends BaseController
 {
@@ -82,262 +86,167 @@ class Tracking extends BaseController
 		$unitTo = explode ("_", $fileName)[0];
 		// Define how many rows we want to read for each "chunk"
 		
-			foreach(array_chunk($data,count($data),true) as $rows) {
-				foreach($rows as $x => $row) {
-					if ($x == 0) {
-						continue;
-					} 
+		foreach(array_chunk($data,count($data),true) as $rows) {
+			foreach($rows as $x => $row) {
+				if ($x == 0) {
+					continue;
+				}  
+				$agendaNumber =  $row[0];
+				$receiptDate =  $row[1];
+				$number =  $row[2];
+				$realDate =  $row[3];
+				$type =  $row[4];
+				$note =  $row[5];
+				$from =  $row[6];
+				$to =  $row[7];
+				$desc =  $row[8];
+				$indexNumber =  $row[9];
+				$status =  "success";
+				$message = "";
+				if (empty($indexNumber)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "No tidak boleh kosong";
+					$status = "error";
+				}
+				if (empty($to)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Kepada/Penerima tidak boleh kosong";
+					$status = "error";
+				} 
 
-					$agendaNumber =  $row[0];
-					$receiptDate =  $row[1];
-					$number =  $row[2];
-					$realDate =  $row[3];
-					$type =  $row[4];
-					$note =  $row[5];
-					$from =  $row[6];
-					$to =  $row[7];
-					$desc =  $row[8];
-					$indexNumber =  $row[9];
-					$status =  "success";
-					$message = "";
-	 
-					// if (empty($number)) {
-					// 	if(!empty($message)){
-					// 		$message .= ", ";
-					// 	}
-					// 	$message .= "Nomor Surat tidak boleh kosong";
-					// 	$status = "error";
-					// }else{
+				// validation mandatory
+				if (empty($agendaNumber)) {
+					$message = "Nomor Agenda tidak boleh kosong";
+					$status = "error";
+				}
+				if (empty($receiptDate)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Tanggal Terima tidak boleh kosong";
+					$status = "error";
+				}
+				
+				if (empty($realDate)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Tanggal Surat tidak boleh kosong";
+					$status = "error";
+				}
+				if (empty($type)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Sifat Surat tidak boleh kosong";
+					$status = "error";
+				}else{
+					$typeMsg = array("segera", "sangatsegera", "biasa");
 
-						// Do for all validation when doesn't have duplicate data
-						// $numberData = $this->model->validateDumplicate($number,$fileName, $indexNumber);
-						// if(!empty($numberData)){
-						// 	if(!empty($message)){
-						// 		$message .= ", ";
-						// 	}
-						// 	$message .= "Duplikasi - Nomor surat $number, pada file $fileName sudah ada";
-						// 	$status = "error";
-						// }else{
-							if (empty($indexNumber)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "No tidak boleh kosong";
-								$status = "error";
-							}
-							if (empty($to)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Kepada/Penerima tidak boleh kosong";
-								$status = "error";
-							}
-							// else{
-							// 	$unitData = $modelUnit->getUnitByPrefixNameTo($to);
-							// 	if(empty($unitData)){
-							// 		if(!empty($message)){
-							// 			$message .= ", ";
-							// 		}
-							// 		$message .= "Kepada/Penerima tidak memiliki Unit (Uknown)";
-							// 		$status = "info";
-							// 	}
-							// } 
-		
-							// validation mandatory
-							if (empty($agendaNumber)) {
-								$message = "Nomor Agenda tidak boleh kosong";
-								$status = "error";
-							}
-							if (empty($receiptDate)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Tanggal Terima tidak boleh kosong";
-								$status = "error";
-							}
-							
-							if (empty($realDate)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Tanggal Surat tidak boleh kosong";
-								$status = "error";
-							}
-							if (empty($type)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Sifat Surat tidak boleh kosong";
-								$status = "error";
-							}else{
-								$typeMsg = array("segera", "sangatsegera", "biasa");
-			
-								if(!in_array(strtolower(str_replace(' ', '', $type)), $typeMsg)){
-									if(!empty($message)){
-										$message .= ", ";
-									}
-									$message .= "Kesalahan penamaan Sifat Surat $type";
-									$status = "error";
-								}
-							} 
-			
-							if (empty($note)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Isi Ringkasan/Catatan/Perihal tidak boleh kosong";
-								$status = "error";
-							}
-			
-							if (empty($from)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Dari/Pengirim tidak boleh kosong";
-								$status = "error";
-							} 
-		
-							if (empty($desc)) {
-								if(!empty($message)){
-									$message .= ", ";
-								}
-								$message .= "Keterangan Surat tidak boleh kosong";
-								$status = "error";
-							}else{
-								$typeMsg = array("asli", "salinan", "tembusan","biasa");
-			
-								if(!in_array(strtolower(str_replace(' ', '', $desc)), $typeMsg)){
-									if(!empty($message)){
-										$message .= ", ";
-									}
-									$message .= "Kesalahan penamaan Keteragan $desc";
-									$status = "error";
-								}
-							} 
-				 
-					$simpandata = [
-						'agendaNumber' =>  $agendaNumber , 
-						'receiptDate' => $receiptDate, 
-						'number' => $number,  
-						'realDate'=> $realDate,
-						'type'=> $type,
-						'note'=> $note,
-						'from'=> $from,
-						'unitTo' =>  $unitTo,					 
-						'to'=> $to,
-						'ket'=> $desc,
-						'fileName'=> $fileName,
-						'indexNumber'=> $indexNumber,
-						'status' => $status,
-						"message" => $message
-					];
-	
-					// $db->table('siswa')->insert($simpandata);
-					// session()->setFlashdata('message','Berhasil import excel');
-				// 	if(!in_array($number, $resultExcelData)){
-				// 		$filteredItems = array_filter($resultExcelData, function($elem) use($number){
-				// 			return $elem['number'] == $number;
-				// 		});
-				// 		if(count($filteredItems) == 0){
-							$resultExcelData[] = $simpandata; 
-				// 		}else{ 
-				// 			$resultExcelDataDuplicate[] = $filteredItems;
-				// 		}
-				// }
-			}
-			// $a = array_unique($resultExcelData,SORT_REGULAR);
-			// $duplicates= array_diff($resultExcelData $a, );
-			// $duplications = [];
-			// foreach($resultExcelDataDuplicate as $key => $value){
-			// 	foreach($resultExcelDataDuplicate[$key] as  $keys => $val){
-			// 		// $resultExcelDataDuplicate[$key][$keys]['status'] = 'info';
-			// 		$simpandata = [
-			// 			'indexNumber' => rand(5,10),
-			// 			'agendaNumber' =>  $val['agendaNumber'] , 
-			// 			'receiptDate' =>   $val['receiptDate'] , 
-			// 			'number' =>  $val['number'] , 
-			// 			'realDate'=>  $val['realDate'] , 
-			// 			'type'=>   $val['type'] , 
-			// 			'note'=>   $val['note'] , 
-			// 			'from'=>   $val['from'] , 
-			// 			'unitTo' =>  	 $val['unitTo'] , 				 
-			// 			'to'=> $val['to'] , 	
-			// 			'desc'=>   $val['desc'] , 	
-			// 			'status' => 'info', 
-			// 			"message" =>  "No.Agenda ".$val['agendaNumber']." dan No.Surat ".$val['number']." Duplikasi data pada file excel."
-			// 		];
-			// 		$duplications[] = $simpandata;
-			// 	}
-				 
-			// }
-			 $this->createToTemp($resultExcelData);
-			$responseData = [
-				// "a"=> count($a),
-				// "bb"=> count($resultExcelData),
-				// "duplicates" => $newData,
-				// "responseData" => $this->model->getTrackingTemp(),
-				// "merging" => array_merge($newData,$resultExcelData),
-				"responseData" => $this->model->validationUploadTracking(),
-				"totalOriginalData" => (count($data)-1)
-			];
-			// $this->model->deleteData();
-			return $this->respond($responseData, 200);
+					if(!in_array(strtolower(str_replace(' ', '', $type)), $typeMsg)){
+						if(!empty($message)){
+							$message .= ", ";
+						}
+						$message .= "Kesalahan penamaan Sifat Surat $type";
+						$status = "error";
+					}
+				} 
+
+				if (empty($note)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Isi Ringkasan/Catatan/Perihal tidak boleh kosong";
+					$status = "error";
+				}
+
+				if (empty($from)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Dari/Pengirim tidak boleh kosong";
+					$status = "error";
+				} 
+
+				if (empty($desc)) {
+					if(!empty($message)){
+						$message .= ", ";
+					}
+					$message .= "Keterangan Surat tidak boleh kosong";
+					$status = "error";
+				}else{
+					$typeMsg = array("asli", "salinan", "tembusan","biasa");
+
+					if(!in_array(strtolower(str_replace(' ', '', $desc)), $typeMsg)){
+						if(!empty($message)){
+							$message .= ", ";
+						}
+						$message .= "Kesalahan penamaan Keteragan $desc";
+						$status = "error";
+					}
+				} 
+				
+				$simpandata = [
+					'agendaNumber' =>  $agendaNumber , 
+					'receiptDate' => $receiptDate, 
+					'number' => $number,  
+					'realDate'=> $realDate,
+					'type'=> $type,
+					'note'=> $note,
+					'from'=> $from,
+					'unitTo' =>  $unitTo,					 
+					'to'=> $to,
+					'ket'=> $desc,
+					'fileName'=> $fileName,
+					'indexNumber'=> $indexNumber,
+					'status' => $status,
+					"message" => $message
+				]; 
+				$resultExcelData[] = $simpandata;  
+		} 
+			$this->createToTemp($resultExcelData);
+		$responseData = [
+			"responseData" => $this->model->validationUploadTracking(),
+			"totalOriginalData" => (count($data)-1)
+		]; 
+		return $this->respond($responseData, 200);
 		}
     }
 
 	
 	public function createToTemp($listData)
-	{
-		$modelTracking = new ModelTracking(); 
-		// $data = $this->request->getPost('listData');
+	{ 
 		$isSuccess = false;
-		if (!empty($listData)) {
-			// $listData = json_decode($data); 
+		if (!empty($listData)) { 
 			$resultExcelData = [];
 			$message = "";
 			$status = "";
 			foreach(array_chunk($listData,count($listData),true) as $rows) {
-				// foreach($rows as $x => $row) {
-				// 	$numberData = $this->model->validateDumplicate($row->number,$row->unitTo);
-				// 	if(!empty($numberData)){
-				// 		if(!empty($message)){
-				// 			$message .= ", ";
-				// 		}
-				// 		$message .= "Nomor surat $row->number sudah ada (Duplikasi)";
-				// 		$status = "error";
-					
-				// 		$simpandata = [
-				// 			'status' => $status,
-				// 			"message" => $message
-				// 		];
-				// 		$resultExcelData[] = $simpandata;
-				// 	}
-				// }
-				
-				// if(empty($status)){
-					$trackingData = $modelTracking->saveDataTemp($rows);
-					if($trackingData){
-						$response = [
-							"status" => 'success',
-							"message" => ""
-						];
-						$resultExcelData[] = $response;
-						// return $this->respond($response);
-					}
-				// }
+				$trackingData = $this->model->saveDataTemp($rows);
+				if($trackingData){
+					$response = [
+						"status" => 'success',
+						"message" => ""
+					];
+					$resultExcelData[] = $response;
+				}
 			}
-			// $modelTracking->updateData();
-
-			// if(!empty($status)){
-				return $this->respond($resultExcelData, 200);
-			// }
+			return $this->respond($resultExcelData, 200);
 		} 
 		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
 	}
 
 	public function create()
 	{
-		$modelTracking = new ModelTracking(); 
+		$modelInbox = new ModelInbox(); 
+		$modelUnknown = new ModelUnknown(); 
+		$modelHistory= new ModelHistory(); 
+		$modelFileUpload = new ModelFileUpload(); 
+
 		$data = $this->request->getPost('listData');
 		$isSuccess = false;
 		if (!empty($data)) {
@@ -345,40 +254,70 @@ class Tracking extends BaseController
 			$resultExcelData = [];
 			$message = "";
 			$status = "";
-			foreach(array_chunk($listData,count($listData),true) as $rows) {
-				// foreach($rows as $x => $row) {
-				// 	$numberData = $this->model->validateDumplicate($row->number,$row->unitTo);
-				// 	if(!empty($numberData)){
-				// 		if(!empty($message)){
-				// 			$message .= ", ";
-				// 		}
-				// 		$message .= "Nomor surat $row->number sudah ada (Duplikasi)";
-				// 		$status = "error";
-					
-				// 		$simpandata = [
-				// 			'status' => $status,
-				// 			"message" => $message
-				// 		];
-				// 		$resultExcelData[] = $simpandata;
-				// 	}
-				// }
-				
-				// if(empty($status)){
-					$trackingData = $modelTracking->saveData($rows);
+
+			$fileUploadData = $modelFileUpload->saveFileUploadData($listData->fileUpload);
+			if($fileUploadData){
+				$response = [
+					"type" => 'fileUploadData',
+					"status" => 'success',
+					"message" => "success insert data"
+				];
+				$resultExcelData[] = $response; 
+			} 
+
+			foreach(array_chunk($listData->nadineData,count($listData->nadineData),true) as $rows) {
+				 
+					$trackingData = $this->model->saveNadineData($rows);
 					if($trackingData){
 						$response = [
+							"type" => 'nadineData',
 							"status" => 'success',
-							"message" => ""
+							"message" => "success insert data"
 						];
-						$resultExcelData[] = $response;
-						// return $this->respond($response);
-					}
-				// }
+						$resultExcelData[] = $response; 
+					} 
+			}
+			
+			foreach(array_chunk($listData->inboxData,count($listData->inboxData),true) as $rows) {
+				 
+				$trackingData = $modelInbox->saveInboxData($rows);
+				if($trackingData){
+					$response = [
+						"type" => 'inboxData',
+						"status" => 'success',
+						"message" => "success insert data"
+					];
+					$resultExcelData[] = $response; 
+				} 
+			}
+			
+			foreach(array_chunk($listData->unknownData,count($listData->unknownData),true) as $rows) {
+				 
+				$trackingData = $modelUnknown->saveUnknownData($rows);
+				if($trackingData){
+					$response = [
+						"type" => 'unknownData',
+						"status" => 'success',
+						"message" => "success insert data"
+					];
+					$resultExcelData[] = $response; 
+				} 
 			}
 
-			// if(!empty($status)){
-				return $this->respond($resultExcelData, 200);
-			// }
+			foreach(array_chunk($listData->historyData,count($listData->historyData),true) as $rows) {
+				 
+				$trackingData = $modelHistory->saveHistoryData($rows);
+				if($trackingData){
+					$response = [
+						"type" => 'historyData',
+						"status" => 'success',
+						"message" => "success insert data"
+					];
+					$resultExcelData[] = $response; 
+				} 
+			}
+
+			return $this->respond($resultExcelData, 200); 
 		} 
 		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");
 	}

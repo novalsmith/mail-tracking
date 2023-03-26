@@ -14,73 +14,8 @@ class ModelTracking extends Model
 
     function getTracking($searchingParams)
     {
-        // $builder = $this->db->query("getTracking()");
-        // if(!empty($searchingParams)){ 
-            // $number = $searchingParams["number"];
-            // $agendaNumber = $searchingParams["agendaNumber"];
-            // $from = $searchingParams["from"];
-            // $to = $searchingParams["to"];
-            // $ket = $searchingParams["ket"];
-            // $note = $searchingParams["note"]; 
-            // $dateActionTerimaStart = $searchingParams["dateActionTerimaStart"];
-            // $dateActionTerimaEnd = $searchingParams["dateActionTerimaEnd"];
-            // $dateActionSuratStart = $searchingParams["dateActionSuratStart"];
-            // $dateActionSuratEnd = $searchingParams["dateActionSuratEnd"];
-           
-        //     if(!empty($agendaNumber)){
-        //         $builder->like("agendaNumber",  $agendaNumber);
-        //     }
-
-        //     if(!empty($number)){
-        //             $builder->like("number",  $number);
-        //     }
-
-        //     if(!empty($searchingParams["type"])){
-        //         $builder->like("type",  $searchingParams["type"]);
-        //     }
-
-        //     if(!empty($from)){
-        //         $builder->like("from",  $from);
-        //     }
-
-        //     if(!empty($to)){
-        //         $builder->like("to",  $to);
-        //     }
-
-        //     if(!empty($ket)){
-        //         $builder->like("ket",  $ket);
-        //     }
-
-        //     if(!empty($note)){
-        //         $builder->like("note",  $note);
-        //     }
-
-        //     if(!empty($searchingParams["isUnknown"])){
-        //         $builder->where("isUnknown",  $searchingParams["isUnknown"]);
-        //     }
-
-        //     if(!empty($dateActionTerimaStart) && !empty($dateActionTerimaEnd)){
-        //        $builder->where("receiptDate BETWEEN '$dateActionTerimaStart' AND '$dateActionTerimaEnd'");
-        //     //    $builder->where('receiptDate >=', $dateActionTerimaStart);
-        //     //    $builder->where('receiptDate <=', $dateActionTerimaEnd);
-        //     }else{
-        //         if(!empty($dateActionTerimaStart)){
-        //             $builder->where('receiptDate', $dateActionTerimaStart);
-        //          }
-        //     }
-
-        //     if(!empty($dateActionSuratStart) && !empty($dateActionSuratEnd)){
-        //         $builder->where("realDate BETWEEN '$dateActionSuratStart' AND '$dateActionSuratEnd'");
-        //         // $builder->where('realDate >=', $dateActionSuratStart);
-        //         // $builder->where('realDate <=', $dateActionSuratEnd);
-        //      }else{
-        //          if(!empty($dateActionSuratStart)){
-        //              $builder->where("realDate",$dateActionSuratStart); 
-        //           }
-        //      }
-        // }
-        // $builder->where("isUnknown",'N');
         $db = \Config\Database::connect();
+        $db->reconnect();
         $params = [
             ($searchingParams["agendaNumber"] ?? ''),
             ($searchingParams["number"] ?? ''),
@@ -96,18 +31,25 @@ class ModelTracking extends Model
             ($searchingParams["dateActionSuratEnd"] ?? '')
         ];
         // Calling from Stored Procedure
-        $procedure = "CALL getTracking(?,?,?,?,?,?,?,?,?,?,?,?)";
-        $builder = $this->db->query($procedure, $params); 
-       $data =  $builder->getResult(); 
+        $procedure = "CALL getNadine(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $builder = $db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
+
         return $data;
     }
 
     function validationUploadTracking()
     {
+        $db = \Config\Database::connect();
+        $db->reconnect();
         // Calling from Stored Procedure
         $procedure = "CALL validationUploadTracking()";
-        $builder = $this->db->query($procedure); 
+        $builder = $db->query($procedure); 
         $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
         return $data;
     }
 
@@ -116,53 +58,61 @@ class ModelTracking extends Model
         $builder = $this->table("v_tracking");
         $builder->where("to", $role);
         $builder->orWhere("isUnknown", 'N');
-       $data =  $builder->get()->getResult(); 
+        $data =  $builder->get()->getResult(); 
         return $data;
     }
 
     function getTrackingTemp()
     {
         $db = \Config\Database::connect();
+        $db->reconnect();
         $builder = $db->table('v_tracking_temp');  
        $data =  $builder->get()->getResult(); 
+       $db->close();
+       $db->initialize();
         return $data;
     }
 
     function deleteData(){
-        $db = \Config\Database::connect(); 
+        $db = \Config\Database::connect();
+        $db->reconnect(); 
         $sql = "Delete from tracking_temp";  
         $db->query($sql);
-            return   $sql;
-
+        $db->close();
+        $db->initialize();
+        return   $sql;
     }
     
-
-    function saveData($data){
+    function saveNadineData($data){
         $isSuccess = false;
         $db = \Config\Database::connect();
-        $builderTable = $db->table('tracking'); 
+        $db->reconnect();
+        $builderTable = $db->table('nadine'); 
         $response = $builderTable->insertBatch($data);
         if($response){
             $isSuccess = true;
         }
+        $db->close();
+        $db->initialize();
         return  $isSuccess;
     }
 
     function saveDataTemp($data){
         $isSuccess = false;
         $db = \Config\Database::connect();
+        $db->reconnect();
         $builderTable = $db->table('tracking_temp'); 
         $response = $builderTable->insertBatch($data);
         if($response){
             $isSuccess = true;
         }
+        $db->close();
+        $db->initialize();
         return  $isSuccess;
     }
 
     function updateData(){
         $db = \Config\Database::connect();
-     
-
             $sql = "UPDATE tracking_temp
             tracking_temp  INNER JOIN 
              v_tracking_temp_duplicates  ON tracking_temp.number = v_tracking_temp_duplicates.number
@@ -172,11 +122,15 @@ class ModelTracking extends Model
     }
 
     function validateDumplicate($number,$fileName, $indexNumber){
-        $builder = $this->table("v_tracking");
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $builder = $db->table("v_tracking");
         $builder->where("number", $number);
         $builder->where("indexNumber", $indexNumber);
         $builder->where("fileName", $fileName);
        $data =  $builder->get()->getResult(); 
+       $db->close();
+       $db->initialize();
         return $data;
     }
 }

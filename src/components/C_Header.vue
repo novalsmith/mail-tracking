@@ -22,7 +22,7 @@
                                     <v-icon>
                                         {{
                                             $vuetify.theme.dark ? 'mdi-white-balance-sunny' :
-                                                'mdi-moon-waxing-crescent'
+                                            'mdi-moon-waxing-crescent'
                                         }}
                                     </v-icon>
                                 </v-btn>
@@ -44,7 +44,7 @@
                                         <v-icon>
                                             {{
                                                 $vuetify.theme.dark ? 'mdi-white-balance-sunny' :
-                                                    'mdi-moon-waxing-crescent'
+                                                'mdi-moon-waxing-crescent'
                                             }}
                                         </v-icon>
                                     </v-btn>

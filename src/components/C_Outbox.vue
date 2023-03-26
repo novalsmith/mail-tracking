@@ -211,7 +211,7 @@
                                                         </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.type }}
                                                         </v-list-item-title>
-                                                    </div> 
+                                                    </div>
                                                     <div class="my-3">
                                                         <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
                                                         <v-list-item-title> {{ detailDataRow.from }}
@@ -356,16 +356,15 @@ export default {
             },
             headers: [
                 { text: 'No', value: 'num' },
-                { text: 'No. Agenda', value: 'agendaNumber' },
-                { text: 'Tgl. Penerimaan', value: 'receiptDate' },
-                { text: 'No. Surat', value: 'number' },
-                { text: 'Tgl. Surat', value: 'realDate' },
-                // { text: 'Sifat Surat', value: 'type' },
-                { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'to' },
-                { text: 'Isi Ringkasan', value: 'description' },
-                { text: 'Tindakan', value: 'actionType' },
-                { text: 'Assigned To', value: 'assignedTo' }
+                { text: 'No.Agenda', value: 'nomorAgenda' },
+                { text: 'Tgl.Penerimaan', value: 'tglPenerimaanDisplayText' },
+                { text: 'No.Surat', value: 'nomorSurat' },
+                { text: 'Tgl.Surat', value: 'tglSuratDisplayText' },
+                { text: 'Sifat Surat', value: 'sifatSurat' },
+                { text: 'Isi Ringkasan', value: 'isiRingkasan' },
+                { text: 'Dari', value: 'dari' },
+                { text: 'Kepada', value: 'kepada' },
+                { text: 'Assigned To', value: 'unitAssignedTo' }
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -545,7 +544,8 @@ export default {
                 dateActionSuratStart: dateActionSuratStart,
                 dateActionSuratEnd: dateActionSuratEnd,
                 note: this.filter.isiRingkasan,
-                isUnknown: this.filter.unknownModelData
+                isUnknown: this.filter.unknownModelData,
+                assignedFrom: this.listLocalUserData.roleCode
             };
             this.filter.searchingParams = remappingParam;
             console.log(this.filter.searchingParams);
@@ -669,4 +669,5 @@ export default {
     cursor: pointer;
     background: #0097A7 !important;
     color: white;
-}</style>
+}
+</style>

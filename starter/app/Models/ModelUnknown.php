@@ -12,10 +12,33 @@ class ModelUnknown extends Model
         'trackingid','agendaNumber','receiptDate','number',
     'realDate','type','note','from','to','description'];
 
-    function getUnknown()
-    {
-        $builder = $this->table("v_unknown");
-       $data =  $builder->get()->getResult(); 
+    function getUnknown($searchingParams)
+    { 
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $params = [
+            ($searchingParams['employeeId'] ?? ''),
+            ($searchingParams["agendaNumber"] ?? ''),
+            ($searchingParams["number"] ?? ''),
+            ($searchingParams["type"] ?? ''),
+            ($searchingParams["from"] ?? ''),
+            ($searchingParams["to"] ?? ''),
+            ($searchingParams["ket"] ?? ''),
+            ($searchingParams["note"] ?? ''), 
+            ($searchingParams["dateActionTerimaStart"] ?? ''),
+            ($searchingParams["dateActionTerimaEnd"] ?? ''),
+            ($searchingParams["dateActionSuratStart"] ?? ''),
+            ($searchingParams["dateActionSuratEnd"] ?? ''),
+            ($searchingParams["unitTo"] ?? ''),
+            ($searchingParams["isUnknown"] ?? '')
+            
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getUnknown(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
         return $data;
     }
 
@@ -88,32 +111,98 @@ class ModelUnknown extends Model
         return $data;
     }
 
-    function getUnknownById($param)
+    function getUnknownById($nomorSurat,$unitAssignedFrom)
     {
-        $dbs = \Config\Database::connect();  
-        $builder = $dbs->table("v_tracking");
-        // $builder->where('trackingid',$param->trackingid);
-       $data =  $builder->where('unitTo <>',$param->to);
-        return $data->get()->getResult(); 
+    //     $dbs = \Config\Database::connect();  
+    //     $builder = $dbs->table("v_tracking");
+    //     // $builder->where('trackingid',$param->trackingid);
+    //    $data =  $builder->where('unitTo <>',$param->to);
+    //     return $data->get()->getResult(); 
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $paramValue["unitAssignedFrom"] = $unitAssignedFrom;
+        $paramValue["nomorSurat"] = $nomorSurat;
+        $params = [
+            $paramValue["unitAssignedFrom"],
+            $paramValue["nomorSurat"]
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getUnknownById(?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
+        return $data;
+
     }
 
-    function getparent($unit,$isAdmin){
-        $dbs = \Config\Database::connect();  
-        $builderTable = $dbs->table('v_unknown_unit');
-        if($isAdmin != 0){
-            $builderTable->where("parent", $unit);  
-        }
-       $data =  $builderTable->get()->getResult(); 
+    function getparent($unit,$isAdmin,$nomorSurat,$unitAssignedFrom,$unknownId){
+    //     $dbs = \Config\Database::connect();  
+    //     $builderTable = $dbs->table('v_unknown_unit');
+    //     if($isAdmin != 0){
+    //         $builderTable->where("parent", $unit);  
+    //     }
+    //    $data =  $builderTable->get()->getResult(); 
+    //     return $data;
+
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $paramValue["isAdmin"] = $isAdmin;
+        $paramValue["unitParent"] = $unit;
+        $paramValue["unitAssignedFrom"] = $unitAssignedFrom;
+        $paramValue["nomorSurat"] = $nomorSurat;
+        $paramValue["unknownId"] = $unknownId;
+        $params = [
+            $paramValue["isAdmin"],
+            $paramValue["unitParent"],
+            $paramValue["unitAssignedFrom"],
+            $paramValue["nomorSurat"],
+            $paramValue["unknownId"]
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getUnknownByParent(?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
         return $data;
+        
     }
 
     function getparentByNumberUnit($number, $unitTo){
-        $dbs = \Config\Database::connect();  
-        $builderTable = $dbs->table('v_unknown_unit');
-        $builderTable->where("unitTo", $unitTo); 
-        $builderTable->where("number", $number); 
+    //     $dbs = \Config\Database::connect();  
+    //     $builderTable = $dbs->table('v_unknown_unit');
+    //     $builderTable->where("unitTo", $unitTo); 
+    //     $builderTable->where("number", $number); 
 
-       $data =  $builderTable->get()->getResult(); 
+    //    $data =  $builderTable->get()->getResult(); 
+    //     return $data;
+    $searchingParams["number"] = $number;
+    $searchingParams["unitAssignedTo"] = $unitTo;
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $params = [
+            ($searchingParams['employeeId'] ?? ''),
+            ($searchingParams["agendaNumber"] ?? ''),
+            ($searchingParams["number"] ?? ''),
+            ($searchingParams["type"] ?? ''),
+            ($searchingParams["from"] ?? ''),
+            ($searchingParams["to"] ?? ''),
+            ($searchingParams["ket"] ?? ''),
+            ($searchingParams["note"] ?? ''), 
+            ($searchingParams["dateActionTerimaStart"] ?? ''),
+            ($searchingParams["dateActionTerimaEnd"] ?? ''),
+            ($searchingParams["dateActionSuratStart"] ?? ''),
+            ($searchingParams["dateActionSuratEnd"] ?? ''),
+            ($searchingParams["unitAssignedTo"] ?? '')
+            
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getUnknown(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
         return $data;
     }
 
@@ -130,11 +219,44 @@ class ModelUnknown extends Model
         return  $isSuccess;
     }
 
-    public function saveData($data)
+    public function createDeleteUnknownInbox($unknownIdVal,$trackingId,$assignedFromEmployeeId,$assignedToEmployeeId,$isCreate)
     {
+        // $isSuccess = false;
+        // $db = \Config\Database::connect();
+        // $builderTable = $db->table('inbox'); 
+        // $response = $builderTable->insertBatch($data);
+        // if($response){
+        //     $isSuccess = true;
+        // }
+        // return  $isSuccess;
+
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $paramValue["unknownIdVal"] = $unknownIdVal;
+        $paramValue["trackingIdVal"] = $trackingId;
+        $paramValue["assignedFromEmployeeId"] = $assignedFromEmployeeId;
+        $paramValue["assignedToEmployeeId"] = $assignedToEmployeeId;
+        $paramValue["isCreate"] = $isCreate;
+        $params = [
+            $paramValue["unknownIdVal"],
+            $paramValue["trackingIdVal"],
+            $paramValue["assignedFromEmployeeId"], 
+            $paramValue["assignedToEmployeeId"],
+            $paramValue["isCreate"]
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL createDeleteUnknownInbox(?,?,?,?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data = $builder->getResult(); 
+        $db->close();
+        $db->initialize();
+        return $data;
+    }
+
+    function saveUnknownData($data){
         $isSuccess = false;
         $db = \Config\Database::connect();
-        $builderTable = $db->table('unknown_transaction'); 
+        $builderTable = $db->table('unknown'); 
         $response = $builderTable->insertBatch($data);
         if($response){
             $isSuccess = true;

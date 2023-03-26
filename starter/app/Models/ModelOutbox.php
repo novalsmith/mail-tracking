@@ -27,10 +27,11 @@ class ModelOutbox extends Model
             ($searchingParams["dateActionTerimaStart"] ?? ''),
             ($searchingParams["dateActionTerimaEnd"] ?? ''),
             ($searchingParams["dateActionSuratStart"] ?? ''),
-            ($searchingParams["dateActionSuratEnd"] ?? '')
+            ($searchingParams["dateActionSuratEnd"] ?? ''),
+            ($searchingParams["assignedFrom"] ?? '')
         ];
         // Calling from Stored Procedure
-        $procedure = "CALL getOutbox(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $procedure = "CALL getOutbox(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $builder = $this->db->query($procedure, $params); 
         $data =  $builder->getResult(); 
         return $data;
@@ -54,11 +55,11 @@ class ModelOutbox extends Model
        $data =  $builderTable->get()->getRow()->sequenceTotal; 
         return $data;
     }
-    public function saveData($data)
+    public function saveOutboxData($data)
     {
         $isSuccess = false;
         $db = \Config\Database::connect();
-        $builderTable = $db->table('tracking'); 
+        $builderTable = $db->table('outbox'); 
         $response = $builderTable->insertBatch($data);
         if($response){
             $isSuccess = true;

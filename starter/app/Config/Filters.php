@@ -66,7 +66,7 @@ class Filters extends BaseConfig
 	 */
 	public $filters = [
 		'otentikasi' => [
-			'before' => [
+			'before' => [ 
 				'access/*',
 				'access',
 				'unit/*',
@@ -82,7 +82,9 @@ class Filters extends BaseConfig
 				'removefile/*',
 				'removefile',
 				'outbox/*',
-				'outbox'
+				'outbox',
+				'history/*',
+				'history'
 			]
 		]
 	];

@@ -4,7 +4,6 @@
         <div>
             <h1 class="font-weight-medium">Inbox</h1>
         </div>
-        <!-- <v-divider></v-divider> -->
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
@@ -140,6 +139,15 @@
                 <template v-slot:item.num="{ index }">
                     {{ index + 1 }}
                 </template>
+                <template v-slot:item.unitAssignedTo="{ item, index }">
+
+                    <v-chip v-if="item.unitAssignedTo" color="cyan darken-2" dark>
+                        Assigned <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                    </v-chip>
+                    <v-chip v-else color="orange" dark>
+                        Unassigned <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                    </v-chip>
+                </template>
             </v-data-table>
 
         </v-card>
@@ -168,8 +176,6 @@
                         </v-col>
                         <h3> <v-icon class="mx-3">mdi-file-outline</v-icon> Transaksi Surat</h3>
                         <form class="my-10">
-
-
                             <v-row>
                                 <v-col md="4">
                                     <v-text-field :disabled="true" dense outlined v-model="userDefault" label="Dari"
@@ -226,131 +232,237 @@
 
                         </form>
                     </v-main>
-                    <v-divider></v-divider>
+                    <v-row>
+                        <v-col md="7">
+                            <div class="my-5">
+                                <h3>Riwayat Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <v-expansion-panels v-model="panelActive" multiple>
+
+                                <v-expansion-panel v-for="(subValueData, index) in historyListData.header" class="my-1">
+                                    <v-expansion-panel-header expand-icon="mdi-chevron-down">
+                                        <h4> 
+                                            <v-btn fab x-small
+                                                :color="loadingIndicator(subValueData.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
+                                                dark class="mx-2">
+                                                <v-icon v-if="loadingIndicator(subValueData.unitAssignedTo).length > 0">
+                                                    mdi-check
+                                                </v-icon>
+                                                <v-icon v-else>
+                                                    mdi-sync
+                                                </v-icon>
+                                            </v-btn>
+                                            {{ subValueData.unitAssignedFrom }} - {{ subValueData.nameFrom }}
+                                        </h4>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-container>
+
+                                            {{
+                                                momentJsFormating(subValueData.createdDate)
+                                            }} - {{ subValueData.description }}
+
+                                            <v-expansion-panels multiple class="my-2">
+                                                <v-expansion-panel
+                                                    v-for="(subValueData1, index) in subHeaderDataTo(subValueData.unitAssignedFrom)"
+                                                    class="my-1">
+                                                    <v-expansion-panel-header expand-icon="mdi-chevron-down">
+                                                        <h4>
+                                                            <v-btn fab x-small
+                                                                :color="loadingIndicator(subValueData1.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
+                                                                dark class="mx-2">
+                                                                <v-icon
+                                                                    v-if="loadingIndicator(subValueData1.unitAssignedTo).length > 0">
+                                                                    mdi-check
+                                                                </v-icon>
+                                                                <v-icon v-else>
+                                                                    mdi-sync
+                                                                </v-icon>
+                                                            </v-btn>
+                                                            {{ subValueData1.unitAssignedTo }} - {{ subValueData1.nameTo }}
+                                                        </h4>
+                                                    </v-expansion-panel-header>
+                                                    <v-expansion-panel-content>
+                                                        <v-container>
+
+                                                            {{
+                                                                momentJsFormating(subValueData1.createdDate)
+                                                            }}
+                                                            {{ subValueData1.description
+                                                            }}
+
+                                                            <v-expansion-panels multiple class="my-2">
+                                                                <v-expansion-panel
+                                                                    v-for="(subValueData2, index) in subHeaderDataTo(subValueData1.unitAssignedTo)"
+                                                                    class="my-1">
+                                                                    <v-expansion-panel-header
+                                                                        expand-icon="mdi-chevron-down">
+                                                                        <h4>
+                                                                        <!-- <v-btn fab x-small color="cyan darken-2" dark
+                                                                                class="mx-2">
+                                                                                <v-icon>
+                                                                                    mdi-check
+                                                                                </v-icon>
+                                                                                                                    </v-btn> -->
+                                                                            <v-btn fab x-small
+                                                                                :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
+                                                                                dark class="mx-2">
+                                                                                <v-icon
+                                                                                    v-if="loadingIndicator(subValueData2.unitAssignedTo).length > 0">
+                                                                                    mdi-check
+                                                                                </v-icon>
+                                                                                <v-icon v-else>
+                                                                                    mdi-sync
+                                                                                </v-icon>
+                                                                            </v-btn>
+                                                                            {{ subValueData2.unitAssignedTo }} -
+                                                                            {{ subValueData2.nameTo }}
+                                                                        </h4>
+                                                                    </v-expansion-panel-header>
+                                                                    <v-expansion-panel-content>
+                                                                        <v-container>
+
+                                                                            {{
+                                                                                momentJsFormating(subValueData2.createdDate)
+                                                                            }}- {{ subValueData2.description }}
 
 
-                    <v-card>
-                        <v-toolbar flat>
 
-                            <template v-slot:extension>
-                                <v-tabs v-model="tabs" fixed-tabs>
-                                    <v-tabs-slider></v-tabs-slider>
-                                    <v-tab href="#mobile-tabs-5-1" class="primary--text">
-                                        <v-icon class="mx-2">mdi-file-document</v-icon> Detail Surat
-                                    </v-tab>
+                                                                            <v-expansion-panels multiple class="my-2">
+                                                                                <v-expansion-panel
+                                                                                    v-for="(subValueData3, index) in subHeaderDataTo(subValueData2.unitAssignedTo)"
+                                                                                    class="my-1">
+                                                                                    <v-expansion-panel-header
+                                                                                        expand-icon="mdi-chevron-down">
+                                                                                        <h4>
+                                                                                        <!-- <v-btn fab x-small
+                                                                                                color="cyan darken-2" dark
+                                                                                                class="mx-2">
+                                                                                                <v-icon>
+                                                                                                    mdi-check
+                                                                                                </v-icon>
+                                                                                                                                </v-btn> -->
+                                                                                            <v-btn fab x-small
+                                                                                                :color="loadingIndicator(subValueData3.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
+                                                                                                dark class="mx-2">
+                                                                                                <v-icon
+                                                                                                    v-if="loadingIndicator(subValueData3.unitAssignedTo).length > 0">
+                                                                                                    mdi-check
+                                                                                                </v-icon>
+                                                                                                <v-icon v-else>
+                                                                                                    mdi-sync
+                                                                                                </v-icon>
+                                                                                            </v-btn>
+                                                                                            <span
+                                                                                                v-if="subValueData3.levelTo = 5">Staf
+                                                                                                - {{ subValueData3.nameTo }}
+                                                                                            </span>
+                                                                                            <span v-else>{{
+                                                                                                subValueData3.unitAssignedTo
+                                                                                                - subValueData3.nameTo
+                                                                                            }}</span>
+                                                                                        </h4>
+                                                                                    </v-expansion-panel-header>
+                                                                                    <v-expansion-panel-content>
+                                                                                        {{
+                                                                                            momentJsFormating(subValueData2.createdDate)
+                                                                                        }}- {{
+    subValueData2.description }}
+                                                                                    </v-expansion-panel-content>
+                                                                                </v-expansion-panel>
+                                                                            </v-expansion-panels>
+                                                                        </v-container>
+                                                                    </v-expansion-panel-content>
+                                                                </v-expansion-panel>
+                                                            </v-expansion-panels>
+                                                        </v-container>
 
-                                    <v-tab href="#mobile-tabs-5-2" class="primary--text">
-                                        <v-icon class="mx-2">mdi-history</v-icon> Riwayat
-                                    </v-tab>
-                                </v-tabs>
-                            </template>
-                        </v-toolbar>
+                                                    </v-expansion-panel-content>
+                                                </v-expansion-panel>
+                                            </v-expansion-panels>
+                                        </v-container>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
 
-                        <v-tabs-items v-model="tabs">
-                            <v-tab-item value="mobile-tabs-5-1">
-                                <v-card flat>
-                                    <v-card-text>
-                                        <v-list three-line subheader class="my-5">
-
-                                            <v-list-item>
-                                                <v-list-item-content>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Nomor Agenda
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.agendaNumber }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Nomor Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.Penerimaan
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.receiptDate }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.realDate }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Sifat Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.type }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.from }}
-                                                        </v-list-item-title>
-                                                    </div>
-
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.to }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Isi Ringkasan
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.description }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.actionType }}
-                                                        </v-list-item-title>
-                                                    </div>
+                            <!-- tab -->
 
 
-                                                </v-list-item-content>
-                                            </v-list-item>
+                        </v-col>
+                        <v-col md="5">
+                            <div class="my-5">
+                                <h3>Detail Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <v-card>
+                                <v-card-text>
+                                    <v-list three-line subheader class="my-5">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Agenda
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.agendaNumber }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Penerimaan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.receiptDate }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.realDate }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Sifat Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.type }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.from }}
+                                                    </v-list-item-title>
+                                                </div>
 
-                                        </v-list>
-                                    </v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                        </v-tabs-items>
-                        <v-tabs-items v-model="tabs">
-                            <v-tab-item value="mobile-tabs-5-2">
-                                <v-card flat>
-                                    <v-card-text>
-                                        <v-list three-line subheader class="my-5">
-                                            <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
-
-                                            <v-list-item v-for="(items, key) in detailDataList.logData" :key="key">
-                                                <v-list-item-content v-if="items.createdDate != null">
-                                                    <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined
-                                                            fab>{{
-                                                                items.sequence
-                                                            }} </v-btn> {{
-    items.createdBy
-}}</v-list-item-title>
-                                                    <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }}
-                                                        - {{
-                                                            items.note
-                                                        }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle>Tanggal : {{
-                                                        items.createdDate
-                                                    }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle>Keterangan: {{
-                                                        items.note
-                                                    }}</v-list-item-subtitle>
-                                                </v-list-item-content>
-                                            </v-list-item>
-
-                                        </v-list>
-                                    </v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                        </v-tabs-items>
-                    </v-card>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.to }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Isi Ringkasan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.description }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.actionType }}
+                                                    </v-list-item-title>
+                                                </div>
 
 
+                                            </v-list-item-content>
+                                        </v-list-item>
+
+                                    </v-list>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+
+
+                    </v-row>
                 </v-container>
 
             </v-card>
@@ -369,6 +481,10 @@ var maxlength = 18;
 export default {
     data() {
         return {
+            panelActive: [],
+            subPanelActive: [],
+            e6: 22,
+            step1Complete: 1,
             tabs: null,
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
             isShowAlertDialogDetail: false,
@@ -427,15 +543,19 @@ export default {
             },
             headers: [
                 { text: 'No', value: 'num' },
-                { text: 'No. Agenda', value: 'agendaNumber' },
-                { text: 'Tgl. Penerimaan', value: 'receiptDate' },
-                { text: 'No. Surat', value: 'number' },
-                { text: 'Tgl. Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'type' },
-                { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'to' },
-                { text: 'Isi Ringkasan', value: 'description' },
-                { text: 'Assigned From', value: 'assignedFrom' }
+                { text: 'No.Agenda', value: 'nomorAgenda' },
+                { text: 'Tgl.Penerimaan', value: 'tglPenerimaanDisplayText' },
+                { text: 'No.Surat', value: 'nomorSurat' },
+                { text: 'Tgl.Surat', value: 'tglSuratDisplayText' },
+                { text: 'Sifat Surat', value: 'sifatSurat' },
+                { text: 'Isi Ringkasan', value: 'isiRingkasan' },
+                { text: 'Dari', value: 'dari' },
+                { text: 'Kepada', value: 'kepada' },
+                { text: 'Assigned From', value: 'unitAssignedFrom' },
+                { text: 'Tgl.Tindak lanjut', value: 'tglTindaklanjut' },
+                { text: 'Tindakan', value: 'actionTypeValue' },
+                { text: 'Outbox', value: 'unitAssignedTo' }
+
             ],
             headerprops: {
                 "sort-icon": "mdi-arrow-up"
@@ -461,52 +581,74 @@ export default {
                 }
             ],
             disabledModalButtonSave: false,
-
+            trackingId: "",
+            historyListData: {
+                header: [],
+                subHeader: []
+            },
+            isLoadingIndicator: []
         }
     },
     methods: {
         async submit() {
             console.log(this.detailDataRow);
-            var listData = [];
-            var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
-            var newNumber = maxDataFromLocal + 1;
+            var params = {
+                inboxData: [],
+                outboxData: [],
+                historyData: []
+            };
+
             this.disabledModalButtonSave = true;
             if (this.recipient) {
+                var nameValue = this.actionFollowUp.filter((e) => e.code === this.selectedType)
+                    .map((e) => { return name = e.name })[0];
+
                 this.recipient.forEach((element, key) => {
                     console.log(element);
                     var newData = {
-                        trackingid: this.detailDataRow.trackingid,
-                        // agendaNumber: this.detailDataRow.agendaNumber,
-                        actionType: this.selectedType,
-                        from: this.listLocalUserData.roleCode,
+                        trackingId: this.detailDataRow.trackingId,
+                        from: this.listLocalUserData.employeeId,
                         to: element.value,
-                        // number: this.detailDataRow.number,
-                        note: this.description,
+                        description: this.description,
+                        actionType: this.selectedType,
+                        actionDate: new moment(new Date).locale('id'),
                         createdBy: this.listLocalUserData.employeeId,
-                        createdDate: new moment(this.dateAction).locale('id'),
-                        actionDate: new moment(this.dateAction).locale('id'),
-                        // actionFollowUp: this.selectedType,
-                        // sequence: newNumber, // auto increment
-                        // actionFollowUpDescription: this.description
-                    }
-                    newNumber++;
-                    listData.push(newData);
-                });
-            }
-            console.log(listData);
+                        createdDate: new moment(new Date).locale('id'),
+                    };
 
+                    params.inboxData.push(newData);
+
+                });
+
+                params.outboxData = {
+                    trackingId: this.detailDataRow.trackingId,
+                    catatan: this.description,
+                    tindaklanjut: this.selectedType,
+                    tglTindaklanjut: new moment(new Date).locale('id'),
+                    createdBy: this.listLocalUserData.employeeId,
+                    createdDate: new moment(new Date).locale('id'),
+                };
+
+                params.historyData = {
+                    trackingId: this.detailDataRow.trackingId,
+                    menu: 'INBOX',
+                    type: this.selectedType,
+                    description: "Surat telah di " + nameValue,
+                    createdBy: this.listLocalUserData.employeeId,
+                    createdDate: new moment(new Date).locale('id')
+                };
+            }
             try {
 
                 var formdata = new FormData();
                 this.loadingUploadButton = true;
-                formdata.append("listData", JSON.stringify(listData));
+                formdata.append("listData", JSON.stringify(params));
                 await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
                 this.dialogDetail = false;
                 this.responseAlert.color = 'cyan darken-2';
                 this.responseAlert.message = "Data berhasil tersimpan dan masuk ke Outbox";
                 this.loadingUploadButton = false;
                 this.isShowAlert = true;
-                await this.getSettings(this.detailDataRow.agendaNumber);
                 this.dialogDetail = false;
                 this.getInbox();
                 this.disabledModalButtonSave = false;
@@ -647,14 +789,20 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        async getSettings(agendaNumber) {
+        async getHistoryHeader() {
             try {
-                var formdata = new FormData();
                 this.loadingUploadButton = true;
-                formdata.append("agendaNumber", agendaNumber);
-                var response = await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/log', formdata);
-                this.detailDataList = !!response ? response.data : [];
-                // console.log(this.detailDataList);
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
+                var dataVal = !!response ? response.data : [];
+
+                this.historyListData.header = dataVal.header.filter((e) => parseInt(e.level) === 0 || parseInt(e.level) === 1 || parseInt(e.level) === 2)
+                    .map((e) => { return e });
+                this.historyListData.subHeader = dataVal.headerDetail;
+                console.log(this.historyListData.subHeader);
+                // const state = {
+                //     data: !!response ? response.data : []
+                // }
+                // this.$store.dispatch('history', state);
             } catch (error) {
                 console.log(error);
             }
@@ -671,7 +819,8 @@ export default {
             this.dialogDetail = true;
             // this.description = row.note;
             this.selectedType = row.actionFollowUp;
-            await this.getSettings(row.agendaNumber);
+            this.trackingId = row.trackingId;
+            await this.getHistoryHeader();
             this.clearFormDialog();
 
         },
@@ -699,11 +848,24 @@ export default {
                 }
             })
         },
+        subHeaderDataTo(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.parentTo === unitAssignedTo)
+                .map((e) => { return e });
+            return data;
+        },
+        loadingIndicator(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.unitAssignedFrom === unitAssignedTo)
+                .map((e) => { return e });
+            return data;
+        },
+        momentJsFormating(dateValue) {
+            return moment.utc(dateValue).format("MMMM Do YYYY, h:mm:ss");
+        }
     },
     async created() {
         var data = JSON.parse(localStorage.getItem('userData'));
         this.listLocalUserData = data.user;
-        this.getSettings();
+        this.getHistoryHeader();
         await this.searching();
 
     },
@@ -713,7 +875,12 @@ export default {
             return this.$store.state.lookup.lookups['type'];
         },
         actionFollowUp() {
-            return this.$store.state.lookup.lookups['action'];
+            var data = this.$store.state.lookup.lookups['action'];
+            if (parseInt(this.listLocalUserData.roleLevel) == 5) {
+                data.filter((e) => e.code === "ARSIP")
+                    .map((e) => { return e });
+            }
+            return data;
         },
         likesAllFruit() {
             return this.filter.sifatSurat.length === this.$store.state.lookup.lookups['type'].length
@@ -742,4 +909,14 @@ export default {
     background: #0097A7 !important;
     color: white;
 }
+
+.divider-active {
+    border-width: 3px;
+    background: #0097A7 !important;
+}
+
+/* ::v-deep .v-stepper__step__step {
+    width: 40px;
+    height: 40px;
+} */
 </style>

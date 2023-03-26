@@ -16,26 +16,20 @@ class Unknown extends BaseController
 	 
 	public function index()
 	{
-		$data = $this->model->getUnknown();
+		$searchingParams = $this->request->getVar('searchingParams'); 
+		$data = $this->model->getUnknown($searchingParams);
 	    return $this->respond($data, 200);
 	} 
 	public function parent()
 	{
 		$unit = $this->request->getVar('roleCode');
 		$level = $this->request->getVar('isAdmin');
-		$number = $this->request->getVar('number');
-		$unitTo = $this->request->getVar('unitTo');
-		$data = [];
-		$resultSingle = $this->model->getparentByNumberUnit($number,$unitTo); 
-		if(!$resultSingle){
-			$resultAll = $this->model->getparent($unit,$level); 
-			$data["isEdit"] = false;
-			$data["data"] = $resultAll;
-		}else{
-			$data["isEdit"] = true;
-			$data["data"] = $resultSingle;
-		}
-	    return $this->respond($data , 200);
+		$nomorSurat = $this->request->getVar('nomorSurat');
+		$unknownId = $this->request->getVar('unknownId');
+		$unitAssignedFrom = $this->request->getVar('unitAssignedFrom'); 
+		$resultAll = $this->model->getparent($unit,$level,$nomorSurat,$unitAssignedFrom,$unknownId); 
+		 
+	    return $this->respond($resultAll , 200);
 	} 
 	
 	public function updateInbox($listData)
@@ -88,16 +82,16 @@ class Unknown extends BaseController
 		if (!empty($data)) {
 			$rows = json_decode($data); 
 			// foreach(array_chunk($countData,count($countData),true) as $rows) {
-				$trackingData = $this->model->saveData($rows);
-				if($trackingData){ 
-					$this->updateInbox($rows);
+				  $this->model->createDeleteUnknownInbox($rows[0]->unknownId,$rows[0]->trackingId, $rows[0]->assignedFromEmployeeId,$rows[0]->assignedToEmployeeId, $rows[0]->isCreate);
+				// if($trackingData){ 
+					// $this->updateInbox($rows);
 					$response = [
 						'status' => 200,
 						'error' => null,
 						'messages' => "Data Berhasil tersimpan"
 					];
 					return $this->respond($response);
-				}
+				// }
 			// }
 		} 
 		return $this->failNotFound("Data gagal tersimpan, periksa dan coba lagi");

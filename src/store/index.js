@@ -8,6 +8,8 @@ import trackings from './modules/tracking'
 import access from './modules/access'
 import unit from './modules/unit'
 import lookup from './modules/lookup'
+import unknown from './modules/unknown'
+import historys from './modules/history'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     trackings,
     access,
     unit,
-    lookup
+    lookup,
+    unknown,
+    historys
   }
 });

@@ -22,36 +22,47 @@
             <v-form>
                 <v-container>
                     <v-row>
-
-                        <v-col cols="12" md="4">
-                            <v-select clearable :items="latterType" item-text="name" item-value="code"
-                                v-model="filter.sifatSurat" dense outlined label="Sifat Surat" multiple chips>
-                                <template v-slot:prepend-item>
-                                    <v-list-item ripple @mousedown.prevent @click="toggle">
-                                        <v-list-item-action>
-                                            <v-icon
-                                                :color="filter.sifatSurat.length > 0 ? 'cyan darken-2' : 'cyan darken-2'">
-                                                {{ icon }}
-                                            </v-icon>
-                                        </v-list-item-action>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Select All
-                                            </v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-divider class="mt-2"></v-divider>
-                                </template>
-                            </v-select>
-                        </v-col>
-
-                        <v-col cols="12" md="4">
-                            <v-text-field dense outlined clearable v-model="filter.noAgenda" label="Nomor Agenda"
+                        <v-col cols="12" md="3">
+                            <v-text-field dense outlined v-model="filter.noAgenda" label="Nomor Agenda"
                                 required></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="4">
+                        <v-col cols="12" md="3">
                             <v-text-field dense label="Nomor Surat" v-model="filter.noSurat" outlined clearable
                                 required></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglTerima" :return-value.sync="filter.modalDateTglTerima"
+                                persistent width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Terima" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionTerima" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglTerima.save(filter.modalDateTglTerima)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
+                        </v-col>
+                        <v-col cols="12" md="3">
+                            <v-dialog ref="dialogmodalDateTglSurat" :return-value.sync="filter.modalDateTglSurat" persistent
+                                width="290px">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined dense label="Tgl. Surat" prepend-icon="mdi-calendar" readonly
+                                        v-bind="attrs" v-on="on" v-model="dateRangeSuratText"></v-text-field>
+                                </template>
+                                <v-date-picker dense v-model="filter.dateActionSurat" range type="date" scrollable>
+                                    <v-spacer></v-spacer>
+
+                                    <v-btn text color="primary"
+                                        @click="$refs.dialogmodalDateTglSurat.save(filter.modalDateTglSurat)">
+                                        OK
+                                    </v-btn>
+                                </v-date-picker>
+                            </v-dialog>
                         </v-col>
                         <!-- show if is advanced search -->
                         <v-container v-if="isAdvanceSearch">
@@ -61,35 +72,34 @@
                                         required></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.kepada" dense outlined
-                                        label="Kepada" multiple chips></v-combobox>
+                                    <v-text-field dense label="Kepada" v-model="filter.kepada" outlined clearable
+                                        required></v-text-field>
+                                </v-col>
+
+                                <v-col md="4">
+                                    <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
+                                        item-text="name" item-value="id" label="Unknown?"></v-select>
+                                </v-col>
+
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field dense label="Isi Ringkasan" v-model="filter.isiRingkasan" outlined
+                                        clearable required></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+
+                                    <v-text-field dense outlined clearable v-model="filter.sifatSurat" label="Sifat Surat"
+                                        required></v-text-field>
+
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-combobox :items="listItemsReciver" v-model="filter.keterangan" dense outlined
-                                        label="Keterangan" multiple chips></v-combobox>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaStart"
-                                        label="Tgl. Penerimaan - Start" required></v-text-field>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglTerimaEnd"
-                                        label="Tgl. Penerimaan - End" required></v-text-field>
-                                </v-col>
-
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratStart"
-                                        label="Tgl. Surat - Start"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" md="3">
-                                    <v-text-field dense outlined clearable v-model="filter.tglSuratEnd"
-                                        label="Tgl. Surat - End"></v-text-field>
+                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Keterangan"
+                                        required></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
-                        <!-- show if is advanced search -->
                     </v-row>
                 </v-container>
             </v-form>
@@ -122,14 +132,14 @@
                     {{ index + 1 }}
                 </template>
 
-                <template v-slot:item.unitTo="{ item, index }">
+                <template v-slot:item.unitAssignedFrom="{ item, index }">
 
-                    <!-- <v-btn v-if="item.unitTo ?? ''" small color="cyan darken-2" dark> {{ item.unitTo }}</v-btn> -->
-                    <v-chip v-if="item.unitTo" color="cyan darken-2" dark>
-                        {{ item.unitTo }} <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                    <v-chip v-if="item.unitAssignedFrom" color="cyan darken-2" dark
+                        :disabled="item.isExists ? true : false">
+                        {{ item.unitAssignedFrom }} <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
                     </v-chip>
                     <v-chip v-else color="orange" dark>
-                        {{ item.unitTo }} Unknown <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                        Unknown <v-icon class="mx-1">mdi-alert-outline</v-icon>
                     </v-chip>
                 </template>
 
@@ -150,17 +160,17 @@
                         <v-data-table ref="unknownTable" :items-per-page="5" :loading="isLoadingUnknown"
                             :loading-text="isLoadingUnknown ? 'Loading... Please wait' : ''"
                             :footer-props="{ 'items-per-page-options': [5, 10, 50, 100, -1] }" :headers="headersUnknown"
-                            :items="listUnitUnknown.data" :search="searchUnknown" :item-class="itemRowBackground">
+                            :items="listUnitUnknown" :search="searchUnknown" :item-class="itemRowBackground">
                             <template v-slot:item.num="{ index }">
                                 {{ index + 1 }}
                             </template>
 
                             <template v-slot:item.takeIt="{ item }">
-                                <v-btn v-if="listUnitUnknown.isEdit" :disabled="disabledUnknownButton"
-                                    @click="moveToInbox(item, true)" small color="orange" class="white--text">
+                                <v-btn v-if="item.unitAssignedFrom" :disabled="disabledUnknownButton"
+                                    @click="moveToInbox(item, false)" small color="orange" class="white--text">
                                     Batalkan <v-icon class="mx-1">mdi-remove-outline</v-icon>
                                 </v-btn>
-                                <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item, false)" small
+                                <v-btn v-else :disabled="disabledUnknownButton" @click="moveToInbox(item, true)" small
                                     color="cyan darken-2" class="white--text mr-2">
                                     OK <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
                                 </v-btn>
@@ -223,28 +233,36 @@ export default {
                 color: ""
             },
             filter: {
-                sifatSurat: [],
+                range: true,
+                sifatSurat: "",
                 noAgenda: "",
                 noSurat: "",
                 dari: "",
-                kepada: [],
-                keterangan: [],
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
                 tglTerimaStart: "",
                 tglTerimaEnd: "",
                 tglSuratStart: "",
-                tglSuratEnd: ""
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+                searchingParams: [],
+                unknownModelData: ""
             },
             headers: [
                 { text: 'No', value: 'num' },
-                { text: 'No. Agenda', value: 'agendaNumber' },
-                { text: 'Tgl. Penerimaan', value: 'receiptDate' },
-                { text: 'No. Surat', value: 'number' },
-                { text: 'Tgl. Surat', value: 'realDate' },
-                { text: 'Sifat Surat', value: 'type' },
-                { text: 'Dari', value: 'from' },
-                { text: 'Kepada', value: 'to' },
-                { text: 'Isi Ringkasan', value: 'note', with: '10%' },
-                { text: 'Tujuan', value: 'unitTo', with: '10%' },
+                { text: 'No.Agenda', value: 'nomorAgenda' },
+                { text: 'Tgl.Penerimaan', value: 'tglPenerimaanDisplayText' },
+                { text: 'No.Surat', value: 'nomorSurat' },
+                { text: 'Tgl.Surat', value: 'tglSuratDisplayText' },
+                { text: 'Sifat Surat', value: 'sifatSurat' },
+                { text: 'Isi Ringkasan', value: 'isiRingkasan' },
+                { text: 'Dari', value: 'dari' },
+                { text: 'Kepada', value: 'kepada' },
+                { text: 'Assigned To', value: 'unitAssignedFrom' }
 
             ],
             searchUnknown: "",
@@ -264,7 +282,21 @@ export default {
             dialogUnknown: false,
             detailUnknownData: [],
             disabledUnknownButton: false,
-            loadingUploadButton: false
+            loadingUploadButton: false,
+            unknownData: [
+                {
+                    id: "",
+                    name: "Semua"
+                },
+                {
+                    id: "Y",
+                    name: "Ya"
+                },
+                {
+                    id: "N",
+                    name: "Bukan"
+                }
+            ],
         }
     },
     methods: {
@@ -277,21 +309,24 @@ export default {
                         params: {
                             roleCode: this.userDefault.roleCode,
                             isAdmin: this.userDefault.roleLevel,
-                            number: this.detailUnknownData.number,
-                            unitTo: this.detailUnknownData.unitTo ?? ""
+                            nomorSurat: this.detailUnknownData.nomorSurat,
+                            unknownId: this.detailUnknownData.unknownId,
+                            unitAssignedFrom: this.detailUnknownData.unitAssignedFrom ?? ""
                         }
                     };
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown/parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
-                    if (!!this.listUnitUnknown) {
-                        console.log(this.listUnitUnknown);
-                        console.log(this.detailUnknownData);
-                        var listData = this.listUnitUnknown.filter((e) => e.number.toLowerCase() == this.detailUnknownData.number.toLowerCase())
-                            .map((e) => { return e });
-                        console.log(listData);
-                        this.listUnitUnknown = (listData.length == 0 ? this.listUnitUnknown : listData);
+                    // if (!!this.listUnitUnknown) {
 
-                    }
+                    //     var listData = this.listUnitUnknown.data.filter((e) => e.nomorSurat.toLowerCase() == this.detailUnknownData.nomorSurat.toLowerCase())
+                    //         .map((e) => { return e });
+                    //     this.listUnitUnknown = (listData.length == 0 ? this.listUnitUnknown : listData);
+                    //     console.log(this.listUnitUnknown);
+                    // }
+                    // const state = {
+                    //     data: !!response ? response.data : []
+                    // }
+                    // this.$store.dispatch('unknowns', state);
 
                     this.isLoadingUnknown = false;
                 }
@@ -302,15 +337,15 @@ export default {
         },
         async getUnknown() {
             try {
-                this.isLoading = true;
-                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown");
+                this.isLoadingUnknown = true;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown", { params: { searchingParams: this.filter.searchingParams } });
                 this.listUnknownData = !!response ? response.data : [];
                 this.listUnknownData.forEach((item, i) => {
                     item.indexNumber = i + 1;
                 });
-                this.isLoading = false;
+                this.isLoadingUnknown = false;
             } catch (error) {
-                this.isLoading = false;
+                this.isLoadingUnknown = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
@@ -331,38 +366,51 @@ export default {
         },
         async searching() {
             this.isShowTable = true;
-            var mappArraySifatSurat = [];
-            this.filter.sifatSurat.forEach(element => {
-                mappArraySifatSurat.push(element);
-            });
-            var mappArrayKepada = [];
-            this.filter.kepada.forEach(element => {
-                mappArrayKepada.push(element);
-            });
+            var dateActionTerimaStart = "";
+            var dateActionTerimaEnd = "";
 
-            var mappArrayKet = [];
-            this.filter.keterangan.forEach(element => {
-                mappArrayKet.push(element);
-            });
-            var remappingParam = {
-                isAdvancedSearch: this.isAdvanceSearch,
-                sifatSurat: mappArraySifatSurat,
-                noSurat: this.filter.noSurat,
-                noAgenda: this.filter.noAgenda,
-                dari: this.filter.dari,
-                kepada: mappArrayKepada,
-                keterangan: mappArrayKet,
-                tglTerimaStart: this.tglTerimaStart,
-                tglTerimaEnd: this.tglTerimaEnd,
-                tglSuratStart: this.tglSuratStart,
-                tglSuratEnd: this.tglSuratEnd
+            var dateActionSuratStart = "";
+            var dateActionSuratEnd = "";
+
+            if (this.filter.dateActionTerima.length == 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
             }
-            // this.getUnknown();
+            if (this.filter.dateActionTerima.length > 1) {
+                dateActionTerimaStart = this.filter.dateActionTerima[0];
+                dateActionTerimaEnd = this.filter.dateActionTerima[1];
+            }
+
+            if (this.filter.dateActionSurat.length == 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+            }
+            if (this.filter.dateActionSurat.length > 1) {
+                dateActionSuratStart = this.filter.dateActionSurat[0];
+                dateActionSuratEnd = this.filter.dateActionSurat[1];
+            }
+            var remappingParam = {
+                employeeId: this.userDefault.employeeId,
+                isAdvancedSearch: this.isAdvanceSearch,
+                type: this.filter.sifatSurat,
+                number: this.filter.noSurat,
+                agendaNumber: this.filter.noAgenda,
+                from: this.filter.dari,
+                to: this.filter.kepada,
+                ket: this.filter.ket,
+                dateActionTerimaStart: dateActionTerimaStart,
+                dateActionTerimaEnd: dateActionTerimaEnd,
+                dateActionSuratStart: dateActionSuratStart,
+                dateActionSuratEnd: dateActionSuratEnd,
+                note: this.filter.isiRingkasan,
+                isUnknown: this.filter.unknownModelData,
+                unitTo: this.userDefault.roleCode
+            }
+            this.filter.searchingParams = remappingParam;
+            this.getUnknown();
         },
         async submit() {
             try {
                 var listData = {
-                    trackingid: row.trackingid,
+                    trackingId: row.trackingid,
                     from: this.listLocalUserData.roleCode,
                     to: item.code,
                     note: this.description,
@@ -389,6 +437,25 @@ export default {
         },
         clear() {
             this.isShowTable = false;
+            var remappingParam = {
+                sifatSurat: "",
+                noAgenda: "",
+                noSurat: "",
+                dari: "",
+                kepada: "",
+                ket: "",
+                isiRingkasan: "",
+                dateActionTerima: [],
+                dateActionSurat: [],
+                tglTerimaStart: "",
+                tglTerimaEnd: "",
+                tglSuratStart: "",
+                tglSuratEnd: "",
+                modalDateTglTerima: null,
+                modalDateTglSurat: null,
+            };
+            this.filter = remappingParam;
+
         },
         selectedTypeEvnt() {
             if (this.selectedType != 'Arsipkan') {
@@ -414,36 +481,41 @@ export default {
             select(!isSelected)
         },
         async takeItAction(row) {
-            this.detailUnknownData = row;
-            await this.getUnitParent();
-            this.dialogUnknown = true;
-            this.searchUnknown = row.unitTo;
+            if (row.isExists) {
+                this.responseAlert.color = 'orange darken-2';
+                this.responseAlert.message = "Data sudah digunakan(Dalam proses), tidak dapat dibatalkan";
+                this.loadingUploadButton = false;
+                this.isShowAlert = true;
+            } else {
+                this.detailUnknownData = row;
+                await this.getUnitParent();
+                this.dialogUnknown = true;
+                this.searchUnknown = row.unitAssignedFrom;
+            }
+
         },
-        async moveToInbox(item, isCancel) {
+        async moveToInbox(item, isCreate) {
             var row = this.detailUnknownData;
-            console.log(row);
+            console.log(this.userDefault);
             var params = [
                 {
-                    trackingid: row.trackingid,
-                    to: isCancel ? null : item.code,
-                    from: row.createdBy,
-                    createdDate: moment().format('YYYY-MM-DD'),
-                    createdBy: row.createdBy,
-                    updatedDate: moment().format('YYYY-MM-DD'),
-                    updatedBy: row.createdBy
+                    unknownId: row.unknownId,
+                    trackingId: row.trackingId,
+                    assignedFromEmployeeId: this.userDefault.employeeId,
+                    assignedToEmployeeId: item.employeeId,
+                    isCreate: isCreate
                 }
             ];
-
+            console.log(params);
             try {
                 if (params) {
                     var formdata = new FormData();
                     this.disabledUnknownButton = true;
                     formdata.append("listData", JSON.stringify(params));
-                    var url = (isCancel ? 'unknown/delete' : 'unknown/create');
-                    await axios.post(process.env.VUE_APP_SERVICE_URL + url, formdata);
+                    await axios.post(process.env.VUE_APP_SERVICE_URL + 'unknown/create', formdata);
                     this.isShowAlert = true;
                     this.responseAlert.color = 'cyan darken-2';
-                    this.responseAlert.message = "Data Berhasil Dipindahkan ke Unit " + item.code;
+                    this.responseAlert.message = isCreate ? "Data Berhasil Dipindahkan ke Unit " + item.code : "Data Berhasil Dikembalikan ke Unknown";
                     this.dialogUnknown = false;
                 } else {
                     this.isShowAlert = true;
@@ -470,11 +542,12 @@ export default {
     },
     async created() {
         await this.getSettings();
-        await this.getUnknown();
+        // await this.getUnknown();
+        await this.searching();
         await this.getUnitParent();
     },
     computed: {
-        ...mapGetters(['inboxs', 'settings', 'lookups']),
+        ...mapGetters(['inboxs', 'settings', 'lookups', 'unknowns']),
         latterType() {
             return this.$store.state.lookup.lookups['type'];
         },
@@ -488,7 +561,13 @@ export default {
         },
         likesSomeFruit() {
             return this.filter.sifatSurat.length > 0 && !this.likesAllFruit
-        }
+        },
+        dateRangeText() {
+            return this.filter.dateActionTerima.join(' ~ ')
+        },
+        dateRangeSuratText() {
+            return this.filter.dateActionSurat.join(' ~ ')
+        },
     },
     mounted() {
         this.activateMultipleDraggableDialogs();

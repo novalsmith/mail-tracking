@@ -53,6 +53,7 @@ $routes->get('/unknown/parent', 'Unknown::parent');
 $routes->presenter('unknown');
 $routes->presenter('outbox');
 
+$routes->presenter('history');
 
 /*
  * --------------------------------------------------------------------

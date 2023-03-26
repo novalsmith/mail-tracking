@@ -6,6 +6,22 @@ import routerObject from "@/router";
 Vue.use(VueRouter)
 
 const routes = [{
+    path: '',
+    name: 'Home',
+    component: Home,
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token') == null) {
+        // routerObject.push("/logout");
+        next({
+          path: '/logout',
+          replace: true
+        })
+      } else {
+        next();
+      }
+    }
+  },
+  {
     path: '/',
     name: 'Home',
     component: Home,

@@ -67,5 +67,19 @@ class ModelInbox extends Model
         }
         return  $isSuccess;
     }
+
+    function saveInboxData($data){
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $builderTable = $db->table('inbox'); 
+        $response = $builderTable->insertBatch($data);
+        if($response){
+            $isSuccess = true;
+        }
+        $db->close();
+        $db->initialize();
+        return  $isSuccess;
+    }
  
 }
