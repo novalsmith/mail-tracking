@@ -181,7 +181,15 @@
                                         prepend-icon="mdi-paperclip"></v-file-input>
                                     <span class="text--secondary">
                                         <v-icon>mdi-information-outline</v-icon>
-                                        Contoh Penamaan File : SDB_2023_01_01.xlsx</span>
+                                        Contoh Penamaan File : SDB_2023_01_01.xlsx
+                                        <ul>
+                                            <li>Unit : SDB</li>
+                                            <li>Tahun : 2023</li>
+                                            <li>Bulan : 01</li>
+                                            <li>Tanggal : 01</li>
+                                            <li>Format : .xlsx</li>
+                                        </ul>
+                                    </span>
                                 </v-col>
                                 <v-col md="6">
                                     <v-btn :disabled="disabledWhenLoading || loadingUploadButton" color="cyan darken-2"
@@ -669,6 +677,7 @@ export default {
         mappingMultipleRecipient() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
             var employeeId = this.userLocalData.employeeId;
+            var newDate = new moment(new Date).locale('id');
             var objectHistory = [];
             var unitFilteUploader = data[0].unitTo;
             this.mappingMultipleRecipientParam.fileUpload = {
@@ -676,7 +685,7 @@ export default {
                 fileName: this.uploadedValue.name,
                 unitUploader: unitFilteUploader,
                 uploadBy: employeeId,
-                uploadDate: new moment(new Date).locale('id')
+                uploadDate: newDate
             };
 
             this.mappingMultipleRecipientParam.nadineData = data.filter((e) => e.status != "error").map((e) => {
@@ -694,32 +703,32 @@ export default {
                     keterangan: e.ket,
                     isiRingkasan: e.note,
                     createdBy: employeeId,
-                    createdDate: new moment(new Date).locale('id')
+                    createdDate: newDate
                 }
             });
 
             this.mappingMultipleRecipientParam.inboxData = data.filter((e) => e.status == "success").map((e) => {
                 return {
                     trackingId: e.trackingId,
-                    actionDate: new moment(new Date).locale('id'),
+                    actionDate: newDate,
                     actionType: 'NEW',
                     from: employeeId,
                     to: e.unitToEmployeeId,
                     description: "Surat diUpload oleh " + unitFilteUploader,
                     createdBy: employeeId,
-                    createdDate: new moment(new Date).locale('id')
+                    createdDate: newDate
                 }
             });
 
             this.mappingMultipleRecipientParam.unknownData = data.filter((e) => e.status == "unknown").map((e) => {
                 return {
                     trackingId: e.trackingId,
-                    actionDate: new moment(new Date).locale('id'),
+                    actionDate: newDate,
                     actionType: 'NEW',
                     from: employeeId,
                     description: "Surat diUpload oleh " + unitFilteUploader,
                     createdBy: employeeId,
-                    createdDate: new moment(new Date).locale('id')
+                    createdDate: newDate
                 }
             });
 
@@ -731,7 +740,7 @@ export default {
                     type: 'NEW',
                     description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Inbox",
                     createdBy: employeeId,
-                    createdDate: new moment(new Date).locale('id')
+                    createdDate: newDate
                 });
             });
 
@@ -743,7 +752,7 @@ export default {
                     type: 'NEW',
                     description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Unknown",
                     createdBy: employeeId,
-                    createdDate: new moment(new Date).locale('id')
+                    createdDate: newDate
                 });
             });
 

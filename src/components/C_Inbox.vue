@@ -160,7 +160,7 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} </v-toolbar-title>
+                    <v-toolbar-title>Detail Surat</v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
@@ -242,7 +242,7 @@
 
                                 <v-expansion-panel v-for="(subValueData, index) in historyListData.header" class="my-1">
                                     <v-expansion-panel-header expand-icon="mdi-chevron-down">
-                                        <h4> 
+                                        <h4>
                                             <v-btn fab x-small
                                                 :color="loadingIndicator(subValueData.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                 dark class="mx-2">
@@ -304,7 +304,7 @@
                                                                                 <v-icon>
                                                                                     mdi-check
                                                                                 </v-icon>
-                                                                                                                    </v-btn> -->
+                                                                                                                        </v-btn> -->
                                                                             <v-btn fab x-small
                                                                                 :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                 dark class="mx-2">
@@ -327,8 +327,6 @@
                                                                                 momentJsFormating(subValueData2.createdDate)
                                                                             }}- {{ subValueData2.description }}
 
-
-
                                                                             <v-expansion-panels multiple class="my-2">
                                                                                 <v-expansion-panel
                                                                                     v-for="(subValueData3, index) in subHeaderDataTo(subValueData2.unitAssignedTo)"
@@ -336,13 +334,6 @@
                                                                                     <v-expansion-panel-header
                                                                                         expand-icon="mdi-chevron-down">
                                                                                         <h4>
-                                                                                        <!-- <v-btn fab x-small
-                                                                                                color="cyan darken-2" dark
-                                                                                                class="mx-2">
-                                                                                                <v-icon>
-                                                                                                    mdi-check
-                                                                                                </v-icon>
-                                                                                                                                </v-btn> -->
                                                                                             <v-btn fab x-small
                                                                                                 :color="loadingIndicator(subValueData3.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                                 dark class="mx-2">
@@ -480,9 +471,7 @@ import moment from 'moment';
 var maxlength = 18;
 export default {
     data() {
-        return {
-            panelActive: [],
-            subPanelActive: [],
+        return { 
             e6: 22,
             step1Complete: 1,
             tabs: null,
@@ -586,7 +575,10 @@ export default {
                 header: [],
                 subHeader: []
             },
-            isLoadingIndicator: []
+            isLoadingIndicator: [],
+            panelActive: [],
+            subPanelActive: [],
+            loadingUploadButton:false
         }
     },
     methods: {
@@ -788,25 +780,7 @@ export default {
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
             }
-        },
-        async getHistoryHeader() {
-            try {
-                this.loadingUploadButton = true;
-                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
-                var dataVal = !!response ? response.data : [];
-
-                this.historyListData.header = dataVal.header.filter((e) => parseInt(e.level) === 0 || parseInt(e.level) === 1 || parseInt(e.level) === 2)
-                    .map((e) => { return e });
-                this.historyListData.subHeader = dataVal.headerDetail;
-                console.log(this.historyListData.subHeader);
-                // const state = {
-                //     data: !!response ? response.data : []
-                // }
-                // this.$store.dispatch('history', state);
-            } catch (error) {
-                console.log(error);
-            }
-        },
+        }, 
         async rowClick(row) {
 
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
@@ -860,7 +834,21 @@ export default {
         },
         momentJsFormating(dateValue) {
             return moment.utc(dateValue).format("MMMM Do YYYY, h:mm:ss");
-        }
+        },
+        async getHistoryHeader() {
+            try {
+                this.loadingUploadButton = true;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
+                var dataVal = !!response ? response.data : [];
+
+                this.historyListData.header = dataVal.header.filter((e) => parseInt(e.level) === 0 || parseInt(e.level) === 1 || parseInt(e.level) === 2)
+                    .map((e) => { return e });
+                this.historyListData.subHeader = dataVal.headerDetail;
+                console.log(this.historyListData.subHeader); 
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
     async created() {
         var data = JSON.parse(localStorage.getItem('userData'));
