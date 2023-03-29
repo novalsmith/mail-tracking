@@ -174,7 +174,7 @@
                         <form class="my-5">
                             <v-row>
                                 <v-col md="4">
-                                    <v-file-input :disabled="loadingUploadButton" label="Browse File"
+                                    <v-file-input v-file-input :disabled="loadingUploadButton" label="Browse File"
                                         v-model="uploadedValue"
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                         @change="handleFilesUpload" outlined chips truncate-length="50" dense
@@ -482,7 +482,8 @@ export default {
                 inboxData: [],
                 unknownData: [],
                 historyData: []
-            }
+            },
+            isSuccessUpload: false
         }
     },
     methods: {
@@ -539,7 +540,6 @@ export default {
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             this.detailDataList = filteredList;
-            // var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = this.userLocalData.name;
         },
         async searching() {
@@ -644,6 +644,7 @@ export default {
                         this.responseAlertReview.color = 'error';
                         this.responseAlertReview.message = ResonseData.data.length + " Data sudah ada (Duplikasi)";
                         this.loadingUploadButton = false;
+                        this.isSuccessUpload = true;
                     } else {
                         this.isShowAlertReview = true;
                         this.responseAlertReview.color = 'cyan darken-2';
@@ -652,19 +653,13 @@ export default {
                         this.isClearFile = false;
                     }
 
-                    // var errorCount = resData.filter((e) => e.status == "error").map((e) => { return e }).length;
-                    // console.log(errorCount);
-
                 } else {
                     this.isShowAlertReview = true;
                     this.responseAlertReview.color = 'error';
                     this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda.";
                 }
-
-                // setTimeout(() => {
-                //     this.isShowAlertReview = false;
                 this.isLoadingReview = false;
-                // }, 5000);
+
             } catch (error) {
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'error';
@@ -758,7 +753,8 @@ export default {
 
             this.mappingMultipleRecipientParam.historyData = objectHistory;
         },
-        async clearUploadValue() {
+        clearUploadValue() {
+            this.uploadedValue = null;
             this.expanded = [];
             this.isShowAlertReview = false;
             this.responseSummaryDataReview.totalErrors = 0;
@@ -767,26 +763,27 @@ export default {
             this.responseSummaryDataReview.totalUnknown = 0;
             this.responseSummaryDataReview.totalOriginalSource = 0;
 
-            try {
+            // if(this.isSuccessUpload)
+            // try {
 
-                this.isLoading = true;
-                if (this.isClearFile && this.uploadedValue != null) {
-                    await axios.get(process.env.VUE_APP_SERVICE_URL + "removefile", { params: { fileName: this.uploadedValue.name } }).then((data) => {
-                        if (!!data) {
-                            console.log('masuk sukses');
-                        }
-                    });
-                }
-                this.uploadedValue = null;
+            //     this.isLoading = true;
+            //     if (this.isClearFile && this.uploadedValue != null) {
+            //         await axios.get(process.env.VUE_APP_SERVICE_URL + "removefile", { params: { fileName: this.uploadedValue.name } }).then((data) => {
+            //             if (!!data) {
+            //                 console.log('masuk sukses');
+            //             }
+            //         });
+            //     }
+            //     this.uploadedValue = null;
 
-            } catch (error) {
-                this.uploadedValue = null;
-                console.log(error);
-                this.isLoading = false;
-                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
-                this.responseAlert.color = "red";
-                this.isShowAlert = true;
-            }
+            // } catch (error) {
+            //     this.uploadedValue = null;
+            //     console.log(error);
+            //     this.isLoading = false;
+            //     this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+            //     this.responseAlert.color = "red";
+            //     this.isShowAlert = true;
+            // }
 
         },
         async handleFilesUpload() {
@@ -794,47 +791,74 @@ export default {
                 this.isClearFile = true;
                 var file = event.target.files[0].name;
                 var prefixFile = this.$store.state.lookup.lookups['filePrefix'];
-                console.log(file.split('_'));
-                if (file.split('_').length > 1) {
 
-                    var datas = prefixFile.filter(e => e.code == file.split('_')[0]).map(el => { return el });
-                    console.log(datas);
-                } else {
-                    this.isShowAlertReview = true;
-                    this.responseAlertReview.color = 'red';
-                    this.responseAlertReview.message = 'Periksa kembali format nama file anda. Contoh : SDB_2023_01_01.xlsx';
-                    this.uploadedValue = null;
-                    return null;
-                }
+                var messageResponse = "";
+                if (file) {
+                    var isValidDate = false;
+                    var fileformat = file.split('_');
+                    fileformat.forEach(element => {
+                        if (element) {
+                            var dateAndExtention = element.split('.');
+                            console.log(element);
+                            var datas = prefixFile.filter(e => e.code == fileformat[0]).map(el => { return el });
+                            if (datas.length == 0) {
+                                messageResponse = 'Periksa kembali format file anda, nama file harus berisi Unit';
+                            } else if (dateAndExtention.length > 1) {
+                                console.log(dateAndExtention);
+                                if (dateAndExtention[1] != "xlsx") {
+                                    messageResponse = 'Maaf, format file harus bertipe .xlsx';
+                                } else {
+                                    var isValidYear = moment(fileformat[1] + "-" + fileformat[2] + "-" + dateAndExtention[0]);
+                                    if (isValidYear.isValid()) {
+                                        isValidDate = true;
+                                    } else {
+                                        messageResponse = 'Periksa kembali format tanggal pada nama file anda.';
+                                    }
+                                }
 
-                this.userLocalData;
-                let formData = new FormData();
-                console.log(this.uploadedValue.name);
-                formData.append('TrackingFileUpload', this.uploadedValue);
-                formData.append('unitTo', file.split('_')[0]);
-                this.dialogReview = true;
-                this.isLoadingReview = true;
-                this.listDataReview = [];
-                var listData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'upload',
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
+                            } else {
+                                messageResponse = 'Periksa kembali format nama file anda.';
+                            }
+                        } else {
+                            messageResponse = 'Periksa kembali format file anda.';
                         }
-                    }
-                );
-
-                this.listDataReview = !!listData ? listData.data.responseData : [];
-                const state = {
-                    tracking: [],
-                    tempTracking: !!listData ? listData.data.responseData : [],
-                    totalOriginalData: listData.data.totalOriginalData
+                    });
+                    console.log(isValidDate);
                 }
-                this.$store.dispatch('trackings', state);
-                this.isLoadingReview = false;
-                this.listDataReview.forEach((item, i) => {
-                    item.indexNumber = i + 1;
-                });
+
+                if (!isValidDate) {
+                    this.isShowAlertReview = true;
+                    this.responseAlertReview.color = 'orange';
+                    this.responseAlertReview.message = (messageResponse + " " + "Contoh : SDB_2023_01_01.xlsx");
+                    return;
+                } else {
+                    let formData = new FormData();
+                    formData.append('TrackingFileUpload', this.uploadedValue);
+                    formData.append('unitTo', file.split('_')[0]);
+                    this.dialogReview = true;
+                    this.isLoadingReview = true;
+                    this.listDataReview = [];
+                    var listData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'upload',
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    );
+
+                    this.listDataReview = !!listData ? listData.data.responseData : [];
+                    const state = {
+                        tracking: [],
+                        tempTracking: !!listData ? listData.data.responseData : [],
+                        totalOriginalData: listData.data.totalOriginalData
+                    }
+                    this.$store.dispatch('trackings', state);
+                    this.isLoadingReview = false;
+                    this.listDataReview.forEach((item, i) => {
+                        item.indexNumber = i + 1;
+                    });
+                }
             } catch (error) {
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'red';
