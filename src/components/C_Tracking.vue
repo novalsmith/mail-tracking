@@ -753,6 +753,15 @@ export default {
 
             this.mappingMultipleRecipientParam.historyData = objectHistory;
         },
+        resetControlReview() { 
+            this.expanded = [];
+            this.isShowAlertReview = false;
+            this.responseSummaryDataReview.totalErrors = 0;
+            this.responseSummaryDataReview.totalSuccess = 0;
+            this.responseSummaryDataReview.totalUploadedData = 0;
+            this.responseSummaryDataReview.totalUnknown = 0;
+            this.responseSummaryDataReview.totalOriginalSource = 0;
+        },
         clearUploadValue() {
             this.uploadedValue = null;
             this.expanded = [];
@@ -788,6 +797,8 @@ export default {
         },
         async handleFilesUpload() {
             try {
+                this.resetControlReview();
+                this.listDataReview = [];
                 this.isClearFile = true;
                 var file = event.target.files[0].name;
                 var prefixFile = this.$store.state.lookup.lookups['filePrefix'];
@@ -808,7 +819,8 @@ export default {
                                 if (dateAndExtention[1] != "xlsx") {
                                     messageResponse = 'Maaf, format file harus bertipe .xlsx';
                                 } else {
-                                    var isValidYear = moment(fileformat[1] + "-" + fileformat[2] + "-" + dateAndExtention[0]);
+                                    var dateFormats = new Date(fileformat[1] + "-" + fileformat[2] + "-" + dateAndExtention[0]);
+                                    var isValidYear = moment(dateFormats, "YYYY-MM-DD");
                                     if (isValidYear.isValid()) {
                                         isValidDate = true;
                                     } else {
@@ -816,8 +828,6 @@ export default {
                                     }
                                 }
 
-                            } else {
-                                messageResponse = 'Periksa kembali format nama file anda.';
                             }
                         } else {
                             messageResponse = 'Periksa kembali format file anda.';
@@ -830,14 +840,13 @@ export default {
                     this.isShowAlertReview = true;
                     this.responseAlertReview.color = 'orange';
                     this.responseAlertReview.message = (messageResponse + " " + "Contoh : SDB_2023_01_01.xlsx");
-                    return;
+                    return null;
                 } else {
                     let formData = new FormData();
                     formData.append('TrackingFileUpload', this.uploadedValue);
                     formData.append('unitTo', file.split('_')[0]);
                     this.dialogReview = true;
                     this.isLoadingReview = true;
-                    this.listDataReview = [];
                     var listData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'upload',
                         formData,
                         {

@@ -267,8 +267,8 @@ class Tracking extends BaseController
 				} 
 		 
 			 
-	 
-				$nadineData = is_array($listData->nadineData) ? count($listData->nadineData) : 1;
+				if(count($listData->nadineData) > 0){
+					$nadineData = is_array($listData->nadineData) ? count($listData->nadineData) : 1;
 				foreach(array_chunk($listData->nadineData,$nadineData,true) as $rows) {
 				 
 					$trackingData = $this->model->saveNadineData($rows);
@@ -280,11 +280,11 @@ class Tracking extends BaseController
 						];
 						$resultExcelData[] = $response; 
 					} 
-			}
-		 
-			
-			
-			$inboxData = is_array($listData->inboxData) ? count($listData->inboxData) : 1;
+				}
+			} 
+
+			if(count($listData->inboxData) > 0){
+				$inboxData = is_array($listData->inboxData) ? count($listData->inboxData) : 1;
 				foreach(array_chunk($listData->inboxData,$inboxData,true) as $rows) {
 				 
 					$trackingData = $modelInbox->saveInboxData($rows);
@@ -297,28 +297,29 @@ class Tracking extends BaseController
 						$resultExcelData[] = $response; 
 					} 
 				}
-		 
-			 
-			$unknownData = is_array($listData->unknownData) ? count($listData->unknownData) : 0;
-			if($unknownData > 0){
-				foreach(array_chunk($listData->unknownData,$unknownData,true) as $rows) {
-				 
-					$trackingData = $modelUnknown->saveUnknownData($rows);
-					if($trackingData){
-						$response = [
-							"type" => 'unknownData',
-							"status" => 'success',
-							"message" => "success insert data"
-						];
-						$resultExcelData[] = $response; 
-					} 
-				}
-			 
 			}
 			
-			
-	 
-			$historyData = is_array($listData->historyData) ? count($listData->historyData) : 1;
+		 
+			 if(count($listData->unknownData) > 0){
+				$unknownData = is_array($listData->unknownData) ? count($listData->unknownData) : 0;
+				if($unknownData > 0){
+					foreach(array_chunk($listData->unknownData,$unknownData,true) as $rows) {
+					 
+						$trackingData = $modelUnknown->saveUnknownData($rows);
+						if($trackingData){
+							$response = [
+								"type" => 'unknownData',
+								"status" => 'success',
+								"message" => "success insert data"
+							];
+							$resultExcelData[] = $response; 
+						} 
+					}
+				 
+				}
+			 }
+			 if(count($listData->historyData) > 0){
+				$historyData = is_array($listData->historyData) ? count($listData->historyData) : 1;
 				foreach(array_chunk($listData->historyData,$historyData,true) as $rows) {
 				 
 					$trackingData = $modelHistory->saveHistoryData($rows);
@@ -331,8 +332,7 @@ class Tracking extends BaseController
 						$resultExcelData[] = $response; 
 					} 
 				}
-		 
-			
+			 } 
 
 			return $this->respond($resultExcelData, 200); 
 		} 
