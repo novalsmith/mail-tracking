@@ -174,7 +174,7 @@
                         <form class="my-5">
                             <v-row>
                                 <v-col md="4">
-                                    <v-file-input v-file-input :disabled="loadingUploadButton" label="Browse File"
+                                    <v-file-input :disabled="loadingUploadButton" label="Browse File"
                                         v-model="uploadedValue"
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                         @change="handleFilesUpload" outlined chips truncate-length="50" dense
@@ -655,7 +655,7 @@ export default {
 
                 } else {
                     this.isShowAlertReview = true;
-                    this.responseAlertReview.color = 'error';
+                    this.responseAlertReview.color = 'orange';
                     this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda.";
                 }
                 this.isLoadingReview = false;
@@ -696,7 +696,7 @@ export default {
                     dari: e.from,
                     kepada: e.to,
                     keterangan: e.ket,
-                    isiRingkasan: e.note,
+                    indexNumber: e.indexNumber,
                     createdBy: employeeId,
                     createdDate: newDate
                 }
@@ -753,7 +753,7 @@ export default {
 
             this.mappingMultipleRecipientParam.historyData = objectHistory;
         },
-        resetControlReview() { 
+        resetControlReview() {
             this.expanded = [];
             this.isShowAlertReview = false;
             this.responseSummaryDataReview.totalErrors = 0;

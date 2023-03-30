@@ -207,13 +207,13 @@ class Tracking extends BaseController
 					"message" => $message
 				]; 
 				$resultExcelData[] = $simpandata;  
-		} 
+			} 
 			$this->createToTemp($resultExcelData);
-		$responseData = [
-			"responseData" => $this->model->validationUploadTracking(),
-			"totalOriginalData" => (count($data)-1)
-		]; 
-		return $this->respond($responseData, 200);
+			$responseData = [
+				"responseData" => $this->model->validationUploadTracking(),
+				"totalOriginalData" => (count($data)-1)
+			]; 
+			return $this->respond($responseData, 200);
 		}
     }
 
