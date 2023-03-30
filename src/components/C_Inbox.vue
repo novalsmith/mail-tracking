@@ -103,7 +103,7 @@
 
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Keterangan"
+                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Catatan"
                                         required></v-text-field>
                                 </v-col>
                             </v-row>
@@ -305,7 +305,7 @@
                                                                                 <v-icon>
                                                                                     mdi-check
                                                                                 </v-icon>
-                                                                                                                            </v-btn> -->
+                                                                                                                                </v-btn> -->
                                                                             <v-btn fab x-small
                                                                                 :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                 dark class="mx-2">
