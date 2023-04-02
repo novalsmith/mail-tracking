@@ -771,7 +771,10 @@ export default {
             this.responseSummaryDataReview.totalUploadedData = 0;
             this.responseSummaryDataReview.totalUnknown = 0;
             this.responseSummaryDataReview.totalOriginalSource = 0;
-
+            this.uploadStatus.all = true;
+            this.uploadStatus.error = true;
+            this.uploadStatus.success = true;
+            this.uploadStatus.info = true;
             // if(this.isSuccessUpload)
             // try {
 

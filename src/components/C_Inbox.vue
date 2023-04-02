@@ -141,12 +141,13 @@
                 </template>
                 <template v-slot:item.unitAssignedTo="{ item, index }">
 
-                    <v-chip v-if="item.unitAssignedTo" color="cyan darken-2" dark>
-                        Assigned <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
-                    </v-chip>
-                    <v-chip v-else color="orange" dark>
-                        Unassigned <v-icon class="mx-1">mdi-alert-outline</v-icon>
-                    </v-chip>
+                    <v-btn fab small v-if="item.inboxOutboxId" color="cyan darken-2" dark>
+                        <v-icon class="mx-1">mdi-account-check</v-icon>
+                    </v-btn>
+
+                    <v-btn fab small v-else color="orange" dark>
+                        <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                    </v-btn>
                 </template>
             </v-data-table>
 
@@ -238,6 +239,49 @@
                                 <h3>Riwayat Surat</h3>
                                 <v-divider></v-divider>
                             </div>
+                            <!-- <template> -->
+                            <div>
+                                <v-stepper v-model="e13" vertical>
+                                    <v-stepper-step step="1" complete>
+                                        Name of step 1
+                                    </v-stepper-step>
+
+                                    <v-stepper-content step="1">
+                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
+                                        <v-btn color="primary" @click="e13 = 2">Continue</v-btn>
+                                        <v-btn text>Cancel</v-btn>
+                                    </v-stepper-content>
+
+                                    <v-stepper-step step="2" complete complete-icon="mdi-check">Name of step
+                                        2</v-stepper-step>
+
+                                    <v-stepper-content step="2">
+                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
+                                        <v-btn color="primary" @click="e13 = 3">Continue</v-btn>
+                                        <v-btn text>Cancel</v-btn>
+                                    </v-stepper-content>
+
+                                    <v-stepper-step :rules="[() => false]" step="3">
+                                        Ad templates
+                                        <small>Alert message</small>
+                                    </v-stepper-step>
+
+                                    <v-stepper-content step="3">
+                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
+                                        <v-btn color="primary" @click="e13 = 4">Continue</v-btn>
+                                        <v-btn text>Cancel</v-btn>
+                                    </v-stepper-content>
+
+                                    <v-stepper-step step="4">View setup instructions</v-stepper-step>
+
+                                    <v-stepper-content step="4">
+                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
+                                        <v-btn color="primary" @click="e13 = 1">Continue</v-btn>
+                                        <v-btn text>Cancel</v-btn>
+                                    </v-stepper-content>
+                                </v-stepper>
+                            </div>
+                            <!-- </template> -->
                             <v-expansion-panels v-model="panelActive" multiple>
 
                                 <v-expansion-panel v-for="(subValueData, index) in historyListData.header" :key="index"
@@ -305,7 +349,7 @@
                                                                                 <v-icon>
                                                                                     mdi-check
                                                                                 </v-icon>
-                                                                                                                                </v-btn> -->
+                                                                                                                                                            </v-btn> -->
                                                                             <v-btn fab x-small
                                                                                 :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                 dark class="mx-2">
@@ -474,6 +518,7 @@ export default {
     data() {
         return {
             e6: 22,
+            e13: 2,
             step1Complete: 1,
             tabs: null,
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
@@ -544,7 +589,7 @@ export default {
                 { text: 'Assigned From', value: 'unitAssignedFrom' },
                 { text: 'Tgl.Tindak lanjut', value: 'tglTindaklanjut' },
                 { text: 'Tindakan', value: 'actionTypeValue' },
-                { text: 'Outbox', value: 'unitAssignedTo' }
+                { text: 'Status', value: 'unitAssignedTo' }
 
             ],
             headerprops: {
@@ -615,6 +660,7 @@ export default {
 
                 params.outboxData = {
                     trackingId: this.detailDataRow.trackingId,
+                    inboxId: this.detailDataRow.inboxId,
                     catatan: this.description,
                     tindaklanjut: this.selectedType,
                     tglTindaklanjut: new moment(new Date).locale('id'),
@@ -624,6 +670,7 @@ export default {
 
                 params.historyData = {
                     trackingId: this.detailDataRow.trackingId,
+                    inboxId: this.detailDataRow.inboxId,
                     menu: 'INBOX',
                     type: this.selectedType,
                     description: "Surat telah di " + nameValue,
