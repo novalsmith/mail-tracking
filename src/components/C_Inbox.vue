@@ -201,7 +201,7 @@
                                         </v-date-picker>
                                     </v-dialog>
                                 </v-col>
-                                <v-col md="4">
+                                <v-col md="4" v-if="!isStaf">
                                     <v-select :items="actionFollowUp" item-text="name" item-value="code"
                                         v-model="selectedType" dense outlined @change="selectedTypeEvnt"
                                         label="Tindak Lanjut"></v-select>
@@ -349,7 +349,7 @@
                                                                                 <v-icon>
                                                                                     mdi-check
                                                                                 </v-icon>
-                                                                                                                                                            </v-btn> -->
+                                                                                                                                                                </v-btn> -->
                                                                             <v-btn fab x-small
                                                                                 :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                 dark class="mx-2">
@@ -574,7 +574,8 @@ export default {
                 modalDateTglTerima: null,
                 modalDateTglSurat: null,
                 searchingParams: [],
-                unknownModelData: ""
+                unknownModelData: "",
+                isStaf: false
             },
             headers: [
                 { text: 'No', value: 'num' },
@@ -903,7 +904,7 @@ export default {
         this.listLocalUserData = data.user;
         this.getHistoryHeader();
         await this.searching();
-
+        this.isStaf = (parseInt(this.listLocalUserData.roleLevel) == 5 || parseInt(this.listLocalUserData.roleLevel) == 0 ? true : false);
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
