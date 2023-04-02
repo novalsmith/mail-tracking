@@ -810,33 +810,38 @@ export default {
                 if (file) {
                     var isValidDate = false;
                     var fileformat = file.split('_');
-                    fileformat.forEach(element => {
-                        if (element) {
-                            var dateAndExtention = element.split('.');
-                            console.log(element);
-                            var datas = prefixFile.filter(e => e.code == fileformat[0]).map(el => { return el });
-                            if (datas.length == 0) {
-                                messageResponse = 'Periksa kembali format file anda, nama file harus berisi Unit';
-                            } else if (dateAndExtention.length > 1) {
-                                console.log(dateAndExtention);
-                                if (dateAndExtention[1] != "xlsx") {
-                                    messageResponse = 'Maaf, format file harus bertipe .xlsx';
-                                } else {
-                                    var dateFormats = new Date(fileformat[1] + "-" + fileformat[2] + "-" + dateAndExtention[0]);
-                                    var isValidYear = moment(dateFormats, "YYYY-MM-DD");
-                                    if (isValidYear.isValid()) {
-                                        isValidDate = true;
+                    if (fileformat && (fileformat.length > 0 && fileformat.length == 4)) {
+                        fileformat.forEach(element => {
+                            if (element) {
+                                var dateAndExtention = element.split('.');
+                                console.log(element);
+                                var datas = prefixFile.filter(e => e.code == fileformat[0]).map(el => { return el });
+                                if (datas.length == 0) {
+                                    messageResponse = 'Periksa kembali format file anda, nama file harus berisi Unit';
+                                } else if (dateAndExtention.length > 1) {
+                                    console.log(dateAndExtention);
+                                    if (dateAndExtention[1] != "xlsx") {
+                                        messageResponse = 'Maaf, format file harus bertipe .xlsx';
                                     } else {
-                                        messageResponse = 'Periksa kembali format tanggal pada nama file anda.';
+                                        var dateFormats = new Date(fileformat[1] + "-" + fileformat[2] + "-" + dateAndExtention[0]);
+                                        var isValidYear = moment(dateFormats, "YYYY-MM-DD");
+                                        if (isValidYear.isValid()) {
+                                            isValidDate = true;
+                                        } else {
+                                            messageResponse = 'Periksa kembali format tanggal pada nama file anda.';
+                                        }
                                     }
-                                }
 
+                                }
+                            } else {
+                                messageResponse = 'Periksa kembali format file anda.';
                             }
-                        } else {
-                            messageResponse = 'Periksa kembali format file anda.';
-                        }
-                    });
-                    console.log(isValidDate);
+                        });
+                        console.log(isValidDate);
+                    } else {
+                        messageResponse = 'Periksa kembali format file anda.';
+                    }
+
                 }
 
                 if (!isValidDate) {
