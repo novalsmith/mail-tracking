@@ -1,33 +1,20 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import AxiosPlugin from 'vue-axios-cors';
 import axios from "axios";
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import vuetify from './plugins/vuetify'
-import httpClientAxios from './auth/http-common'
-import Modal from './components/C_GeneralDialog.vue'
-import VuePapaParse from 'vue-papa-parse'
-import './registerServiceWorker'
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import vuetify from './plugins/vuetify';
+import httpClientAxios from './auth/http-common';
+import Modal from './components/C_GeneralDialog.vue';
+import VuePapaParse from 'vue-papa-parse';
+import './registerServiceWorker';
 import mixins from 'vuetify-multiple-draggable-dialogs';
+import {
+  hmrDirtyComponents
+} from '@vue/runtime-dom';
 
-Vue.config.productionTip = false
-
-// let refresh = false;
-// axios.defaults.baseURL = process.env.VUE_APP_PROXY_SERVICE_URL;
-// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-// axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-
-// axios.interceptors.response.use(resp => resp, async error => {
-//   console.log("masuk sini");
-//   console.log(error.response.status);
-//   if (error.response.status === 401) {
-
-//     if (error.response.data && error.response.data.error === "Expired token") {
-//       router.push('/logout')
-//     }
-//   }
-// });
+Vue.config.productionTip = false;
 Vue.mixin(mixins);
 
 new Vue({
@@ -40,4 +27,17 @@ new Vue({
   AxiosPlugin,
   VuePapaParse,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
+
+// Clear the code cache on hot module reload
+if (
+  import.meta.hot) {
+  import.meta.hot.accept()
+  import.meta.hot.dispose(() => {
+    // Before the reload, mark all dirty components as reloaded
+    app._container.__vueApp__.unmount()
+    hmrDirtyComponents.forEach((component) => {
+      component.__hmrUpdated = true
+    })
+  })
+}

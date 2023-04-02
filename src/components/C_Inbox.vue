@@ -349,7 +349,7 @@
                                                                                 <v-icon>
                                                                                     mdi-check
                                                                                 </v-icon>
-                                                                                                                                                                </v-btn> -->
+                                                                                                                                                                    </v-btn> -->
                                                                             <v-btn fab x-small
                                                                                 :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
                                                                                 dark class="mx-2">
@@ -574,8 +574,7 @@ export default {
                 modalDateTglTerima: null,
                 modalDateTglSurat: null,
                 searchingParams: [],
-                unknownModelData: "",
-                isStaf: false
+                unknownModelData: ""
             },
             headers: [
                 { text: 'No', value: 'num' },
@@ -625,7 +624,8 @@ export default {
             isLoadingIndicator: [],
             panelActive: [],
             subPanelActive: [],
-            loadingUploadButton: false
+            loadingUploadButton: false,
+            isStaf: false
         }
     },
     methods: {
