@@ -239,192 +239,35 @@
                                 <h3>Riwayat Surat</h3>
                                 <v-divider></v-divider>
                             </div>
-                            <!-- <template> -->
                             <div>
-                                <v-stepper v-model="e13" vertical>
-                                    <v-stepper-step step="1" complete>
-                                        Name of step 1
-                                    </v-stepper-step>
 
-                                    <v-stepper-content step="1">
-                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                                        <v-btn color="primary" @click="e13 = 2">Continue</v-btn>
-                                        <v-btn text>Cancel</v-btn>
-                                    </v-stepper-content>
 
-                                    <v-stepper-step step="2" complete complete-icon="mdi-check">Name of step
-                                        2</v-stepper-step>
 
-                                    <v-stepper-content step="2">
-                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                                        <v-btn color="primary" @click="e13 = 3">Continue</v-btn>
-                                        <v-btn text>Cancel</v-btn>
-                                    </v-stepper-content>
+                                <v-timeline side="start">
 
-                                    <v-stepper-step :rules="[() => false]" step="3">
-                                        Ad templates
-                                        <small>Alert message</small>
-                                    </v-stepper-step>
+                                    <v-timeline-item v-for="itemDetail, index in this.historyListData.subHeader" :key="index"
+                                        :dot-color="itemDetail.color" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
+                                        size="small" fill-dot>
+                                        <v-alert :value="true" :color="itemDetail.color" :icon="itemDetail.icon" outlined>
+                                            <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }}</h3>
+                                            <small class="font-weight-bold">{{
+                                                        momentJsFormating(itemDetail.createdDate)
+                                                    }}</small> <br>
+                                            {{ itemDetail.description }} -({{ itemDetail.unitTo }})
+                                            <!-- <ul>
+                                                <li v-for="itemDetail, keys in detailHistory(item)" :key="keys">
+                                                    <small class="font-weight-bold">{{
+                                                        momentJsFormating(itemDetail.createdDate)
+                                                    }}</small> <br>
+                                                    {{ itemDetail.description }} ({{ itemDetail.unitTo }})
+                                                </li>
+                                            </ul> -->
+                                        </v-alert>
+                                    </v-timeline-item>
+                                </v-timeline>
 
-                                    <v-stepper-content step="3">
-                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                                        <v-btn color="primary" @click="e13 = 4">Continue</v-btn>
-                                        <v-btn text>Cancel</v-btn>
-                                    </v-stepper-content>
 
-                                    <v-stepper-step step="4">View setup instructions</v-stepper-step>
-
-                                    <v-stepper-content step="4">
-                                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                                        <v-btn color="primary" @click="e13 = 1">Continue</v-btn>
-                                        <v-btn text>Cancel</v-btn>
-                                    </v-stepper-content>
-                                </v-stepper>
                             </div>
-                            <!-- </template> -->
-                            <v-expansion-panels v-model="panelActive" multiple>
-
-                                <v-expansion-panel v-for="(subValueData, index) in historyListData.header" :key="index"
-                                    class="my-1">
-                                    <v-expansion-panel-header expand-icon="mdi-chevron-down">
-                                        <h4>
-                                            <v-btn fab x-small
-                                                :color="loadingIndicator(subValueData.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
-                                                dark class="mx-2">
-                                                <v-icon v-if="loadingIndicator(subValueData.unitAssignedTo).length > 0">
-                                                    mdi-check
-                                                </v-icon>
-                                                <v-icon v-else>
-                                                    mdi-sync
-                                                </v-icon>
-                                            </v-btn>
-                                            {{ subValueData.unitAssignedFrom }} - {{ subValueData.nameFrom }}
-                                        </h4>
-                                    </v-expansion-panel-header>
-                                    <v-expansion-panel-content>
-                                        <v-container>
-
-                                            {{
-                                                momentJsFormating(subValueData.createdDate)
-                                            }} - {{ subValueData.description }}
-
-                                            <v-expansion-panels multiple class="my-2">
-                                                <v-expansion-panel
-                                                    v-for="(subValueData1, index) in subHeaderDataTo(subValueData.unitAssignedFrom)"
-                                                    :key="index" class="my-1">
-                                                    <v-expansion-panel-header expand-icon="mdi-chevron-down">
-                                                        <h4>
-                                                            <v-btn fab x-small
-                                                                :color="loadingIndicator(subValueData1.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
-                                                                dark class="mx-2">
-                                                                <v-icon
-                                                                    v-if="loadingIndicator(subValueData1.unitAssignedTo).length > 0">
-                                                                    mdi-check
-                                                                </v-icon>
-                                                                <v-icon v-else>
-                                                                    mdi-sync
-                                                                </v-icon>
-                                                            </v-btn>
-                                                            {{ subValueData1.unitAssignedTo }} - {{ subValueData1.nameTo }}
-                                                        </h4>
-                                                    </v-expansion-panel-header>
-                                                    <v-expansion-panel-content>
-                                                        <v-container>
-
-                                                            {{
-                                                                momentJsFormating(subValueData1.createdDate)
-                                                            }}
-                                                            {{ subValueData1.description
-                                                            }}
-
-                                                            <v-expansion-panels multiple class="my-2">
-                                                                <v-expansion-panel
-                                                                    v-for="(subValueData2, index) in subHeaderDataTo(subValueData1.unitAssignedTo)"
-                                                                    :key="index" class="my-1">
-                                                                    <v-expansion-panel-header
-                                                                        expand-icon="mdi-chevron-down">
-                                                                        <h4>
-                                                                        <!-- <v-btn fab x-small color="cyan darken-2" dark
-                                                                                class="mx-2">
-                                                                                <v-icon>
-                                                                                    mdi-check
-                                                                                </v-icon>
-                                                                                                                                                                        </v-btn> -->
-                                                                            <v-btn fab x-small
-                                                                                :color="loadingIndicator(subValueData2.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
-                                                                                dark class="mx-2">
-                                                                                <v-icon
-                                                                                    v-if="loadingIndicator(subValueData2.unitAssignedTo).length > 0">
-                                                                                    mdi-check
-                                                                                </v-icon>
-                                                                                <v-icon v-else>
-                                                                                    mdi-sync
-                                                                                </v-icon>
-                                                                            </v-btn>
-                                                                            {{ subValueData2.unitAssignedTo }} -
-                                                                            {{ subValueData2.nameTo }}
-                                                                        </h4>
-                                                                    </v-expansion-panel-header>
-                                                                    <v-expansion-panel-content>
-                                                                        <v-container>
-
-                                                                            {{
-                                                                                momentJsFormating(subValueData2.createdDate)
-                                                                            }}- {{ subValueData2.description }}
-
-                                                                            <v-expansion-panels multiple class="my-2">
-                                                                                <v-expansion-panel
-                                                                                    v-for="(subValueData3, index) in subHeaderDataTo(subValueData2.unitAssignedTo)"
-                                                                                    :key="index" class="my-1">
-                                                                                    <v-expansion-panel-header
-                                                                                        expand-icon="mdi-chevron-down">
-                                                                                        <h4>
-                                                                                            <v-btn fab x-small
-                                                                                                :color="loadingIndicator(subValueData3.unitAssignedTo).length > 0 ? 'cyan darken-2' : 'blue-grey lighten-2'"
-                                                                                                dark class="mx-2">
-                                                                                                <v-icon
-                                                                                                    v-if="loadingIndicator(subValueData3.unitAssignedTo).length > 0">
-                                                                                                    mdi-check
-                                                                                                </v-icon>
-                                                                                                <v-icon v-else>
-                                                                                                    mdi-sync
-                                                                                                </v-icon>
-                                                                                            </v-btn>
-                                                                                            <span
-                                                                                                v-if="subValueData3.levelTo = 5">Staf
-                                                                                                - {{ subValueData3.nameTo }}
-                                                                                            </span>
-                                                                                            <span v-else>{{
-                                                                                                subValueData3.unitAssignedTo
-                                                                                                - subValueData3.nameTo
-                                                                                            }}</span>
-                                                                                        </h4>
-                                                                                    </v-expansion-panel-header>
-                                                                                    <v-expansion-panel-content>
-                                                                                        {{
-                                                                                            momentJsFormating(subValueData2.createdDate)
-                                                                                        }}- {{
-    subValueData2.description }}
-                                                                                    </v-expansion-panel-content>
-                                                                                </v-expansion-panel>
-                                                                            </v-expansion-panels>
-                                                                        </v-container>
-                                                                    </v-expansion-panel-content>
-                                                                </v-expansion-panel>
-                                                            </v-expansion-panels>
-                                                        </v-container>
-
-                                                    </v-expansion-panel-content>
-                                                </v-expansion-panel>
-                                            </v-expansion-panels>
-                                        </v-container>
-                                    </v-expansion-panel-content>
-                                </v-expansion-panel>
-                            </v-expansion-panels>
-
-                            <!-- tab -->
-
-
                         </v-col>
                         <v-col md="5">
                             <div class="my-5">
@@ -625,10 +468,29 @@ export default {
             panelActive: [],
             subPanelActive: [],
             loadingUploadButton: false,
-            isStaf: false
+            isStaf: false,
+            activeStep: 2,
+            itemsTimeline: [
+                {
+                    id: 1,
+                    color: 'cyan darken-2',
+                    icon: 'mdi-check'
+                },
+                {
+                    id: 2,
+                    color: 'green',
+                    icon: 'mdi-sync'
+                },
+            ],
+
         }
     },
     methods: {
+        detailHistory(item) {
+            // Returns true to show content for completed steps, false for others
+            return this.historyListData.subHeader.filter((e) => e.unitFrom === item.unitFrom)
+                .map((e) => { return e });
+        },
         async submit() {
             console.log(this.detailDataRow);
             var params = {
@@ -654,8 +516,20 @@ export default {
                         createdBy: this.listLocalUserData.employeeId,
                         createdDate: new moment(new Date).locale('id'),
                     };
+                    var newHistoryData = {
+                        trackingId: this.detailDataRow.trackingId,
+                        inboxId: this.detailDataRow.inboxId,
+                        menu: 'INBOX',
+                        type: this.selectedType,
+                        description: "Surat telah di " + nameValue,
+                        from: this.listLocalUserData.employeeId,
+                        to: element.value,
+                        createdBy: this.listLocalUserData.employeeId,
+                        createdDate: new moment(new Date).locale('id')
+                    };
 
                     params.inboxData.push(newData);
+                    params.historyData.push(newHistoryData);
 
                 });
 
@@ -667,16 +541,6 @@ export default {
                     tglTindaklanjut: new moment(new Date).locale('id'),
                     createdBy: this.listLocalUserData.employeeId,
                     createdDate: new moment(new Date).locale('id'),
-                };
-
-                params.historyData = {
-                    trackingId: this.detailDataRow.trackingId,
-                    inboxId: this.detailDataRow.inboxId,
-                    menu: 'INBOX',
-                    type: this.selectedType,
-                    description: "Surat telah di " + nameValue,
-                    createdBy: this.listLocalUserData.employeeId,
-                    createdDate: new moment(new Date).locale('id')
                 };
             }
             try {
@@ -890,8 +754,7 @@ export default {
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
                 var dataVal = !!response ? response.data : [];
 
-                this.historyListData.header = dataVal.header.filter((e) => parseInt(e.level) === 0 || parseInt(e.level) === 1 || parseInt(e.level) === 2)
-                    .map((e) => { return e });
+                this.historyListData.header = dataVal.header;
                 this.historyListData.subHeader = dataVal.headerDetail;
                 console.log(this.historyListData.subHeader);
             } catch (error) {
@@ -936,6 +799,12 @@ export default {
         dateRangeSuratText() {
             return this.filter.dateActionSurat.join(' ~ ')
         },
+        allStepsCompleted() {
+            // Check if all steps are completed
+            var aa = this.historyListData.header.every(step => step.completed);
+            console.log("sample " + aa);
+            return this.historyListData.header.every(step => step.completed)
+        }
     }
 }
 </script> 
@@ -950,6 +819,10 @@ export default {
 .divider-active {
     border-width: 3px;
     background: #0097A7 !important;
+}
+
+.show-content {
+    display: block !important;
 }
 
 /* ::v-deep .v-stepper__step__step {

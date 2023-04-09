@@ -733,7 +733,9 @@ export default {
                     trackingId: e.trackingId,
                     menu: 'NADINE',
                     type: 'NEW',
-                    description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Inbox",
+                    description: "Surat diupload oleh Operator dan masuk Inbox",
+                    from: employeeId,
+                    to: e.to,
                     createdBy: employeeId,
                     createdDate: newDate
                 });
@@ -745,7 +747,9 @@ export default {
                     trackingId: e.trackingId,
                     menu: 'UNKNOWNBOX',
                     type: 'NEW',
-                    description: "Surat diUpload oleh " + unitFilteUploader + " dan masuk Unknown",
+                    description: "Surat diupload oleh Operator dan masuk Unknown",
+                    from: e.from,
+                    to: null,
                     createdBy: employeeId,
                     createdDate: newDate
                 });
