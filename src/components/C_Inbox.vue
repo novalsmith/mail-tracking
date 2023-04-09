@@ -241,27 +241,25 @@
                             </div>
                             <div>
 
-
-
                                 <v-timeline side="start">
 
-                                    <v-timeline-item v-for="itemDetail, index in this.historyListData.subHeader" :key="index"
-                                        :dot-color="itemDetail.color" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
-                                        size="small" fill-dot>
+                                    <v-timeline-item v-for="itemDetail, index in this.historyListData.subHeader"
+                                        :key="index" :dot-color="itemDetail.color"
+                                        :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'" size="small" fill-dot>
                                         <v-alert :value="true" :color="itemDetail.color" :icon="itemDetail.icon" outlined>
                                             <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }}</h3>
                                             <small class="font-weight-bold">{{
-                                                        momentJsFormating(itemDetail.createdDate)
-                                                    }}</small> <br>
+                                                momentJsFormating(itemDetail.createdDate)
+                                            }}</small> <br>
                                             {{ itemDetail.description }} -({{ itemDetail.unitTo }})
-                                            <!-- <ul>
+                                        <!-- <ul>
                                                 <li v-for="itemDetail, keys in detailHistory(item)" :key="keys">
                                                     <small class="font-weight-bold">{{
                                                         momentJsFormating(itemDetail.createdDate)
                                                     }}</small> <br>
                                                     {{ itemDetail.description }} ({{ itemDetail.unitTo }})
                                                 </li>
-                                            </ul> -->
+                                                                            </ul> -->
                                         </v-alert>
                                     </v-timeline-item>
                                 </v-timeline>
@@ -282,55 +280,55 @@
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Nomor Agenda
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.agendaNumber }}
+                                                    <v-list-item-title> {{ detailDataRow.nomorAgenda }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Nomor Surat
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
+                                                    <v-list-item-title> {{ detailDataRow.nomorSurat }} </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1">Tgl.Penerimaan
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.receiptDate }}
+                                                    <v-list-item-title> {{ detailDataRow.tglPenerimaanDisplayText }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1">Tgl.Surat
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.realDate }}
+                                                    <v-list-item-title> {{ detailDataRow.tglSurat }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1">Sifat Surat
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.type }}
+                                                    <v-list-item-title> {{ detailDataRow.sifatSurat }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.from }}
+                                                    <v-list-item-title> {{ detailDataRow.dari }}
                                                     </v-list-item-title>
                                                 </div>
 
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.to }}
+                                                    <v-list-item-title> {{ detailDataRow.kepada }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Isi Ringkasan
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.description }}
-                                                    </v-list-item-title>
-                                                </div>
-                                                <div class="my-3">
-                                                    <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.actionType }}
+                                                    <v-list-item-title> {{ detailDataRow.isiRingkasan }}
                                                     </v-list-item-title>
                                                 </div>
 
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.actionTypeValue }}
+                                                    </v-list-item-title>
+                                                </div>
 
                                             </v-list-item-content>
                                         </v-list-item>
