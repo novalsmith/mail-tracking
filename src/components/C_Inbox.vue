@@ -259,7 +259,7 @@
                                                     }}</small> <br>
                                                     {{ itemDetail.description }} ({{ itemDetail.unitTo }})
                                                 </li>
-                                                                            </ul> -->
+                                                                                                    </ul> -->
                                         </v-alert>
                                     </v-timeline-item>
                                 </v-timeline>
@@ -744,7 +744,8 @@ export default {
             return data;
         },
         momentJsFormating(dateValue) {
-            return moment.utc(dateValue).format("MMMM Do YYYY, h:mm:ss");
+            moment.locale('id');
+            return moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
         },
         async getHistoryHeader() {
             try {
