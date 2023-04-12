@@ -241,25 +241,33 @@
                             </div>
                             <div>
 
-                                <v-timeline side="start">
+                                <v-timeline side="start" align-top :dense="$vuetify.breakpoint.smAndDown">
 
                                     <v-timeline-item v-for="itemDetail, index in this.historyListData.subHeader"
-                                        :key="index" :dot-color="itemDetail.color"
+                                        :key="index" color="cyan darken-2"
                                         :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'" size="small" fill-dot>
+
                                         <v-alert :value="true" :color="itemDetail.color" :icon="itemDetail.icon" outlined>
-                                            <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }}</h3>
+                                            <v-row>
+                                                <v-col md="8">
+                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
+                                                </v-col>
+                                                <v-col md="4" class="text-end">
+                                                    <v-chip small class="ma-2">
+                                                        {{ itemDetail.typeText }}
+                                                    </v-chip>
+                                                </v-col>
+                                            </v-row>
                                             <small class="font-weight-bold">{{
-                                                momentJsFormating(itemDetail.createdDate)
+                                                momentJsFormating(itemDetail.createdDate, 1)
                                             }}</small> <br>
-                                            {{ itemDetail.description }} -({{ itemDetail.unitTo }})
-                                        <!-- <ul>
-                                                <li v-for="itemDetail, keys in detailHistory(item)" :key="keys">
-                                                    <small class="font-weight-bold">{{
-                                                        momentJsFormating(itemDetail.createdDate)
-                                                    }}</small> <br>
-                                                    {{ itemDetail.description }} ({{ itemDetail.unitTo }})
-                                                </li>
-                                                                                                    </ul> -->
+                                            {{ itemDetail.descriptionAction }} <br>
+                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
+                                                <span>Catatan:</span>
+                                                <i>
+                                                    <p> {{ itemDetail.catatan }}</p>
+                                                </i>
+                                            </div>
                                         </v-alert>
                                     </v-timeline-item>
                                 </v-timeline>
@@ -291,13 +299,14 @@
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1">Tgl.Penerimaan
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.tglPenerimaanDisplayText }}
+                                                    <v-list-item-title> {{
+                                                        momentJsFormating(detailDataRow.tglPenerimaanDisplayText, 2) }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1">Tgl.Surat
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.tglSurat }}
+                                                    <v-list-item-title> {{ momentJsFormating(detailDataRow.tglSurat, 2) }}
                                                     </v-list-item-title>
                                                 </div>
                                                 <div class="my-3">
@@ -321,12 +330,6 @@
                                                     <v-list-item-subtitle class="my-1"> Isi Ringkasan
                                                     </v-list-item-subtitle>
                                                     <v-list-item-title> {{ detailDataRow.isiRingkasan }}
-                                                    </v-list-item-title>
-                                                </div>
-
-                                                <div class="my-3">
-                                                    <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.actionTypeValue }}
                                                     </v-list-item-title>
                                                 </div>
 
@@ -519,7 +522,7 @@ export default {
                         inboxId: this.detailDataRow.inboxId,
                         menu: 'INBOX',
                         type: this.selectedType,
-                        description: "Surat telah di " + nameValue,
+                        description: this.description,
                         from: this.listLocalUserData.employeeId,
                         to: element.value,
                         createdBy: this.listLocalUserData.employeeId,
@@ -743,9 +746,15 @@ export default {
                 .map((e) => { return e });
             return data;
         },
-        momentJsFormating(dateValue) {
+        momentJsFormating(dateValue, dateType) {
             moment.locale('id');
-            return moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
+            var newDate = "";
+            if (dateType == 1) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
+            } else if (dateType == 2) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY");
+            }
+            return newDate;
         },
         async getHistoryHeader() {
             try {
