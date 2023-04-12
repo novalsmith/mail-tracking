@@ -241,13 +241,13 @@
                             </div>
                             <div>
 
-                                <v-timeline side="start" align-top :dense="$vuetify.breakpoint.smAndDown">
+                                <v-timeline side="start" align-top>
 
-                                    <v-timeline-item v-for="itemDetail, index in this.historyListData.subHeader"
-                                        :key="index" color="cyan darken-2"
-                                        :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'" size="small" fill-dot>
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                        color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
+                                        size="small" fill-dot>
 
-                                        <v-alert :value="true" :color="itemDetail.color" :icon="itemDetail.icon" outlined>
+                                        <v-alert :value="true" outlined>
                                             <v-row>
                                                 <v-col md="8">
                                                     <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
@@ -258,9 +258,9 @@
                                                     </v-chip>
                                                 </v-col>
                                             </v-row>
-                                            <small class="font-weight-bold">{{
+                                            <p class="font-weight-bold">{{
                                                 momentJsFormating(itemDetail.createdDate, 1)
-                                            }}</small> <br>
+                                            }}</p>
                                             {{ itemDetail.descriptionAction }} <br>
                                             <div class="my-2" v-show="itemDetail.type != 'NEW'">
                                                 <span>Catatan:</span>
