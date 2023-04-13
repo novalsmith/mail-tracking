@@ -129,7 +129,7 @@
 
             <v-data-table multi-sort :headerProps="headerprops" :headers="headers" class="mx-3 table-style"
                 :items="listData" :search="search" :loading="isLoading"
-                :loading-text="isLoading ? 'Loading... Please wait' : ''" :footer-props="{
+                :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
                     lastIcon: 'mdi-arrow-collapse-right',
@@ -290,6 +290,131 @@
                         </template>
 
                     </v-data-table>
+                </v-container>
+
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar color="cyan darken-2" class="white--text">
+                    <v-btn icon dark @click="dialogDetail = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Surat</v-toolbar-title>
+                    <v-spacer></v-spacer>
+
+                </v-toolbar>
+                <v-container>
+                    <v-row>
+                        <v-col md="7">
+                            <div class="my-5">
+                                <h3>Riwayat Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <div>
+
+                                <v-timeline side="start" align-top>
+
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                        color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
+                                        size="small" fill-dot>
+
+                                        <v-alert :value="true" outlined>
+                                            <v-row>
+                                                <v-col md="8">
+                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
+                                                </v-col>
+                                                <v-col md="4" class="text-end">
+                                                    <v-chip small class="ma-2">
+                                                        {{ itemDetail.typeText }}
+                                                    </v-chip>
+                                                </v-col>
+                                            </v-row>
+                                            <p class="font-weight-bold">{{
+                                                momentJsFormating(itemDetail.createdDate, 1)
+                                            }}</p>
+                                            {{ itemDetail.descriptionAction }} <br>
+                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
+                                                <span>Catatan:</span>
+                                                <i>
+                                                    <p> {{ itemDetail.catatan }}</p>
+                                                </i>
+                                            </div>
+                                        </v-alert>
+                                    </v-timeline-item>
+                                </v-timeline>
+
+
+                            </div>
+                        </v-col>
+                        <v-col md="5">
+                            <div class="my-5">
+                                <h3>Detail Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <v-card>
+                                <v-card-text>
+                                    <v-list three-line subheader class="my-5">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Agenda
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.nomorAgenda }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.nomorSurat }} </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Penerimaan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{
+                                                        momentJsFormating(detailDataRow.tglPenerimaanDisplayText, 2) }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ momentJsFormating(detailDataRow.tglSurat, 2) }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Sifat Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.sifatSurat }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.dari }}
+                                                    </v-list-item-title>
+                                                </div>
+
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.kepada }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Isi Ringkasan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.isiRingkasan }}
+                                                    </v-list-item-title>
+                                                </div>
+
+                                            </v-list-item-content>
+                                        </v-list-item>
+
+                                    </v-list>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+
+
+                    </v-row>
                 </v-container>
 
             </v-card>
@@ -483,7 +608,12 @@ export default {
                 unknownData: [],
                 historyData: []
             },
-            isSuccessUpload: false
+            isSuccessUpload: false,
+            trackingId: "",
+            historyListData: {
+                header: [],
+                subHeader: []
+            },
         }
     },
     methods: {
@@ -532,15 +662,50 @@ export default {
                 this.isShowAlert = true;
             }
         },
-        rowClick(row) {
-            this.dialogDetail = true;
-            const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
+        subHeaderDataTo(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.parentTo === unitAssignedTo)
                 .map((e) => { return e });
+            return data;
+        },
+        loadingIndicator(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.unitAssignedFrom === unitAssignedTo)
+                .map((e) => { return e });
+            return data;
+        },
+        momentJsFormating(dateValue, dateType) {
+            moment.locale('id');
+            var newDate = "";
+            if (dateType == 1) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
+            } else if (dateType == 2) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY");
+            }
+            return newDate;
+        },
+        async getHistoryHeader() {
+            try {
+                this.loadingUploadButton = true;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
+                var dataVal = !!response ? response.data : [];
+
+                this.historyListData.header = dataVal.header;
+                this.historyListData.subHeader = dataVal.headerDetail;
+                console.log(this.historyListData.subHeader);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        rowClick(row) {
+            // const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
+            //     .map((e) => { return e });
 
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
-            this.detailDataList = filteredList;
+            // this.detailDataList = filteredList;
             this.userDefault = this.userLocalData.name;
+            this.trackingId = row.trackingId;
+            this.dialogDetail = true;
+            this.getHistoryHeader();
         },
         async searching() {
 
