@@ -9,6 +9,7 @@ use App\Models\ModelInbox;
 use App\Models\ModelUnknown;
 use App\Models\ModelHistory;
 use App\Models\ModelFileUpload; 
+use DateTime;
 
 class Tracking extends BaseController
 {
@@ -129,6 +130,17 @@ class Tracking extends BaseController
 					}
 					$message .= "Tanggal Terima tidak boleh kosong";
 					$status = "error";
+				}else{
+					$date = DateTime::createFromFormat('d-m-Y', $receiptDate);
+					if ($date) {
+						$receiptDate =  $date->format('Y-m-d');
+					}else{
+						if(!empty($message)){
+							$message .= ", ";
+						}
+						$message .= "Format Tanggal Terima tidak sesuai harus berupa (tanggal-bulan-tahun)";
+						$status = "error";
+					}
 				}
 				
 				if (empty($realDate)) {
@@ -137,6 +149,17 @@ class Tracking extends BaseController
 					}
 					$message .= "Tanggal Surat tidak boleh kosong";
 					$status = "error";
+				}else{
+					$date = DateTime::createFromFormat('d-m-Y', $realDate);
+					if ($date) {
+						$realDate =  $date->format('Y-m-d');
+					}else{
+						if(!empty($message)){
+							$message .= ", ";
+						}
+						$message .= "Format Tanggal Surat tidak sesuai harus berupa (tanggal-bulan-tahun)";
+						$status = "error";
+					}
 				}
 				if (empty($type)) {
 					if(!empty($message)){
