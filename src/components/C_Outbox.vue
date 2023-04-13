@@ -149,137 +149,121 @@
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Nomor Surat - {{ detailDataRow.number }} </v-toolbar-title>
+                    <v-toolbar-title>Detail Surat</v-toolbar-title>
                     <v-spacer></v-spacer>
 
                 </v-toolbar>
                 <v-container>
-                    <v-divider></v-divider>
+                    <v-row>
+                        <v-col md="7">
+                            <div class="my-5">
+                                <h3>Riwayat Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <div>
+
+                                <v-timeline side="start" align-top>
+
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                        color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
+                                        size="small" fill-dot>
+
+                                        <v-alert :value="true" outlined>
+                                            <v-row>
+                                                <v-col md="8">
+                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
+                                                </v-col>
+                                                <v-col md="4" class="text-end">
+                                                    <v-chip small class="ma-2">
+                                                        {{ itemDetail.typeText }}
+                                                    </v-chip>
+                                                </v-col>
+                                            </v-row>
+                                            <p class="font-weight-bold">{{
+                                                momentJsFormating(itemDetail.createdDate, 1)
+                                            }}</p>
+                                            {{ itemDetail.descriptionAction }} <br>
+                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
+                                                <span>Catatan:</span>
+                                                <i>
+                                                    <p> {{ itemDetail.catatan }}</p>
+                                                </i>
+                                            </div>
+                                        </v-alert>
+                                    </v-timeline-item>
+                                </v-timeline>
 
 
-                    <v-card>
-                        <v-toolbar flat>
+                            </div>
+                        </v-col>
+                        <v-col md="5">
+                            <div class="my-5">
+                                <h3>Detail Surat</h3>
+                                <v-divider></v-divider>
+                            </div>
+                            <v-card>
+                                <v-card-text>
+                                    <v-list three-line subheader class="my-5">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Agenda
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.nomorAgenda }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Nomor Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.nomorSurat }} </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Penerimaan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{
+                                                        momentJsFormating(detailDataRow.tglPenerimaanDisplayText, 2) }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Tgl.Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ momentJsFormating(detailDataRow.tglSurat, 2) }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1">Sifat Surat
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.sifatSurat }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.dari }}
+                                                    </v-list-item-title>
+                                                </div>
 
-                            <template v-slot:extension>
-                                <v-tabs v-model="tabs" fixed-tabs>
-                                    <v-tabs-slider></v-tabs-slider>
-                                    <v-tab href="#mobile-tabs-5-1" class="primary--text">
-                                        <v-icon class="mx-2">mdi-file-document</v-icon>
-                                        Detail Surat
-                                    </v-tab>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.kepada }}
+                                                    </v-list-item-title>
+                                                </div>
+                                                <div class="my-3">
+                                                    <v-list-item-subtitle class="my-1"> Isi Ringkasan
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-title> {{ detailDataRow.isiRingkasan }}
+                                                    </v-list-item-title>
+                                                </div>
 
-                                    <v-tab href="#mobile-tabs-5-2" class="primary--text">
-                                        <v-icon class="mx-2">mdi-history</v-icon> Riwayat
-                                    </v-tab>
-                                </v-tabs>
-                            </template>
-                        </v-toolbar>
+                                            </v-list-item-content>
+                                        </v-list-item>
 
-                        <v-tabs-items v-model="tabs">
-                            <v-tab-item value="mobile-tabs-5-1">
-                                <v-card flat>
-                                    <v-card-text>
-                                        <v-list three-line subheader class="my-5">
-
-                                            <v-list-item>
-                                                <v-list-item-content>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Nomor Agenda
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.agendaNumber }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Nomor Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.number }} </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.enerimaan
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.receiptDate }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Tgl.Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.realDate }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1">Sifat Surat
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.type }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Dari </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.from }}
-                                                        </v-list-item-title>
-                                                    </div>
-
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.to }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Isi Ringkasan
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.description }}
-                                                        </v-list-item-title>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <v-list-item-subtitle class="my-1"> Tindakan </v-list-item-subtitle>
-                                                        <v-list-item-title> {{ detailDataRow.actionType }}
-                                                        </v-list-item-title>
-                                                    </div>
+                                    </v-list>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
 
 
-                                                </v-list-item-content>
-                                            </v-list-item>
-
-                                        </v-list>
-                                    </v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                        </v-tabs-items>
-                        <v-tabs-items v-model="tabs">
-                            <v-tab-item value="mobile-tabs-5-2">
-                                <v-card flat>
-                                    <v-card-text>
-                                        <v-list three-line subheader class="my-5">
-                                            <h3> <v-icon class="mx-3">mdi-history</v-icon> Log History </h3>
-
-                                            <v-list-item v-for="(items, key) in detailDataList.logData" :key="key">
-                                                <v-list-item-content v-if="items.createdDate != null">
-                                                    <v-list-item-title> <v-btn dark x-small color="cyan darken-2" outlined
-                                                            fab>{{
-                                                                items.sequence
-                                                            }} </v-btn> {{
-    items.createdBy
-}}</v-list-item-title>
-                                                    <v-list-item-subtitle> {{ items.toName }} - {{ items.createdDate }}
-                                                        - {{
-                                                            items.note
-                                                        }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle>Tanggal : {{
-                                                        items.createdDate
-                                                    }}</v-list-item-subtitle>
-                                                    <v-list-item-subtitle>Keterangan: {{
-                                                        items.note
-                                                    }}</v-list-item-subtitle>
-                                                </v-list-item-content>
-                                            </v-list-item>
-
-                                        </v-list>
-                                    </v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                        </v-tabs-items>
-                    </v-card>
-
-
+                    </v-row>
                 </v-container>
 
             </v-card>
@@ -390,10 +374,52 @@ export default {
                 }
             ],
             disabledModalButtonSave: false,
-
+            historyListData: {
+                header: [],
+                subHeader: []
+            },
+            trackingId: ""
         }
     },
     methods: {
+        detailHistory(item) {
+            // Returns true to show content for completed steps, false for others
+            return this.historyListData.subHeader.filter((e) => e.unitFrom === item.unitFrom)
+                .map((e) => { return e });
+        },
+        subHeaderDataTo(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.parentTo === unitAssignedTo)
+                .map((e) => { return e });
+            return data;
+        },
+        loadingIndicator(unitAssignedTo) {
+            var data = this.historyListData.subHeader.filter((e) => e.unitAssignedFrom === unitAssignedTo)
+                .map((e) => { return e });
+            return data;
+        },
+        momentJsFormating(dateValue, dateType) {
+            moment.locale('id');
+            var newDate = "";
+            if (dateType == 1) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
+            } else if (dateType == 2) {
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY");
+            }
+            return newDate;
+        },
+        async getHistoryHeader() {
+            try {
+                this.loadingUploadButton = true;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
+                var dataVal = !!response ? response.data : [];
+
+                this.historyListData.header = dataVal.header;
+                this.historyListData.subHeader = dataVal.headerDetail;
+                console.log(this.historyListData.subHeader);
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async submit() {
             console.log(this.detailDataRow);
             var listData = [];
@@ -434,7 +460,7 @@ export default {
                 this.responseAlert.message = "Data berhasil tersimpan dan masuk ke Outbox";
                 this.loadingUploadButton = false;
                 this.isShowAlert = true;
-                await this.getSettings(this.detailDataRow.agendaNumber);
+                // await this.getSettings(this.detailDataRow.agendaNumber);
                 this.dialogDetail = false;
                 this.getInbox();
                 this.disabledModalButtonSave = false;
@@ -600,7 +626,9 @@ export default {
             this.dialogDetail = true;
             // this.description = row.note;
             this.selectedType = row.actionFollowUp;
-            await this.getSettings(row.agendaNumber);
+            this.trackingId = row.trackingId;
+            await this.getHistoryHeader();
+            // await this.getSettings(row.agendaNumber);
             this.clearFormDialog();
 
         },
@@ -631,7 +659,8 @@ export default {
     async created() {
         var data = JSON.parse(localStorage.getItem('userData'));
         this.listLocalUserData = data.user;
-        this.getSettings();
+        this.getHistoryHeader();
+        // this.getSettings();
         await this.searching();
 
     },
