@@ -322,7 +322,7 @@
                                                 </div>
 
                                                 <div class="my-3">
-                                                    <v-list-item-subtitle class="my-1"> Keada </v-list-item-subtitle>
+                                                    <v-list-item-subtitle class="my-1"> Kepada </v-list-item-subtitle>
                                                     <v-list-item-title> {{ detailDataRow.kepada }}
                                                     </v-list-item-title>
                                                 </div>
@@ -750,7 +750,7 @@ export default {
             moment.locale('id');
             var newDate = "";
             if (dateType == 1) {
-                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, h:mm a");
+                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, HH:mm");
             } else if (dateType == 2) {
                 newDate = moment(dateValue).format("dddd,Do MMMM YYYY");
             }
