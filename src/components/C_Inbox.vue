@@ -785,10 +785,15 @@ export default {
         actionFollowUp() {
             var data = this.$store.state.lookup.lookups['action'];
             if (parseInt(this.listLocalUserData.roleLevel) == 5) {
-                data.filter((e) => e.code === "ARSIP")
+                return data.filter((e) => e.code === "ARSIP")
+                    .map((e) => { return e });
+            } else if (parseInt(this.listLocalUserData.roleLevel) == 2) {
+                return data.filter((e) => e.code != "TERUSKAN")
+                    .map((e) => { return e });
+            } else {
+                return data.filter((e) => e.code != "ARSIP")
                     .map((e) => { return e });
             }
-            return data;
         },
         likesAllFruit() {
             return this.filter.sifatSurat.length === this.$store.state.lookup.lookups['type'].length

@@ -15,15 +15,20 @@ class ModelEmployee extends Model
        $data =  $builder->get()->getResult();
        $response = [
         "parent" =>  $data,
-        "level" => $this->getEmployeeByLevel($roleLevel)
+        "level" => $this->getEmployeeByLevel($roleCode)
        ];
         return $response;
     }
 
-    function getEmployeeByLevel($roleLevel){
-        $builder = $this->table("v_employee");
-        $builder->where("level", $roleLevel);
-       $data =  $builder->get()->getResult();
+    function getEmployeeByLevel($roleCode){ 
+        $params = [
+            ($roleCode ?? '')
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getInboxActionList(?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        
         return $data;
     }
 }
