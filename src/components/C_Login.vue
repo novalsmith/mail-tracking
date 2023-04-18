@@ -43,7 +43,6 @@
 </template>
 
 <script>
-// import { AxiosAuth } from '../auth/http-common'
 import axios from 'axios';
 import { validationMixin } from 'vuelidate'
 import { required, maxLength } from 'vuelidate/lib/validators'
