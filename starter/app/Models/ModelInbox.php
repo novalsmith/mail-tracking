@@ -72,9 +72,30 @@ class ModelInbox extends Model
         $isSuccess = false;
         $db = \Config\Database::connect();
         $db->reconnect();
+        $builderTable = $db->table('inboxTemporary'); 
+        $response = $builderTable->insertBatch($data);
+
+        if($response){
+            // Calling from Stored Procedure
+            $procedure = "CALL inboxUpsert()";
+            $builder = $this->db->query($procedure); 
+             $builder->getResult(); 
+            
+            $isSuccess = true;
+        }
+        $db->close();
+        $db->initialize();
+        return  $isSuccess;
+    }
+
+    function saveUploadInboxData($data){
+        $isSuccess = false;
+        $db = \Config\Database::connect();
+        $db->reconnect();
         $builderTable = $db->table('inbox'); 
         $response = $builderTable->insertBatch($data);
-        if($response){
+
+        if($response){ 
             $isSuccess = true;
         }
         $db->close();

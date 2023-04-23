@@ -141,7 +141,7 @@
                 </template>
                 <template v-slot:item.unitAssignedTo="{ item, index }">
 
-                    <v-btn fab small v-if="item.inboxOutboxId" color="cyan darken-2" dark>
+                    <v-btn fab small v-if="item.tglTindaklanjut" color="cyan darken-2" dark>
                         <v-icon class="mx-1">mdi-account-check</v-icon>
                     </v-btn>
 
@@ -241,34 +241,53 @@
                             </div>
                             <div>
 
-                                <v-timeline side="start" align-top>
+                                <v-timeline dense align-top>
 
-                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
                                         color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
                                         size="small" fill-dot>
+                                        <v-card class="elevation-3">
+                                            <v-card-title class="text-h6">
+                                                <v-row>
+                                                    <v-col md="6">
+                                                        <h4>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h4>
+                                                    </v-col>
+                                                    <v-col md="6" class="text-end">
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{
+                                                                momentJsFormating(itemDetail.createdDate, 1)
+                                                            }}
+                                                        </v-chip>
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{ itemDetail.typeText }}
+                                                        </v-chip>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-title>
+                                            <v-card-text class="font-weight-medium">
+                                                <div v-if="itemDetail.menu == 'NADINE'"> {{ itemDetail.descriptionAction
+                                                }}</div>
+                                                <div v-else>
+                                                    Surat telah di Disposisi oleh Ir. Iman Kristian Sinulingga(SDB) kepada
+                                                    <ul>
+                                                        <li v-for="itemDetails, index in detailHistory(itemDetail)"
+                                                            :key="index">
+                                                            {{ itemDetails.name }}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <br>
+                                                <div class="my-2" v-show="itemDetail.type != 'NEW'">
+                                                    <span>Catatan:</span>
+                                                    <i>
+                                                        <p> {{ itemDetail.catatan }}</p>
+                                                    </i>
+                                                </div>
+                                            </v-card-text>
 
-                                        <v-alert :value="true" outlined>
-                                            <v-row>
-                                                <v-col md="8">
-                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
-                                                </v-col>
-                                                <v-col md="4" class="text-end">
-                                                    <v-chip small class="ma-2">
-                                                        {{ itemDetail.typeText }}
-                                                    </v-chip>
-                                                </v-col>
-                                            </v-row>
-                                            <p class="font-weight-bold">{{
-                                                momentJsFormating(itemDetail.createdDate, 1)
-                                            }}</p>
-                                            {{ itemDetail.descriptionAction }} <br>
-                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
-                                                <span>Catatan:</span>
-                                                <i>
-                                                    <p> {{ itemDetail.catatan }}</p>
-                                                </i>
-                                            </div>
-                                        </v-alert>
+                                        </v-card>
+
+
                                     </v-timeline-item>
                                 </v-timeline>
 
@@ -430,7 +449,6 @@ export default {
                 { text: 'Isi Ringkasan', value: 'isiRingkasan' },
                 { text: 'Dari', value: 'dari' },
                 { text: 'Kepada', value: 'kepada' },
-                { text: 'Assigned From', value: 'unitAssignedFrom' },
                 { text: 'Tgl.Tindak lanjut', value: 'tglTindaklanjut' },
                 { text: 'Tindakan', value: 'actionTypeValue' },
                 { text: 'Status', value: 'unitAssignedTo' }
@@ -696,16 +714,11 @@ export default {
             }
         },
         async rowClick(row) {
-
-            const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
-                .map((e) => { return e });
             console.log(row);
             this.detailDataRow = row;
             this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
-            // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
-            // this.description = row.note;
             this.selectedType = row.actionFollowUp;
             this.trackingId = row.trackingId;
             await this.getHistoryHeader();
@@ -837,9 +850,4 @@ export default {
 .show-content {
     display: block !important;
 }
-
-/* ::v-deep .v-stepper__step__step {
-    width: 40px;
-    height: 40px;
-} */
 </style>
