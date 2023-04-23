@@ -52,33 +52,33 @@ class Inbox extends BaseController
 			$error = "Inbox gagal menyimpan data";
 		}
 
-		if(!empty($listData->outboxData)){
-			$modelOutboxData = $modelOutbox->saveOutboxData($listData->outboxData);
-			if($modelOutboxData){
-				$response = [
-					"type" => 'outboxOutbox',
-					"status" => 'success',
-					"message" => "success insert data"
-				];
-				$resultExcelData[] = $response; 
-			} 
-		}else{
-			$error = "Gagal mengirim data ke Outbox";
-		}
+		// if(!empty($listData->outboxData)){
+		// 	$modelOutboxData = $modelOutbox->saveOutboxData($listData->outboxData);
+		// 	if($modelOutboxData){
+		// 		$response = [
+		// 			"type" => 'outboxOutbox',
+		// 			"status" => 'success',
+		// 			"message" => "success insert data"
+		// 		];
+		// 		$resultExcelData[] = $response; 
+		// 	} 
+		// }else{
+		// 	$error = "Gagal mengirim data ke Outbox";
+		// }
 
-		if(!empty($listData->outboxData)){
-			$modelHistoryData = $modelHistory->saveHistoryData($listData->historyData);
-				if($modelHistoryData){
-					$response = [
-						"type" => 'historyData',
-						"status" => 'success',
-						"message" => "success insert data"
-					];
-					$resultExcelData[] = $response; 
-				} 
-		}else{
-			$error = "Gagal saat mengirim data ke History";
-		}
+		// if(!empty($listData->outboxData)){
+		// 	$modelHistoryData = $modelHistory->saveHistoryData($listData->historyData);
+		// 		if($modelHistoryData){
+		// 			$response = [
+		// 				"type" => 'historyData',
+		// 				"status" => 'success',
+		// 				"message" => "success insert data"
+		// 			];
+		// 			$resultExcelData[] = $response; 
+		// 		} 
+		// }else{
+		// 	$error = "Gagal saat mengirim data ke History";
+		// }
 
 		if(!empty($error)){
 			return $this->failNotFound($error);

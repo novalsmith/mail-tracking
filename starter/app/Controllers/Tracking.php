@@ -310,7 +310,7 @@ class Tracking extends BaseController
 				$inboxData = is_array($listData->inboxData) ? count($listData->inboxData) : 1;
 				foreach(array_chunk($listData->inboxData,$inboxData,true) as $rows) {
 				 
-					$trackingData = $modelInbox->saveInboxData($rows);
+					$trackingData = $modelInbox->saveUploadInboxData($rows);
 					if($trackingData){
 						$response = [
 							"type" => 'inboxData',
