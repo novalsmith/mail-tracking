@@ -250,7 +250,7 @@
                                             <v-card-title class="text-h6">
                                                 <v-row>
                                                     <v-col md="6">
-                                                        <h4>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h4>
+                                                        <h4>{{ itemDetail.unitFrom }} </h4>
                                                     </v-col>
                                                     <v-col md="6" class="text-end">
                                                         <v-chip medium color="default" outlined class="ma-2">
