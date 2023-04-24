@@ -203,20 +203,21 @@
                                 </v-col>
                                 <v-col md="4" v-if="!isStaf">
                                     <v-select :items="actionFollowUp" item-text="name" item-value="code"
-                                        v-model="selectedType" dense outlined @change="selectedTypeEvnt"
-                                        label="Tindak Lanjut"></v-select>
+                                        v-model="detailInboxModalDialog.selectedType" dense outlined
+                                        @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
                                         <v-combobox
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
-                                            dense outlined v-model="recipient" label="Kepada" multiple chips></v-combobox>
+                                            dense outlined v-model="detailInboxModalDialog.recipient" label="Kepada"
+                                            multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea v-model="description" dense outlined name="input-7-4" label="Catatan"
-                                            value=""></v-textarea>
+                                        <v-textarea v-model="detailInboxModalDialog.notes" dense outlined name="input-7-4"
+                                            label="Catatan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
@@ -272,17 +273,18 @@
                                                     <ul>
                                                         <li v-for="itemDetails, index in detailHistory(itemDetail)"
                                                             :key="index">
-                                                            {{ itemDetails.name }}
+                                                            {{ itemDetails.name }} ({{ itemDetails.unitTo }})
                                                         </li>
                                                     </ul>
+                                                    <br>
+                                                    <div class="my-2">
+                                                        <span>Catatan:</span>
+                                                        <i>
+                                                            <p> {{ itemDetail.catatan }}</p>
+                                                        </i>
+                                                    </div>
                                                 </div>
-                                                <br>
-                                                <div class="my-2" v-show="itemDetail.type != 'NEW'">
-                                                    <span>Catatan:</span>
-                                                    <i>
-                                                        <p> {{ itemDetail.catatan }}</p>
-                                                    </i>
-                                                </div>
+
                                             </v-card-text>
 
                                         </v-card>
@@ -501,6 +503,11 @@ export default {
                     icon: 'mdi-sync'
                 },
             ],
+            detailInboxModalDialog: {
+                selectedType: "",
+                notes: "",
+                recipient: []
+            }
 
         }
     },
@@ -511,7 +518,6 @@ export default {
                 .map((e) => { return e });
         },
         async submit() {
-            console.log(this.detailDataRow);
             var params = {
                 inboxData: [],
                 outboxData: [],
@@ -524,7 +530,6 @@ export default {
                     .map((e) => { return name = e.name })[0];
 
                 this.recipient.forEach((element, key) => {
-                    console.log(element);
                     var newData = {
                         trackingId: this.detailDataRow.trackingId,
                         from: this.listLocalUserData.employeeId,
@@ -578,7 +583,6 @@ export default {
                 this.disabledModalButtonSave = false;
 
             } catch (error) {
-                console.log(error);
             }
 
         },
@@ -610,7 +614,6 @@ export default {
                     }
                     this.listItemsReciver.teruskan = listLevel;
                     this.listItemsReciver.disposisi = listParent;
-                    console.log(this.listItemsReciver);
                 }
             } catch (error) {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -686,7 +689,6 @@ export default {
                 unitTo: this.listLocalUserData.roleCode
             };
             this.filter.searchingParams = remappingParam;
-            console.log(this.filter.searchingParams);
             await this.getInbox();
         },
         async getInbox() {
@@ -713,21 +715,50 @@ export default {
                 this.isShowAlert = true;
             }
         },
+        async getInboxById(inboxId) {
+            try {
+                var remappingParam = {
+                    trackingId: this.trackingId
+                };
+                this.filter.searchingParams = remappingParam;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show", { params: { searchingParams: this.filter.searchingParams } });
+                var listtemp = !!response ? response.data : [];
+                if (listtemp.length > 0) {
+
+                    var listRecipientTmp = [];
+                    var datarecipient = listtemp.filter((e) => e.trackingId === this.trackingId)
+                        .map((e) => { return e });
+                    datarecipient.forEach(element => {
+                        listRecipientTmp.push({
+                            value: element.to,
+                            text: element.to + " - " + element.nameTo + " - " + element.unitAssignedTo
+                        });
+                    });
+                    this.detailInboxModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
+                    this.detailInboxModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
+
+                    this.detailInboxModalDialog.recipient = listRecipientTmp;
+                }
+
+            } catch (error) {
+                this.isLoading = false;
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
+            }
+        },
         async rowClick(row) {
-            console.log(row);
             this.detailDataRow = row;
             this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
             this.userDefault = this.listLocalUserData.name;
-            this.dialogDetail = true;
-            this.selectedType = row.actionFollowUp;
             this.trackingId = row.trackingId;
-            await this.getHistoryHeader();
+            this.getHistoryHeader();
             this.clearFormDialog();
-
+            this.selectedTypeEvnt();
+            this.getInboxById(row.inboxId);
+            this.dialogDetail = true;
         },
-
         selectedTypeEvnt() {
-            console.log(this.selectedType);
             this.recipient = [];
             if (this.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
@@ -737,7 +768,6 @@ export default {
         },
 
         advanceSearch(value) {
-            console.log(value);
             this.isAdvanceSearch = value;
         },
         toggle() {
@@ -777,9 +807,7 @@ export default {
 
                 this.historyListData.header = dataVal.header;
                 this.historyListData.subHeader = dataVal.headerDetail;
-                console.log(this.historyListData.subHeader);
             } catch (error) {
-                console.log(error);
             }
         },
     },
@@ -828,7 +856,6 @@ export default {
         allStepsCompleted() {
             // Check if all steps are completed
             var aa = this.historyListData.header.every(step => step.completed);
-            console.log("sample " + aa);
             return this.historyListData.header.every(step => step.completed)
         }
     }

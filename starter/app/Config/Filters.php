@@ -84,7 +84,9 @@ class Filters extends BaseConfig
 				'outbox/*',
 				'outbox',
 				'history/*',
-				'history'
+				'history',
+				'inbox/*',
+				'inbox'
 			]
 		]
 	];

@@ -38,6 +38,21 @@ class ModelInbox extends Model
         return $data;
        
     }
+    function getInboxById($searchingParams)
+    { 
+        $db = \Config\Database::connect();
+        $params = [
+            ($searchingParams['trackingId'] ?? '')
+            
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getInboxById(?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        return $data;
+       
+    }
+    
     public function getLog($agendaNumber)
     {
         $dbs = \Config\Database::connect();
