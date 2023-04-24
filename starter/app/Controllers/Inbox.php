@@ -22,6 +22,12 @@ class Inbox extends BaseController
 		$data = $this->model->getInboxByUnit($searchingParams);
 		return $this->respond($data, 200);
 	}
+	public function show()
+	{ 
+		$searchingParams = $this->request->getVar('searchingParams');
+		$data = $this->model->getInboxById($searchingParams);
+		return $this->respond($data, 200);
+	}
 	public function log()
 	{
 		$dataParam = $this->request->getPost('agendaNumber');
