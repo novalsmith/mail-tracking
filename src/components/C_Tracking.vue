@@ -1,6 +1,9 @@
  
 <template>
     <v-container>
+        <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+            <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+        </v-overlay>
         <div>
             <h1 class="font-weight-medium">Nadine</h1>
         </div>
@@ -160,6 +163,9 @@
 
         <v-dialog v-model="dialogReview" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
+                <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                    <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                </v-overlay>
                 <v-toolbar color="cyan darken-2" class="white--text">
                     <v-btn icon dark @click="closeModalReview">
                         <v-icon>mdi-close</v-icon>
@@ -296,6 +302,9 @@
         </v-dialog>
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
+                <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                    <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                </v-overlay>
                 <v-toolbar color="cyan darken-2" class="white--text">
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
@@ -313,34 +322,54 @@
                             </div>
                             <div>
 
-                                <v-timeline side="start" align-top>
+                                <v-timeline dense align-top>
 
-                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
                                         color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
                                         size="small" fill-dot>
+                                        <v-card class="elevation-3">
+                                            <v-card-title class="text-h6">
+                                                <v-row>
+                                                    <v-col md="4">
+                                                        <h4>{{ itemDetail.unitFrom }} </h4>
+                                                    </v-col>
+                                                    <v-col md="8" class="text-end">
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{
+                                                                momentJsFormating(itemDetail.createdDate, 1)
+                                                            }}
+                                                        </v-chip>
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{ itemDetail.typeText }}
+                                                        </v-chip>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-title>
+                                            <v-card-text class="font-weight-medium">
+                                                <div v-if="itemDetail.menu == 'NADINE'"> {{ itemDetail.descriptionAction
+                                                }}</div>
+                                                <div v-else>
+                                                    Surat telah di Disposisi oleh Ir. Iman Kristian Sinulingga(SDB) kepada
+                                                    <ul>
+                                                        <li v-for="itemDetails, index in detailHistory(itemDetail)"
+                                                            :key="index">
+                                                            {{ itemDetails.name }} ({{ itemDetails.unitTo }})
+                                                        </li>
+                                                    </ul>
+                                                    <br>
+                                                    <div class="my-2">
+                                                        <span>Catatan:</span>
+                                                        <i>
+                                                            <p> {{ itemDetail.catatan }}</p>
+                                                        </i>
+                                                    </div>
+                                                </div>
 
-                                        <v-alert :value="true" outlined>
-                                            <v-row>
-                                                <v-col md="8">
-                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
-                                                </v-col>
-                                                <v-col md="4" class="text-end">
-                                                    <v-chip small class="ma-2">
-                                                        {{ itemDetail.typeText }}
-                                                    </v-chip>
-                                                </v-col>
-                                            </v-row>
-                                            <p class="font-weight-bold">{{
-                                                momentJsFormating(itemDetail.createdDate, 1)
-                                            }}</p>
-                                            {{ itemDetail.descriptionAction }} <br>
-                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
-                                                <span>Catatan:</span>
-                                                <i>
-                                                    <p> {{ itemDetail.catatan }}</p>
-                                                </i>
-                                            </div>
-                                        </v-alert>
+                                            </v-card-text>
+
+                                        </v-card>
+
+
                                     </v-timeline-item>
                                 </v-timeline>
 
@@ -431,17 +460,13 @@ import moment from 'moment';
 
 var maxlength = 18;
 export default {
-    // mixins: [validationMixin],
-    // validations: {
-    //     dari: { required, maxLength: maxLength(maxlength) },
-    //     password: { required, maxLength: maxLength(maxlength) },
-    // },
     mixins: [validationMixin],
     validations: {
         upload: { required },
     },
     data() {
         return {
+            isOverlayLoading: false,
             rules: [
                 v => !!v || 'File is required',
                 v => (v && v.length > 0) || 'File is required',
@@ -642,7 +667,7 @@ export default {
         },
         async getTracking() {
             try {
-
+                this.isOverlayLoading = true;
                 this.isLoading = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking", { params: { searchingParams: this.filter.searchingParams } });
                 this.listData = !!response ? response.data : [];
@@ -654,13 +679,20 @@ export default {
                 this.$store.dispatch('trackings', state);
                 this.isShowTable = true;
                 this.isLoading = false;
+                this.isOverlayLoading = false;
             } catch (error) {
                 console.log(error);
                 this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
+                this.isOverlayLoading = tfalserue;
             }
+        },
+        detailHistory(item) {
+            // Returns true to show content for completed steps, false for others
+            return this.historyListData.subHeader.filter((e) => e.unitFrom === item.unitFrom)
+                .map((e) => { return e });
         },
         subHeaderDataTo(unitAssignedTo) {
             var data = this.historyListData.subHeader.filter((e) => e.parentTo === unitAssignedTo)
@@ -684,24 +716,22 @@ export default {
         },
         async getHistoryHeader() {
             try {
+                this.isOverlayLoading = true;
                 this.loadingUploadButton = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + 'history', { params: { trackingId: this.trackingId } });
                 var dataVal = !!response ? response.data : [];
 
                 this.historyListData.header = dataVal.header;
                 this.historyListData.subHeader = dataVal.headerDetail;
-                console.log(this.historyListData.subHeader);
+                this.isOverlayLoading = false;
             } catch (error) {
                 console.log(error);
+                this.isOverlayLoading = false;
             }
         },
         rowClick(row) {
-            // const filteredList = this.allTrackingData.data.filter((e) => e.agendaNumber === row.agendaNumber)
-            //     .map((e) => { return e });
-
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
-            // this.detailDataList = filteredList;
             this.userDefault = this.userLocalData.name;
             this.trackingId = row.trackingId;
             this.dialogDetail = true;
@@ -796,6 +826,7 @@ export default {
         },
         async processUpload() {
             try {
+                this.isOverlayLoading = true;
                 this.mappingMultipleRecipient(); // get all parameter
                 if (this.mappingMultipleRecipientParam.nadineData.length > 0) {
                     var formdata = new FormData();
@@ -824,16 +855,15 @@ export default {
                     this.responseAlertReview.message = "Maaf, sepertinya tidak ada data yang tersedia untuk disimpan, periksa kembali data anda.";
                 }
                 this.isLoadingReview = false;
-
+                this.isOverlayLoading = false;
             } catch (error) {
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'error';
                 this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;
                 this.isLoadingReview = false;
-                console.log(error);
+                this.isOverlayLoading = false;
             }
         },
-
         mappingMultipleRecipient() {
             var data = this.$store.state.trackings['trackings'].tempTracking;
             var employeeId = this.userLocalData.employeeId;
@@ -944,31 +974,11 @@ export default {
             this.uploadStatus.error = true;
             this.uploadStatus.success = true;
             this.uploadStatus.info = true;
-            // if(this.isSuccessUpload)
-            // try {
-
-            //     this.isLoading = true;
-            //     if (this.isClearFile && this.uploadedValue != null) {
-            //         await axios.get(process.env.VUE_APP_SERVICE_URL + "removefile", { params: { fileName: this.uploadedValue.name } }).then((data) => {
-            //             if (!!data) {
-            //                 console.log('masuk sukses');
-            //             }
-            //         });
-            //     }
-            //     this.uploadedValue = null;
-
-            // } catch (error) {
-            //     this.uploadedValue = null;
-            //     console.log(error);
-            //     this.isLoading = false;
-            //     this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
-            //     this.responseAlert.color = "red";
-            //     this.isShowAlert = true;
-            // }
 
         },
         async handleFilesUpload() {
             try {
+                this.isOverlayLoading = true;
                 this.resetControlReview();
                 this.listDataReview = [];
                 this.isClearFile = true;
@@ -1049,9 +1059,9 @@ export default {
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'red';
                 this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;
-                this.isLoadingReview = false;
             }
             this.summaryUploadReview();
+            this.isOverlayLoading = false;
         },
         filterUploadedData(status) {
             this.uploadStatus.all = true;
@@ -1113,7 +1123,6 @@ export default {
         this.getTracking();
         var userData = JSON.parse(localStorage.getItem('userData'));
         this.userLocalData = userData.user;
-        // this.getFiltersData();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),

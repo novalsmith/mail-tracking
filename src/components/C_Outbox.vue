@@ -143,9 +143,6 @@
             </v-data-table>
 
         </v-card>
-
-
-
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
