@@ -1,10 +1,13 @@
  
 <template>
     <v-container>
+        <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+            <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+        </v-overlay>
         <div>
             <h1 class="font-weight-medium">Unknown Box</h1>
         </div>
-        <!-- <v-divider></v-divider> -->
+
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
@@ -199,6 +202,7 @@ import moment from 'moment';
 export default {
     data() {
         return {
+            isOverlayLoading: false,
             isAdvanceSearch: false,
             isShowTable: false,
             date: null,
@@ -301,7 +305,6 @@ export default {
     },
     methods: {
         async getUnitParent() {
-            console.log(this.detailUnknownData);
             try {
                 this.isLoadingUnknown = true;
                 if (this.userDefault) {
@@ -316,17 +319,6 @@ export default {
                     };
                     var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown/parent", params);
                     this.listUnitUnknown = !!response ? response.data : [];
-                    // if (!!this.listUnitUnknown) {
-
-                    //     var listData = this.listUnitUnknown.data.filter((e) => e.nomorSurat.toLowerCase() == this.detailUnknownData.nomorSurat.toLowerCase())
-                    //         .map((e) => { return e });
-                    //     this.listUnitUnknown = (listData.length == 0 ? this.listUnitUnknown : listData);
-                    //     console.log(this.listUnitUnknown);
-                    // }
-                    // const state = {
-                    //     data: !!response ? response.data : []
-                    // }
-                    // this.$store.dispatch('unknowns', state);
 
                     this.isLoadingUnknown = false;
                 }
@@ -337,6 +329,7 @@ export default {
         },
         async getUnknown() {
             try {
+                this.isOverlayLoading = true;
                 this.isLoadingUnknown = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "unknown", { params: { searchingParams: this.filter.searchingParams } });
                 this.listUnknownData = !!response ? response.data : [];
@@ -344,25 +337,27 @@ export default {
                     item.indexNumber = i + 1;
                 });
                 this.isLoadingUnknown = false;
+                this.isOverlayLoading = false;
             } catch (error) {
                 this.isLoadingUnknown = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
+                this.isOverlayLoading = false;
             }
         },
         async getSettings() {
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user;
         },
-        rowClick(row) {
+        rowClick(row) { 
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
             this.detailDataList = filteredList;
             this.dialogDetail = true;
-            console.log(this.detailDataRow);
+            this.isShowAlert = false;
         },
         async searching() {
             this.isShowTable = true;
@@ -487,16 +482,18 @@ export default {
                 this.loadingUploadButton = false;
                 this.isShowAlert = true;
             } else {
+                this.isOverlayLoading = true;
                 this.detailUnknownData = row;
                 await this.getUnitParent();
                 this.dialogUnknown = true;
                 this.searchUnknown = row.unitAssignedFrom;
+                this.isOverlayLoading = false;
             }
 
         },
         async moveToInbox(item, isCreate) {
+            this.isOverlayLoading = true;
             var row = this.detailUnknownData;
-            console.log(this.userDefault);
             var params = [
                 {
                     unknownId: row.unknownId,
@@ -506,7 +503,6 @@ export default {
                     isCreate: isCreate
                 }
             ];
-            console.log(params);
             try {
                 if (params) {
                     var formdata = new FormData();
@@ -526,6 +522,7 @@ export default {
                 this.dialogUnknown = false;
                 this.disabledUnknownButton = false;
                 await this.getUnknown();
+                this.isOverlayLoading = false;
             } catch (error) {
                 this.isShowAlert = true;
                 this.isLoading = false;
@@ -534,6 +531,7 @@ export default {
                 this.disabledUnknownButton = false;
                 this.responseAlert.color = 'error';
                 this.responseAlert.message = error.response.data.message;
+                this.isOverlayLoading = false;
             }
         },
         itemRowBackground(item) {
@@ -541,10 +539,11 @@ export default {
         }
     },
     async created() {
+        this.isOverlayLoading = true;
         await this.getSettings();
-        // await this.getUnknown();
         await this.searching();
         await this.getUnitParent();
+        this.isOverlayLoading = false;
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'unknowns']),

@@ -70,8 +70,7 @@ export default {
         }
     },
     methods: {
-        async login() {
-            // console.log(axios.defaults.baseURL);
+        async login() { 
             this.isCompletedLoad = true;
             const param = { "nip": this.nip, "password": this.password }
             await axios.post(process.env.VUE_APP_SERVICE_URL + "otentikasi", param).then(async res => {

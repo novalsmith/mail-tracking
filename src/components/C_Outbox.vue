@@ -1,10 +1,13 @@
  
 <template>
     <v-container>
+        <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+            <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+        </v-overlay>
         <div>
             <h1 class="font-weight-medium">Outbox</h1>
         </div>
-        <!-- <v-divider></v-divider> -->
+
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
@@ -145,6 +148,9 @@
 
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
+                <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                    <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                </v-overlay>
                 <v-toolbar color="cyan darken-2" class="white--text">
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
@@ -162,34 +168,54 @@
                             </div>
                             <div>
 
-                                <v-timeline side="start" align-top>
+                                <v-timeline dense align-top>
 
-                                    <v-timeline-item v-for="itemDetail, index in historyListData.subHeader" :key="index"
+                                    <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
                                         color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
                                         size="small" fill-dot>
+                                        <v-card class="elevation-3">
+                                            <v-card-title class="text-h6">
+                                                <v-row>
+                                                    <v-col md="4">
+                                                        <h4>{{ itemDetail.unitFrom }} </h4>
+                                                    </v-col>
+                                                    <v-col md="8" class="text-end">
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{
+                                                                momentJsFormating(itemDetail.createdDate, 1)
+                                                            }}
+                                                        </v-chip>
+                                                        <v-chip medium color="default" outlined class="ma-2">
+                                                            {{ itemDetail.typeText }}
+                                                        </v-chip>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-title>
+                                            <v-card-text class="font-weight-medium">
+                                                <div v-if="itemDetail.menu == 'NADINE'"> {{ itemDetail.descriptionAction
+                                                }}</div>
+                                                <div v-else>
+                                                    Surat telah di Disposisi oleh Ir. Iman Kristian Sinulingga(SDB) kepada
+                                                    <ul>
+                                                        <li v-for="itemDetails, index in detailHistory(itemDetail)"
+                                                            :key="index">
+                                                            {{ itemDetails.name }} ({{ itemDetails.unitTo }})
+                                                        </li>
+                                                    </ul>
+                                                    <br>
+                                                    <div class="my-2">
+                                                        <span>Catatan:</span>
+                                                        <i>
+                                                            <p> {{ itemDetail.catatan }}</p>
+                                                        </i>
+                                                    </div>
+                                                </div>
 
-                                        <v-alert :value="true" outlined>
-                                            <v-row>
-                                                <v-col md="8">
-                                                    <h3>{{ itemDetail.unitFrom }} - {{ itemDetail.unitTo }} </h3>
-                                                </v-col>
-                                                <v-col md="4" class="text-end">
-                                                    <v-chip small class="ma-2">
-                                                        {{ itemDetail.typeText }}
-                                                    </v-chip>
-                                                </v-col>
-                                            </v-row>
-                                            <p class="font-weight-bold">{{
-                                                momentJsFormating(itemDetail.createdDate, 1)
-                                            }}</p>
-                                            {{ itemDetail.descriptionAction }} <br>
-                                            <div class="my-2" v-show="itemDetail.type != 'NEW'">
-                                                <span>Catatan:</span>
-                                                <i>
-                                                    <p> {{ itemDetail.catatan }}</p>
-                                                </i>
-                                            </div>
-                                        </v-alert>
+                                            </v-card-text>
+
+                                        </v-card>
+
+
                                     </v-timeline-item>
                                 </v-timeline>
 
@@ -282,6 +308,7 @@ var maxlength = 18;
 export default {
     data() {
         return {
+            isOverlayLoading: false,
             tabs: null,
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
             isShowAlertDialogDetail: false,
@@ -415,20 +442,17 @@ export default {
 
                 this.historyListData.header = dataVal.header;
                 this.historyListData.subHeader = dataVal.headerDetail;
-                console.log(this.historyListData.subHeader);
             } catch (error) {
                 console.log(error);
             }
         },
         async submit() {
-            console.log(this.detailDataRow);
             var listData = [];
             var maxDataFromLocal = (parseInt(this.detailDataList.maxData));
             var newNumber = maxDataFromLocal + 1;
             this.disabledModalButtonSave = true;
             if (this.recipient) {
                 this.recipient.forEach((element, key) => {
-                    console.log(element);
                     var newData = {
                         trackingid: this.detailDataRow.trackingid,
                         // agendaNumber: this.detailDataRow.agendaNumber,
@@ -448,7 +472,6 @@ export default {
                     listData.push(newData);
                 });
             }
-            console.log(listData);
 
             try {
 
@@ -462,7 +485,7 @@ export default {
                 this.isShowAlert = true;
                 // await this.getSettings(this.detailDataRow.agendaNumber);
                 this.dialogDetail = false;
-                this.getInbox();
+                this.getOutbox();
                 this.disabledModalButtonSave = false;
 
             } catch (error) {
@@ -498,7 +521,7 @@ export default {
                     }
                     this.listItemsReciver.teruskan = listLevel;
                     this.listItemsReciver.disposisi = listParent;
-                    console.log(this.listItemsReciver);
+
                 }
             } catch (error) {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -574,18 +597,18 @@ export default {
                 assignedFrom: this.listLocalUserData.roleCode
             };
             this.filter.searchingParams = remappingParam;
-            console.log(this.filter.searchingParams);
-            await this.getInbox();
+
+            await this.getOutbox();
         },
-        async getInbox() {
+        async getOutbox() {
             try {
+                this.isOverlayLoading = true;
                 this.isLoading = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "outbox", { params: { searchingParams: this.filter.searchingParams } });
                 this.inboxListData = !!response ? response.data : [];
                 const state = {
                     data: !!response ? response.data : []
                 }
-                this.$store.dispatch('outboxs', state);
                 this.inboxListData.forEach((item, i) => {
                     item.indexNumber = i + 1;
                 });
@@ -593,8 +616,9 @@ export default {
 
                 this.isLoading = false;
                 this.isShowTable = true;
-
+                this.isOverlayLoading = false;
             } catch (error) {
+                this.isOverlayLoading = false;
                 this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
@@ -609,31 +633,24 @@ export default {
                 formdata.append("agendaNumber", agendaNumber);
                 var response = await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/log', formdata);
                 this.detailDataList = !!response ? response.data : [];
-                // console.log(this.detailDataList);
+
             } catch (error) {
                 console.log(error);
             }
         },
         async rowClick(row) {
-
-            // const filteredList = this.$store.state.inboxs['outboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
-            //     .map((e) => { return e });
-            console.log(row);
             this.detailDataRow = row;
             this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
-            // this.detailDataList = filteredList;
             this.userDefault = this.listLocalUserData.name;
             this.dialogDetail = true;
-            // this.description = row.note;
             this.selectedType = row.actionFollowUp;
             this.trackingId = row.trackingId;
+            this.isOverlayLoading = true;
             await this.getHistoryHeader();
-            // await this.getSettings(row.agendaNumber);
             this.clearFormDialog();
-
+            this.isOverlayLoading = false;
         },
         selectedTypeEvnt() {
-            console.log(this.selectedType);
             this.recipient = [];
             if (this.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
@@ -643,7 +660,6 @@ export default {
         },
 
         advanceSearch(value) {
-            console.log(value);
             this.isAdvanceSearch = value;
         },
         toggle() {
@@ -657,12 +673,12 @@ export default {
         },
     },
     async created() {
+        this.isOverlayLoading = true;
         var data = JSON.parse(localStorage.getItem('userData'));
         this.listLocalUserData = data.user;
         this.getHistoryHeader();
-        // this.getSettings();
         await this.searching();
-
+        this.isOverlayLoading = false;
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
