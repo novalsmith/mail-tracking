@@ -4,6 +4,9 @@
         <div>
             <h1 class="font-weight-medium">Inbox</h1>
         </div>
+        <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+            <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+        </v-overlay>
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
@@ -152,18 +155,21 @@
             </v-data-table>
 
         </v-card>
-
-
-
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
+                <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                    <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                </v-overlay>
                 <v-toolbar color="cyan darken-2" class="white--text">
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Detail Surat</v-toolbar-title>
                     <v-spacer></v-spacer>
-
+                    <v-btn v-if="detailInboxModalDialog.selectedType" class="mr-4 white--text" color="orange"
+                        @click="isEdit = false">
+                        <v-icon>mdi-pencil</v-icon> Edit Surat
+                    </v-btn>
                 </v-toolbar>
                 <v-container>
                     <v-main class="my-5">
@@ -187,8 +193,8 @@
                                         width="290px">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-text-field outlined dense v-model="dateAction" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                                v-on="on"></v-text-field>
+                                                prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                                :disabled="isEdit"></v-text-field>
                                         </template>
                                         <v-date-picker dense v-model="dateAction" type="date" scrollable>
                                             <v-spacer></v-spacer>
@@ -202,31 +208,32 @@
                                     </v-dialog>
                                 </v-col>
                                 <v-col md="4" v-if="!isStaf">
-                                    <v-select :items="actionFollowUp" item-text="name" item-value="code"
+                                    <v-select :disabled="isEdit" :items="actionFollowUp" item-text="name" item-value="code"
                                         v-model="detailInboxModalDialog.selectedType" dense outlined
                                         @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox
+                                        <v-combobox :disabled="isEdit"
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
                                             dense outlined v-model="detailInboxModalDialog.recipient" label="Kepada"
                                             multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea v-model="detailInboxModalDialog.notes" dense outlined name="input-7-4"
-                                            label="Catatan" value=""></v-textarea>
+                                        <v-textarea :disabled="isEdit" v-model="detailInboxModalDialog.notes" dense outlined
+                                            name="input-7-4" label="Catatan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
                                 <v-col md="12">
-                                    <v-btn :disabled="disabledModalButtonSave" class="mr-4 white--text"
+                                    <v-btn :disabled="disabledModalButtonSave || isEdit" class="mr-4 white--text"
                                         color="cyan darken-2" @click="submit">
                                         <v-icon>mdi-check</v-icon> Submit
                                     </v-btn>
-                                    <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
+                                    <v-btn text class="mr-4 white--text" :disabled="isEdit" color="blue-grey"
+                                        @click="clear">
                                         <v-icon>mdi-cached</v-icon> Clear
                                     </v-btn>
                                 </v-col>
@@ -250,10 +257,10 @@
                                         <v-card class="elevation-3">
                                             <v-card-title class="text-h6">
                                                 <v-row>
-                                                    <v-col md="6">
+                                                    <v-col md="4">
                                                         <h4>{{ itemDetail.unitFrom }} </h4>
                                                     </v-col>
-                                                    <v-col md="6" class="text-end">
+                                                    <v-col md="8" class="text-end">
                                                         <v-chip medium color="default" outlined class="ma-2">
                                                             {{
                                                                 momentJsFormating(itemDetail.createdDate, 1)
@@ -382,6 +389,7 @@ var maxlength = 18;
 export default {
     data() {
         return {
+            isOverlayLoading: false,
             e6: 22,
             e13: 2,
             step1Complete: 1,
@@ -507,8 +515,8 @@ export default {
                 selectedType: "",
                 notes: "",
                 recipient: []
-            }
-
+            },
+            isEdit: false
         }
     },
     methods: {
@@ -525,48 +533,27 @@ export default {
             };
 
             this.disabledModalButtonSave = true;
-            if (this.recipient) {
-                var nameValue = this.actionFollowUp.filter((e) => e.code === this.selectedType)
-                    .map((e) => { return name = e.name })[0];
-
-                this.recipient.forEach((element, key) => {
+            if (this.detailInboxModalDialog.recipient) {
+                // var nameValue = this.actionFollowUp.filter((e) => e.code === this.detailInboxModalDialog.selectedType)
+                //     .map((e) => { return name = e.name })[0];
+                this.detailInboxModalDialog.recipient.forEach((element, key) => {
                     var newData = {
                         trackingId: this.detailDataRow.trackingId,
                         from: this.listLocalUserData.employeeId,
                         to: element.value,
-                        description: this.description,
-                        actionType: this.selectedType,
+                        description: this.detailInboxModalDialog.notes,
+                        actionType: this.detailInboxModalDialog.selectedType,
                         actionDate: new moment(new Date).locale('id'),
                         createdBy: this.listLocalUserData.employeeId,
                         createdDate: new moment(new Date).locale('id'),
                     };
-                    var newHistoryData = {
-                        trackingId: this.detailDataRow.trackingId,
-                        inboxId: this.detailDataRow.inboxId,
-                        menu: 'INBOX',
-                        type: this.selectedType,
-                        description: this.description,
-                        from: this.listLocalUserData.employeeId,
-                        to: element.value,
-                        createdBy: this.listLocalUserData.employeeId,
-                        createdDate: new moment(new Date).locale('id')
-                    };
 
                     params.inboxData.push(newData);
-                    params.historyData.push(newHistoryData);
 
                 });
-
-                params.outboxData = {
-                    trackingId: this.detailDataRow.trackingId,
-                    inboxId: this.detailDataRow.inboxId,
-                    catatan: this.description,
-                    tindaklanjut: this.selectedType,
-                    tglTindaklanjut: new moment(new Date).locale('id'),
-                    createdBy: this.listLocalUserData.employeeId,
-                    createdDate: new moment(new Date).locale('id'),
-                };
             }
+
+            console.log(params);
             try {
 
                 var formdata = new FormData();
@@ -579,7 +566,7 @@ export default {
                 this.loadingUploadButton = false;
                 this.isShowAlert = true;
                 this.dialogDetail = false;
-                this.getInbox();
+                this.searching();
                 this.disabledModalButtonSave = false;
 
             } catch (error) {
@@ -693,6 +680,7 @@ export default {
         },
         async getInbox() {
             try {
+                this.isOverlayLoading = true;
                 this.isLoading = true;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox", { params: { searchingParams: this.filter.searchingParams } });
                 this.inboxListData = !!response ? response.data : [];
@@ -707,26 +695,35 @@ export default {
 
                 this.isLoading = false;
                 this.isShowTable = true;
-
+                this.isOverlayLoading = false;
             } catch (error) {
                 this.isLoading = false;
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
+                this.isOverlayLoading = true;
             }
         },
         async getInboxById(inboxId) {
             try {
+                this.detailInboxModalDialog = {
+                    selectedType: "",
+                    notes: "",
+                    recipient: []
+                };
                 var remappingParam = {
                     trackingId: this.trackingId
                 };
+
                 this.filter.searchingParams = remappingParam;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "inbox/show", { params: { searchingParams: this.filter.searchingParams } });
                 var listtemp = !!response ? response.data : [];
                 if (listtemp.length > 0) {
 
                     var listRecipientTmp = [];
-                    var datarecipient = listtemp.filter((e) => e.trackingId === this.trackingId)
+                    var datarecipient = listtemp.filter((e) => e.trackingId === this.trackingId
+                        && e.from === this.listLocalUserData.employeeId
+                    )
                         .map((e) => { return e });
                     datarecipient.forEach(element => {
                         listRecipientTmp.push({
@@ -746,17 +743,28 @@ export default {
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
             }
+            this.isOverlayLoading = false;
         },
         async rowClick(row) {
+            this.isOverlayLoading = true;
+            this.dialogDetail = true;
+
+            if (row.tglTindaklanjut) {
+                this.isEdit = true;
+            }
             this.detailDataRow = row;
             this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
             this.userDefault = this.listLocalUserData.name;
             this.trackingId = row.trackingId;
+
             this.getHistoryHeader();
             this.clearFormDialog();
             this.selectedTypeEvnt();
+
             this.getInboxById(row.inboxId);
-            this.dialogDetail = true;
+
+            this.isShowAlert = false;
+
         },
         selectedTypeEvnt() {
             this.recipient = [];
@@ -812,11 +820,13 @@ export default {
         },
     },
     async created() {
+        this.isOverlayLoading = true;
         var data = JSON.parse(localStorage.getItem('userData'));
         this.listLocalUserData = data.user;
         this.getHistoryHeader();
         await this.searching();
         this.isStaf = (parseInt(this.listLocalUserData.roleLevel) == 5 || parseInt(this.listLocalUserData.roleLevel) == 0 ? true : false);
+        this.isOverlayLoading = false;
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups']),

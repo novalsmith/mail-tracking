@@ -46,8 +46,10 @@ $routes->post('/lookup/detail', 'Lookup::show');
 
 $routes->presenter('tracking');
 $routes->get('/removefile', 'Tracking::removeUnusedFile');
-$routes->presenter('inbox'); 
-// $routes->get('/inbox/show', 'Inbox::getInboxById'); 
+// $routes->presenter('inbox'); 
+$routes->get('/inbox', 'Inbox::index'); 
+$routes->get('/inbox/show', 'Inbox::show'); 
+$routes->post('/inbox/create', 'Inbox::create'); 
 $routes->get('/unknown/parent', 'Unknown::parent');
 $routes->presenter('unknown');
 $routes->presenter('outbox');
