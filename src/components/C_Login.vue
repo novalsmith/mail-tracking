@@ -20,8 +20,7 @@
                     </v-alert>
                 </div>
 
-                <v-text-field v-model="nip" :error-messages="nipErrors" label="NIP" required @input="$v.nip.$touch()"
-                    @blur="$v.nip.$touch()"></v-text-field>
+                <v-text-field v-model="nip" :error-messages="nipErrors" label="NIP" required @input="$v.nip.$touch()"></v-text-field>
                 <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" required
                     @input="$v.password.$touch()" @blur="$v.password.$touch()" :type="show1 ? 'text' : 'password'"
                     name="input-10-1" label="Password" :error-messages="passwordErrors" counter

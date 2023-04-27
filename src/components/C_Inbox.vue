@@ -184,14 +184,15 @@
                         <form class="my-10">
                             <v-row>
                                 <v-col md="4">
-                                    <v-text-field :rules="rules" required :disabled="true" dense outlined
-                                        v-model="userDefault" label="Dari"></v-text-field>
+                                    <v-text-field :disabled="true" dense outlined v-model="userDefault"
+                                        label="Dari"></v-text-field>
                                 </v-col>
                                 <v-col md="4">
                                     <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction" persistent
                                         width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field required :rules="rules" outlined dense v-model="dateAction"
+                                            <v-text-field :error-messages="tglTindaklanjutError" required
+                                                @input="$v.dateAction.$touch()" outlined dense v-model="dateAction"
                                                 label="Tanggal Tindak Lanjut" prepend-icon="mdi-calendar" readonly
                                                 v-bind="attrs" v-on="on" :disabled="isEdit"></v-text-field>
                                         </template>
@@ -207,33 +208,37 @@
                                     </v-dialog>
                                 </v-col>
                                 <v-col md="4" v-if="!isStaf">
-                                    <v-select required :rules="rules" :disabled="isEdit" :items="actionFollowUp"
-                                        item-text="name" item-value="code" v-model="detailInboxModalDialog.selectedType"
-                                        dense outlined @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
+                                    <v-select :error-messages="tindakLanjutError" required
+                                        @input="$v.detailInboxModalDialog.selectedType.$touch()" :disabled="isEdit"
+                                        :items="actionFollowUp" item-text="name" item-value="code"
+                                        v-model="detailInboxModalDialog.selectedType" dense outlined
+                                        @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox required :rules="[requiredKepada]" :disabled="isEdit"
+                                        <v-combobox :error-messages="kepadaError" required
+                                            @input="$v.detailInboxModalDialog.recipient.$touch()" :disabled="isEdit"
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
                                             dense outlined v-model="detailInboxModalDialog.recipient" label="Kepada"
                                             multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea required :rules="rules" :disabled="isEdit"
+                                        <v-textarea required :error-messages="catatanError"
+                                            @input="$v.detailInboxModalDialog.notes.$touch()" :disabled="isEdit"
                                             v-model="detailInboxModalDialog.notes" dense outlined name="input-7-4"
                                             label="Catatan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
                                 <v-col md="12">
-                                    <v-btn :disabled="disabledModalButtonSave || isEdit" class="mr-4 white--text"
-                                        color="cyan darken-2" @click="submit" type="submit">
+                                    <v-btn :disabled="isValid || disabledModalButtonSave || isEdit" class="mr-4 white--text"
+                                        color="cyan darken-2" @click="submit">
                                         <v-icon>mdi-check</v-icon> Submit
                                     </v-btn>
-                                    <v-btn text class="mr-4 white--text" :disabled="isEdit" color="blue-grey"
-                                        @click="clear">
+                                    <v-btn text class="mr-4 white--text" :disabled="isEdit || isValid" color="blue-grey"
+                                        @click="clearFormDialog">
                                         <v-icon>mdi-cached</v-icon> Clear
                                     </v-btn>
                                 </v-col>
@@ -391,6 +396,15 @@ import moment from 'moment';
 
 var maxlength = 18;
 export default {
+    mixins: [validationMixin],
+    validations: {
+        dateAction: { required },
+        detailInboxModalDialog: {
+            selectedType: { required },
+            notes: { required },
+            recipient: { required },
+        }
+    },
     data() {
         return {
             isOverlayLoading: false,
@@ -543,11 +557,6 @@ export default {
                 .map((e) => { return e });
         },
         async submit() {
-            const { valid } = await this.$refs.form.validate()
-
-            if (!valid) {
-                return valid;
-            }
             var params = {
                 inboxData: [],
                 outboxData: [],
@@ -652,9 +661,11 @@ export default {
             this.filter = remappingParam;
         },
         clearFormDialog() {
-            this.selectedType = "";
-            this.description = "";
-            this.recipient = "";
+            this.detailInboxModalDialog = {
+                selectedType: "",
+                notes: "",
+                recipient: []
+            }
         },
         async searching() {
 
@@ -845,7 +856,7 @@ export default {
         closeDialogDetail() {
             this.dialogDetail = false;
             this.isEdit = false;
-        },
+        }
     },
     async created() {
         this.isOverlayLoading = true;
@@ -895,6 +906,37 @@ export default {
             // Check if all steps are completed
             var aa = this.historyListData.header.every(step => step.completed);
             return this.historyListData.header.every(step => step.completed)
+        },
+        tglTindaklanjutError() {
+            const errors = []
+            if (!this.$v.dateAction.$dirty) return errors
+            !this.$v.dateAction.required && errors.push('Tidak boleh kosong')
+            return errors
+        },
+        tindakLanjutError() {
+            const errors = []
+            if (!this.$v.detailInboxModalDialog.selectedType.$dirty) return errors
+            !this.$v.detailInboxModalDialog.selectedType.required && errors.push('Tidak boleh kosong')
+            return errors
+        },
+        kepadaError() {
+            const errors = []
+            if (!this.$v.detailInboxModalDialog.recipient.$dirty) return errors
+            !this.$v.detailInboxModalDialog.recipient.required && errors.push('Kepada tidak boleh kosong')
+            return errors
+        },
+        catatanError() {
+            const errors = []
+            if (!this.$v.detailInboxModalDialog.notes.$dirty) return errors
+            !this.$v.detailInboxModalDialog.notes.required && errors.push('Tidak boleh kosong')
+            return errors
+        },
+        isValid() {
+            if (this.dateAction != '' && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.notes != "" && this.detailInboxModalDialog.selectedType != "")) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 }
