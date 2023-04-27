@@ -144,7 +144,7 @@
                 </template>
                 <template v-slot:item.unitAssignedTo="{ item, index }">
 
-                    <v-btn fab small v-if="item.tglTindaklanjut" color="cyan darken-2" dark>
+                    <v-btn fab small v-if="item.isExistsInOutbox != null" color="cyan darken-2" dark>
                         <v-icon class="mx-1">mdi-account-check</v-icon>
                     </v-btn>
 
@@ -166,9 +166,8 @@
                     </v-btn>
                     <v-toolbar-title>Detail Surat</v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <v-btn v-if="detailInboxModalDialog.selectedType" class="mr-4 white--text" color="orange"
-                        @click="isEdit = false">
-                        <v-icon>mdi-pencil</v-icon> Edit Surat
+                    <v-btn v-if="isEdit" class="mr-4 white--text" color="orange" @click="isEdit = false">
+                        <v-icon>mdi-pencil</v-icon> Edit
                     </v-btn>
                 </v-toolbar>
                 <v-container>
@@ -185,16 +184,16 @@
                         <form class="my-10">
                             <v-row>
                                 <v-col md="4">
-                                    <v-text-field :disabled="true" dense outlined v-model="userDefault" label="Dari"
-                                        required></v-text-field>
+                                    <v-text-field :rules="rules" required :disabled="true" dense outlined
+                                        v-model="userDefault" label="Dari"></v-text-field>
                                 </v-col>
                                 <v-col md="4">
                                     <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction" persistent
                                         width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field outlined dense v-model="dateAction" label="Tanggal Tindak Lanjut"
-                                                prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
-                                                :disabled="isEdit"></v-text-field>
+                                            <v-text-field required :rules="rules" outlined dense v-model="dateAction"
+                                                label="Tanggal Tindak Lanjut" prepend-icon="mdi-calendar" readonly
+                                                v-bind="attrs" v-on="on" :disabled="isEdit"></v-text-field>
                                         </template>
                                         <v-date-picker dense v-model="dateAction" type="date" scrollable>
                                             <v-spacer></v-spacer>
@@ -208,28 +207,29 @@
                                     </v-dialog>
                                 </v-col>
                                 <v-col md="4" v-if="!isStaf">
-                                    <v-select :disabled="isEdit" :items="actionFollowUp" item-text="name" item-value="code"
-                                        v-model="detailInboxModalDialog.selectedType" dense outlined
-                                        @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
+                                    <v-select required :rules="rules" :disabled="isEdit" :items="actionFollowUp"
+                                        item-text="name" item-value="code" v-model="detailInboxModalDialog.selectedType"
+                                        dense outlined @change="selectedTypeEvnt" label="Tindak Lanjut"></v-select>
                                 </v-col>
                                 <v-col md="12">
 
                                     <div v-if="isReciverShow">
-                                        <v-combobox :disabled="isEdit"
+                                        <v-combobox required :rules="[requiredKepada]" :disabled="isEdit"
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
                                             dense outlined v-model="detailInboxModalDialog.recipient" label="Kepada"
                                             multiple chips></v-combobox>
                                     </div>
 
                                     <div>
-                                        <v-textarea :disabled="isEdit" v-model="detailInboxModalDialog.notes" dense outlined
-                                            name="input-7-4" label="Catatan" value=""></v-textarea>
+                                        <v-textarea required :rules="rules" :disabled="isEdit"
+                                            v-model="detailInboxModalDialog.notes" dense outlined name="input-7-4"
+                                            label="Catatan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
                                 <v-col md="12">
                                     <v-btn :disabled="disabledModalButtonSave || isEdit" class="mr-4 white--text"
-                                        color="cyan darken-2" @click="submit">
+                                        color="cyan darken-2" @click="submit" type="submit">
                                         <v-icon>mdi-check</v-icon> Submit
                                     </v-btn>
                                     <v-btn text class="mr-4 white--text" :disabled="isEdit" color="blue-grey"
@@ -252,8 +252,7 @@
                                 <v-timeline dense align-top>
 
                                     <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
-                                        color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
-                                        size="small" fill-dot>
+                                        color="cyan darken-2" icon="mdi-check" size="small" fill-dot>
                                         <v-card class="elevation-3">
                                             <v-card-title class="text-h6">
                                                 <v-row>
@@ -276,7 +275,7 @@
                                                 <div v-if="itemDetail.menu == 'NADINE'"> {{ itemDetail.descriptionAction
                                                 }}</div>
                                                 <div v-else>
-                                                    Surat telah di Disposisi oleh Ir. Iman Kristian Sinulingga(SDB) kepada
+                                                    {{ itemDetail.descriptionAction }}
                                                     <ul>
                                                         <li v-for="itemDetails, index in detailHistory(itemDetail)"
                                                             :key="index">
@@ -285,11 +284,16 @@
                                                     </ul>
                                                     <br>
                                                     <div class="my-2">
-                                                        <span>Catatan:</span>
+                                                        <span>Catatan:</span> <small v-if="itemDetail.updatedDate != ''">*
+                                                            Catatan terakhir
+                                                            diubah pada {{
+                                                                momentJsFormating(itemDetail.updatedDate, 2) }} </small>
                                                         <i>
                                                             <p> {{ itemDetail.catatan }}</p>
                                                         </i>
+
                                                     </div>
+
                                                 </div>
 
                                             </v-card-text>
@@ -516,7 +520,20 @@ export default {
                 notes: "",
                 recipient: []
             },
-            isEdit: false
+            isEdit: false,
+            rules: [
+                value => {
+                    if (value) return true
+
+                    return 'Tidak boleh kosong'
+                },
+            ],
+            requiredKepada(value) {
+                if (value instanceof Array && value.length == 0) {
+                    return 'Tidak boleh kosong';
+                }
+                return !!value || 'Tidak boleh kosong';
+            },
         }
     },
     methods: {
@@ -526,6 +543,11 @@ export default {
                 .map((e) => { return e });
         },
         async submit() {
+            const { valid } = await this.$refs.form.validate()
+
+            if (!valid) {
+                return valid;
+            }
             var params = {
                 inboxData: [],
                 outboxData: [],
@@ -749,8 +771,10 @@ export default {
             this.isOverlayLoading = true;
             this.dialogDetail = true;
 
-            if (row.tglTindaklanjut) {
+            if (row.isExistsInOutbox != null) {
                 this.isEdit = true;
+            } else {
+                this.isEdit = false;
             }
             this.detailDataRow = row;
             this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
@@ -818,6 +842,10 @@ export default {
             } catch (error) {
             }
         },
+        closeDialogDetail() {
+            this.dialogDetail = false;
+            this.isEdit = false;
+        },
     },
     async created() {
         this.isOverlayLoading = true;
@@ -838,7 +866,7 @@ export default {
             if (parseInt(this.listLocalUserData.roleLevel) == 5) {
                 return data.filter((e) => e.code === "ARSIP")
                     .map((e) => { return e });
-            } else if (parseInt(this.listLocalUserData.roleLevel) == 2) {
+            } else if (parseInt(this.listLocalUserData.roleLevel) == 2 || parseInt(this.listLocalUserData.roleLevel) == 1) {
                 return data.filter((e) => e.code != "TERUSKAN")
                     .map((e) => { return e });
             } else {
