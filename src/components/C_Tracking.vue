@@ -247,7 +247,7 @@
                             <v-chip class="mx-3" :outlined="uploadStatus.info" color="blue" dark
                                 @click="filterUploadedData('unknown')"> <v-icon
                                     class="mr-1">mdi-information-outline</v-icon>
-                                {{ responseSummaryDataReview.totalUnknown }} Go to Unknown</v-chip>
+                                {{ responseSummaryDataReview.totalUnknown }} Go to Unknown Box</v-chip>
 
                         </div>
                         <v-spacer></v-spacer>
