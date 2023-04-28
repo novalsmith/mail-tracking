@@ -192,7 +192,7 @@
                                                 <div v-if="itemDetail.menu == 'NADINE'"> {{ itemDetail.descriptionAction
                                                 }}</div>
                                                 <div v-else>
-                                                    Surat telah di Disposisi oleh Ir. Iman Kristian Sinulingga(SDB) kepada
+                                                    {{ itemDetail.descriptionAction }}
                                                     <ul>
                                                         <li v-for="itemDetails, index in detailHistory(itemDetail)"
                                                             :key="index">
@@ -201,11 +201,16 @@
                                                     </ul>
                                                     <br>
                                                     <div class="my-2">
-                                                        <span>Catatan:</span>
+                                                        <span>Catatan:</span> <small v-if="itemDetail.updatedDate != ''">*
+                                                            Catatan terakhir
+                                                            diubah pada {{
+                                                                momentJsFormating(itemDetail.updatedDate, 2) }} </small>
                                                         <i>
                                                             <p> {{ itemDetail.catatan }}</p>
                                                         </i>
+
                                                     </div>
+
                                                 </div>
 
                                             </v-card-text>
