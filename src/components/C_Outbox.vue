@@ -168,8 +168,7 @@
                                 <v-timeline dense align-top>
 
                                     <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
-                                        color="cyan darken-2" :icon="itemDetail.completed ? 'mdi-check' : 'mdi-sync'"
-                                        size="small" fill-dot>
+                                        color="cyan darken-2" icon="mdi-check" size="small" fill-dot>
                                         <v-card class="elevation-3">
                                             <v-card-title class="text-h6">
                                                 <v-row>
