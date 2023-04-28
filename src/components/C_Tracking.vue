@@ -242,12 +242,12 @@
                             <v-chip class="mx-3" :outlined="uploadStatus.success" color="cyan darken-2" dark
                                 @click="filterUploadedData('success')"> <v-icon
                                     class="mr-1">mdi-check-circle-outline</v-icon>
-                                {{ responseSummaryDataReview.totalSuccess }} Ready to save</v-chip>
+                                {{ responseSummaryDataReview.totalSuccess }} Go to Inbox</v-chip>
 
                             <v-chip class="mx-3" :outlined="uploadStatus.info" color="blue" dark
                                 @click="filterUploadedData('unknown')"> <v-icon
                                     class="mr-1">mdi-information-outline</v-icon>
-                                {{ responseSummaryDataReview.totalUnknown }} Unknown</v-chip>
+                                {{ responseSummaryDataReview.totalUnknown }} Go to Unknown</v-chip>
 
                         </div>
                         <v-spacer></v-spacer>
@@ -273,7 +273,7 @@
                             <span v-if="item.status == 'error'"><v-icon color="red">mdi-close-circle-outline</v-icon>
                                 Error</span>
                             <span v-if="item.status == 'success'"><v-icon
-                                    color="cyan darken-2">mdi-check-circle-outline</v-icon> Ready to save</span>
+                                    color="cyan darken-2">mdi-check-circle-outline</v-icon> Go to Inbox</span>
                         </template>
                         <template v-slot:item.data-table-expand="{ item, expand, isExpanded }">
                             <td v-if="item.status == 'error' || item.status == 'unknown'" class="text-start">
@@ -1016,7 +1016,6 @@ export default {
                                 messageResponse = 'Periksa kembali format file anda.';
                             }
                         });
-                        console.log(isValidDate);
                     } else {
                         messageResponse = 'Periksa kembali format file anda.';
                     }
@@ -1024,6 +1023,7 @@ export default {
                 }
 
                 if (!isValidDate) {
+                    this.isOverlayLoading = false;
                     this.isShowAlertReview = true;
                     this.responseAlertReview.color = 'orange';
                     this.responseAlertReview.message = (messageResponse + " " + "Contoh : SDB_2023_01_01.xlsx");
