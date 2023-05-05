@@ -133,12 +133,12 @@
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
                 class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
-                    showFirstLastPage: true,
-                    firstIcon: 'mdi-arrow-collapse-left',
-                    lastIcon: 'mdi-arrow-collapse-right',
-                    prevIcon: 'mdi-minus',
-                    nextIcon: 'mdi-plus'
-                }">
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus'
+                    }">
                 <template v-slot:item.num="{ index }">
                     {{ index + 1 }}
                 </template>
@@ -166,7 +166,7 @@
                     </v-btn>
                     <v-toolbar-title>Detail Surat</v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <v-btn v-if="isEdit" class="mr-4 white--text" color="orange" @click="isEdit = false">
+                    <v-btn v-if="isShowEditButton" class="mr-4 white--text" color="orange" @click="isEdit = false">
                         <v-icon>mdi-pencil</v-icon> Edit
                     </v-btn>
                 </v-toolbar>
@@ -188,20 +188,24 @@
                                         label="Dari"></v-text-field>
                                 </v-col>
                                 <v-col md="4">
-                                    <v-dialog ref="dialog" v-model="modalDate" :return-value.sync="dateAction" persistent
-                                        width="290px">
+                                    <v-dialog ref="dialog" v-model="modalDate"
+                                        :return-value.sync="detailInboxModalDialog.actionDate" persistent width="290px">
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-text-field :error-messages="tglTindaklanjutError" required
-                                                @input="$v.dateAction.$touch()" outlined dense v-model="dateAction"
-                                                label="Tanggal Tindak Lanjut" prepend-icon="mdi-calendar" readonly
-                                                v-bind="attrs" v-on="on" :disabled="isEdit"></v-text-field>
+                                                @input="$v.detailInboxModalDialog.actionDate.$touch()" outlined dense
+                                                v-model="detailInboxModalDialog.actionDate" label="Tanggal Tindak Lanjut"
+                                                prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                                :disabled="isEdit"></v-text-field>
                                         </template>
-                                        <v-date-picker dense v-model="dateAction" type="date" scrollable>
+                                        <v-date-picker @input="$v.detailInboxModalDialog.actionDate.$touch()"
+                                            :error-messages="tglTindaklanjutError" dense
+                                            v-model="detailInboxModalDialog.actionDate" type="date" scrollable>
                                             <v-spacer></v-spacer>
                                             <v-btn text color="primary" @click="modalDate = false">
                                                 Cancel
                                             </v-btn>
-                                            <v-btn text color="primary" @click="$refs.dialog.save(dateAction)">
+                                            <v-btn text color="primary"
+                                                @click="$refs.dialog.save(detailInboxModalDialog.actionDate)">
                                                 OK
                                             </v-btn>
                                         </v-date-picker>
@@ -394,15 +398,14 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex';
 import moment from 'moment';
 
-var maxlength = 18;
 export default {
     mixins: [validationMixin],
     validations: {
-        dateAction: { required },
         detailInboxModalDialog: {
             selectedType: { required },
             notes: { required },
             recipient: { required },
+            actionDate: { required },
         }
     },
     data() {
@@ -532,9 +535,16 @@ export default {
             detailInboxModalDialog: {
                 selectedType: "",
                 notes: "",
+                recipient: [],
+                actionDate: null
+            },
+            detailInboxOriginalDataModalDialog: {
+                selectedType: "",
+                notes: "",
                 recipient: []
             },
             isEdit: false,
+            isShowEditButton: false,
             rules: [
                 value => {
                     if (value) return true
@@ -563,20 +573,38 @@ export default {
                 historyData: []
             };
 
-            this.disabledModalButtonSave = true;
+
             if (this.detailInboxModalDialog.recipient) {
-                // var nameValue = this.actionFollowUp.filter((e) => e.code === this.detailInboxModalDialog.selectedType)
-                //     .map((e) => { return name = e.name })[0];
                 this.detailInboxModalDialog.recipient.forEach((element, key) => {
                     var newData = {
+                        inboxId: this.detailDataRow.inboxId,
                         trackingId: this.detailDataRow.trackingId,
                         from: this.listLocalUserData.employeeId,
                         to: element.value,
                         description: this.detailInboxModalDialog.notes,
                         actionType: this.detailInboxModalDialog.selectedType,
-                        actionDate: new moment(new Date).locale('id'),
+                        actionDate: this.detailInboxModalDialog.actionDate,
                         createdBy: this.listLocalUserData.employeeId,
                         createdDate: new moment(new Date).locale('id'),
+                        inboxType: "EDIT"
+                    };
+
+                    params.inboxData.push(newData);
+
+                });
+
+                this.detailInboxOriginalDataModalDialog.recipient.forEach((element, key) => {
+                    var newData = {
+                        inboxId: this.detailDataRow.inboxId,
+                        trackingId: this.detailDataRow.trackingId,
+                        from: this.listLocalUserData.employeeId,
+                        to: element.value,
+                        description: this.detailInboxModalDialog.notes,
+                        actionType: this.detailInboxModalDialog.selectedType,
+                        actionDate: this.detailInboxModalDialog.actionDate,
+                        createdBy: this.listLocalUserData.employeeId,
+                        createdDate: new moment(new Date).locale('id'),
+                        inboxType: "ORIGINAL"
                     };
 
                     params.inboxData.push(newData);
@@ -590,17 +618,21 @@ export default {
                 var formdata = new FormData();
                 this.loadingUploadButton = true;
                 formdata.append("listData", JSON.stringify(params));
-                await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);            // var unknown = data.filter((e) => e.status === 'info').map((e) => {
-                this.dialogDetail = false;
+
+                this.isOverlayLoading = true;
+                await axios.post(process.env.VUE_APP_SERVICE_URL + 'inbox/create', formdata);
                 this.responseAlert.color = 'cyan darken-2';
                 this.responseAlert.message = "Data berhasil tersimpan dan masuk ke Outbox";
                 this.loadingUploadButton = false;
                 this.isShowAlert = true;
-                this.dialogDetail = false;
+                this.isOverlayLoading = false;
                 this.searching();
-                this.disabledModalButtonSave = false;
-
+                this.dialogDetail = false;
             } catch (error) {
+                this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
+                this.responseAlert.color = "red";
+                this.isShowAlert = true;
+                this.isOverlayLoading = false;
             }
 
         },
@@ -664,7 +696,8 @@ export default {
             this.detailInboxModalDialog = {
                 selectedType: "",
                 notes: "",
-                recipient: []
+                recipient: [],
+                actionDate: null
             }
         },
         async searching() {
@@ -737,13 +770,8 @@ export default {
                 this.isOverlayLoading = true;
             }
         },
-        async getInboxById(inboxId) {
+        async getInboxById() {
             try {
-                this.detailInboxModalDialog = {
-                    selectedType: "",
-                    notes: "",
-                    recipient: []
-                };
                 var remappingParam = {
                     trackingId: this.trackingId
                 };
@@ -766,8 +794,15 @@ export default {
                     });
                     this.detailInboxModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
-
+                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : null;
                     this.detailInboxModalDialog.recipient = listRecipientTmp;
+
+                    this.detailInboxOriginalDataModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
+                    this.detailInboxOriginalDataModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
+                    this.detailInboxOriginalDataModalDialog.recipient = listRecipientTmp;
+                    this.detailInboxOriginalDataModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : null;
+                } else {
+                    this.clearFormDialog();
                 }
 
             } catch (error) {
@@ -784,11 +819,12 @@ export default {
 
             if (row.isExistsInOutbox != null) {
                 this.isEdit = true;
+                this.isShowEditButton = true;
             } else {
                 this.isEdit = false;
+                this.isShowEditButton = false;
             }
             this.detailDataRow = row;
-            this.dateAction = moment(row.receiptDate).format('YYYY-MM-DD');
             this.userDefault = this.listLocalUserData.name;
             this.trackingId = row.trackingId;
 
@@ -796,7 +832,7 @@ export default {
             this.clearFormDialog();
             this.selectedTypeEvnt();
 
-            this.getInboxById(row.inboxId);
+            this.getInboxById();
 
             this.isShowAlert = false;
 
@@ -909,8 +945,8 @@ export default {
         },
         tglTindaklanjutError() {
             const errors = []
-            if (!this.$v.dateAction.$dirty) return errors
-            !this.$v.dateAction.required && errors.push('Tidak boleh kosong')
+            if (!this.$v.detailInboxModalDialog.actionDate.$dirty) return errors
+            !this.$v.detailInboxModalDialog.actionDate.required && errors.push('Tidak boleh kosong')
             return errors
         },
         tindakLanjutError() {
@@ -932,7 +968,7 @@ export default {
             return errors
         },
         isValid() {
-            if (this.dateAction != '' && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.notes != "" && this.detailInboxModalDialog.selectedType != "")) {
+            if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.notes != "" && this.detailInboxModalDialog.selectedType != "")) {
                 return false;
             } else {
                 return true;
