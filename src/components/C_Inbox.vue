@@ -133,12 +133,12 @@
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
                 class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
-                        showFirstLastPage: true,
-                        firstIcon: 'mdi-arrow-collapse-left',
-                        lastIcon: 'mdi-arrow-collapse-right',
-                        prevIcon: 'mdi-minus',
-                        nextIcon: 'mdi-plus'
-                    }">
+                    showFirstLastPage: true,
+                    firstIcon: 'mdi-arrow-collapse-left',
+                    lastIcon: 'mdi-arrow-collapse-right',
+                    prevIcon: 'mdi-minus',
+                    nextIcon: 'mdi-plus'
+                }">
                 <template v-slot:item.num="{ index }">
                     {{ index + 1 }}
                 </template>
@@ -161,7 +161,7 @@
                     <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
                 </v-overlay>
                 <v-toolbar color="cyan darken-2" class="white--text">
-                    <v-btn icon dark @click="dialogDetail = false">
+                    <v-btn icon dark @click="closeModal(false)">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Detail Surat</v-toolbar-title>
@@ -229,14 +229,12 @@
                                     </div>
 
                                     <div>
-                                        <v-textarea required :error-messages="catatanError"
-                                            @input="$v.detailInboxModalDialog.notes.$touch()" :disabled="isEdit"
-                                            v-model="detailInboxModalDialog.notes" dense outlined name="input-7-4"
-                                            label="Catatan" value=""></v-textarea>
+                                        <v-textarea :disabled="isEdit" v-model="detailInboxModalDialog.notes" dense outlined
+                                            name="input-7-4" label="Catatan" value=""></v-textarea>
 
                                     </div>
                                 </v-col>
-                                <v-col md="12">
+                                <v-col md="12" v-if="detailInboxModalDialog.selectedType != 'ARSIP'">
                                     <v-btn :disabled="isValid || disabledModalButtonSave || isEdit" class="mr-4 white--text"
                                         color="cyan darken-2" @click="submit">
                                         <v-icon>mdi-check</v-icon> Submit
@@ -794,15 +792,13 @@ export default {
                     });
                     this.detailInboxModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
-                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : null;
+                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
                     this.detailInboxModalDialog.recipient = listRecipientTmp;
 
                     this.detailInboxOriginalDataModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxOriginalDataModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
                     this.detailInboxOriginalDataModalDialog.recipient = listRecipientTmp;
                     this.detailInboxOriginalDataModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : null;
-                } else {
-                    this.clearFormDialog();
                 }
 
             } catch (error) {
@@ -813,7 +809,11 @@ export default {
             }
             this.isOverlayLoading = false;
         },
+        closeModal(isClose) {
+            this.dialogDetail = isClose;
+        },
         async rowClick(row) {
+            console.log(row);
             this.isOverlayLoading = true;
             this.dialogDetail = true;
 
@@ -827,11 +827,8 @@ export default {
             this.detailDataRow = row;
             this.userDefault = this.listLocalUserData.name;
             this.trackingId = row.trackingId;
-
             this.getHistoryHeader();
-            this.clearFormDialog();
             this.selectedTypeEvnt();
-
             this.getInboxById();
 
             this.isShowAlert = false;
@@ -968,7 +965,7 @@ export default {
             return errors
         },
         isValid() {
-            if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.notes != "" && this.detailInboxModalDialog.selectedType != "")) {
+            if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.selectedType != "")) {
                 return false;
             } else {
                 return true;
