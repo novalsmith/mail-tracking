@@ -83,6 +83,15 @@ class ModelInbox extends Model
         return  $isSuccess;
     }
 
+    public function isExistsInboxData(){
+        $db = \Config\Database::connect();
+        // Calling from Stored Procedure
+        $procedure = "CALL getExistsInbox()";
+        $builder = $this->db->query($procedure); 
+        $data =  $builder->getResult(); 
+        return $data;
+    }
+
     function saveInboxData($data){
         $isSuccess = false;
         $db = \Config\Database::connect();

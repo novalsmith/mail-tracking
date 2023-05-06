@@ -61,7 +61,12 @@ class Inbox extends BaseController
 		if(!empty($error)){
 			return $this->failNotFound($error);
 		}else{
-			return $this->respond($data, 200);
+			$datas = $this->model->isExistsInboxData();
+			$response = [
+				"isDataSaved" => $data,
+				"exsistsData" =>  $datas
+			];
+			return $this->respond($response, 200);
 		}
 	
 	}
