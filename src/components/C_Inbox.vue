@@ -224,7 +224,7 @@
                                 </v-col>
                                 <v-col md="12">
 
-                                    <div v-if="isReciverShow">
+                                    <div v-if="isReciverShow && !isStaf">
                                         <v-combobox :error-messages="kepadaError" required
                                             @input="$v.detailInboxModalDialog.recipient.$touch()" :disabled="isEdit"
                                             :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
@@ -618,7 +618,7 @@ export default {
                     from: this.listLocalUserData.employeeId,
                     to: this.listLocalUserData.employeeId,
                     description: this.detailInboxModalDialog.notes,
-                    actionType: this.detailInboxModalDialog.selectedType,
+                    actionType: (this.isStaf ? "ARSIP" : this.detailInboxModalDialog.selectedType),
                     actionDate: this.detailInboxModalDialog.actionDate,
                     createdBy: this.listLocalUserData.employeeId,
                     createdDate: new moment(new Date).locale('id'),
@@ -987,18 +987,30 @@ export default {
             return errors
         },
         isValid() {
-            if (this.detailInboxModalDialog.selectedType == "ARSIP") {
-                if (this.detailInboxModalDialog.actionDate != null && this.detailInboxModalDialog.selectedType != "") {
+
+            if (!this.isStaf) {
+                if (this.detailInboxModalDialog.selectedType == "ARSIP") {
+                    if (this.detailInboxModalDialog.actionDate != null && this.detailInboxModalDialog.selectedType != "") {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                else if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.selectedType != "")) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                this.detailInboxModalDialog.selectedType = "ARSIP";
+                this.detailInboxModalDialog.recipient = [];
+                if (this.detailInboxModalDialog.actionDate != null) {
                     return false;
                 } else {
                     return true;
                 }
             }
-            else if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.selectedType != "")) {
-                return false;
-            } else {
-                return true;
-            }
+
         }
     }
 }
