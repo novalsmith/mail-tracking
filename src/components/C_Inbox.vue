@@ -148,6 +148,10 @@
                         <v-icon class="mx-1">mdi-account-check</v-icon>
                     </v-btn>
 
+                    <v-btn fab small v-else-if="item.actionType == 'ARSIP'" color="green lighten-1" dark>
+                        <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                    </v-btn>
+
                     <v-btn fab small v-else color="orange" dark>
                         <v-icon class="mx-1">mdi-alert-outline</v-icon>
                     </v-btn>
@@ -234,7 +238,7 @@
 
                                     </div>
                                 </v-col>
-                                <v-col md="12" v-if="detailInboxModalDialog.selectedType != 'ARSIP'">
+                                <v-col md="12" v-if="!isArsipSurat">
                                     <v-btn :disabled="isValid || disabledModalButtonSave || isEdit" class="mr-4 white--text"
                                         color="cyan darken-2" @click="submit">
                                         <v-icon>mdi-check</v-icon> Submit
@@ -258,7 +262,7 @@
 
                                 <v-timeline dense align-top>
 
-                                    <v-timeline-item v-for="itemDetail, index in historyListData.header" :key="index"
+                                    <v-timeline-item v-for=" itemDetail, index  in  historyListData.header " :key="index"
                                         color="cyan darken-2" icon="mdi-check" size="small" fill-dot>
                                         <v-card class="elevation-3">
                                             <v-card-title class="text-h6">
@@ -284,7 +288,7 @@
                                                 <div v-else>
                                                     {{ itemDetail.descriptionAction }}
                                                     <ul>
-                                                        <li v-for="itemDetails, index in detailHistory(itemDetail)"
+                                                        <li v-for=" itemDetails, index  in  detailHistory(itemDetail) "
                                                             :key="index">
                                                             {{ itemDetails.name }} ({{ itemDetails.unitTo }})
                                                         </li>
@@ -506,6 +510,7 @@ export default {
                     name: "Bukan"
                 }
             ],
+            isArsipSurat: false,
             disabledModalButtonSave: false,
             trackingId: "",
             historyListData: {
@@ -534,7 +539,7 @@ export default {
                 selectedType: "",
                 notes: "",
                 recipient: [],
-                actionDate: null
+                actionDate: moment().format("YYYY-MM-DD")
             },
             detailInboxOriginalDataModalDialog: {
                 selectedType: "",
@@ -566,13 +571,11 @@ export default {
         },
         async submit() {
             var params = {
-                inboxData: [],
-                outboxData: [],
-                historyData: []
+                inboxData: []
             };
 
 
-            if (this.detailInboxModalDialog.recipient) {
+            if (this.detailInboxModalDialog.recipient.length > 0) {
                 this.detailInboxModalDialog.recipient.forEach((element, key) => {
                     var newData = {
                         inboxId: this.detailDataRow.inboxId,
@@ -608,6 +611,21 @@ export default {
                     params.inboxData.push(newData);
 
                 });
+            } else {
+                var newData = {
+                    inboxId: this.detailDataRow.inboxId,
+                    trackingId: this.detailDataRow.trackingId,
+                    from: this.listLocalUserData.employeeId,
+                    to: this.listLocalUserData.employeeId,
+                    description: this.detailInboxModalDialog.notes,
+                    actionType: this.detailInboxModalDialog.selectedType,
+                    actionDate: this.detailInboxModalDialog.actionDate,
+                    createdBy: this.listLocalUserData.employeeId,
+                    createdDate: new moment(new Date).locale('id'),
+                    inboxType: "EDIT"
+                };
+
+                params.inboxData.push(newData);
             }
 
             console.log(params);
@@ -695,7 +713,7 @@ export default {
                 selectedType: "",
                 notes: "",
                 recipient: [],
-                actionDate: null
+                actionDate: moment().format("YYYY-MM-DD")
             }
         },
         async searching() {
@@ -792,13 +810,14 @@ export default {
                     });
                     this.detailInboxModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
-                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : moment.format('YYYY-MM-DD');
                     this.detailInboxModalDialog.recipient = listRecipientTmp;
 
                     this.detailInboxOriginalDataModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxOriginalDataModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
                     this.detailInboxOriginalDataModalDialog.recipient = listRecipientTmp;
                     this.detailInboxOriginalDataModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : null;
+                    this.isArsipSurat = (this.detailInboxModalDialog.selectedType == 'ARSIP' ? true : false);
                 }
 
             } catch (error) {
@@ -824,9 +843,11 @@ export default {
                 this.isEdit = false;
                 this.isShowEditButton = false;
             }
+
             this.detailDataRow = row;
             this.userDefault = this.listLocalUserData.name;
             this.trackingId = row.trackingId;
+            this.clearFormDialog();
             this.getHistoryHeader();
             this.selectedTypeEvnt();
             this.getInboxById();
@@ -836,10 +857,11 @@ export default {
         },
         selectedTypeEvnt() {
             this.recipient = [];
-            if (this.selectedType != 'ARSIP') {
+            if (this.detailInboxModalDialog.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
             } else {
                 this.isReciverShow = false;
+                this.detailInboxModalDialog.recipient = [];
             }
         },
 
@@ -965,7 +987,14 @@ export default {
             return errors
         },
         isValid() {
-            if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.selectedType != "")) {
+            if (this.detailInboxModalDialog.selectedType == "ARSIP") {
+                if (this.detailInboxModalDialog.actionDate != null && this.detailInboxModalDialog.selectedType != "") {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            else if (this.detailInboxModalDialog.actionDate != null && (this.detailInboxModalDialog.recipient.length > 0 && this.detailInboxModalDialog.selectedType != "")) {
                 return false;
             } else {
                 return true;
