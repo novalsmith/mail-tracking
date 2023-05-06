@@ -372,8 +372,9 @@
                                                 <div class="my-3">
                                                     <v-list-item-subtitle class="my-1"> Isi Ringkasan
                                                     </v-list-item-subtitle>
-                                                    <v-list-item-title> {{ detailDataRow.isiRingkasan }}
-                                                    </v-list-item-title>
+                                                    <span v-html="detailDataRow.isiRingkasan">
+                                                    </span>
+                                                 
                                                 </div>
 
                                             </v-list-item-content>
