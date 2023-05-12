@@ -5,7 +5,7 @@
             <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
         </v-overlay>
         <div>
-            <h1 class="font-weight-medium">Unknown Box</h1>
+            <h1 class="font-weight-medium">Duplication Box</h1>
         </div>
 
         <v-card class="my-5">
