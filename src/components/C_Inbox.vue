@@ -374,7 +374,7 @@
                                                     </v-list-item-subtitle>
                                                     <span v-html="detailDataRow.isiRingkasan">
                                                     </span>
-                                                 
+
                                                 </div>
 
                                             </v-list-item-content>

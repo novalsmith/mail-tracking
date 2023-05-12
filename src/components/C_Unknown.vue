@@ -350,7 +350,7 @@ export default {
             var listData = JSON.parse(localStorage.getItem('userData'));
             this.userDefault = listData.user;
         },
-        rowClick(row) { 
+        rowClick(row) {
             const filteredList = this.$store.state.inboxs['inboxs'].data.filter((e) => e.agendaNumber === row.agendaNumber)
                 .map((e) => { return e });
             this.detailDataRow = row;

@@ -173,7 +173,7 @@ export default {
                     isShow: ((level == 0 || level == 0 || level == 1 || level == 2 || level == 3 || level == 4 || level == 5) ? true : false)
                 },
                 {
-                    name: "Unknown Box",
+                    name: "Duplication Box",
                     path: "/unknown",
                     icon: "mdi-phone",
                     isShow: ((level == 0 || level == 1 || level == 2) ? true : false)
