@@ -10,12 +10,12 @@
         <v-card class="my-5">
             <v-card-title>Filter
                 <v-spacer></v-spacer>
-                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
-                    color="cyan darken-2 mr-2" class="white--text">
+                <v-btn v-if="userLocalData.roleLevel == 0 || userLocalData.roleLevel == 2" @click="dialogReview = true" text
+                    small color="cyan darken-2 mr-2" class="white--text">
                     <v-icon>mdi-upload</v-icon>
                     Upload</v-btn>
-                <v-btn v-if="userLocalData.roleLevel == 0" @click="dialogReview = true" text small
-                    color="cyan darken-2 mr-2" class="white--text">
+                <v-btn v-if="userLocalData.roleLevel == 0 || userLocalData.roleLevel == 2" @click="dialogReview = true" text
+                    small color="cyan darken-2 mr-2" class="white--text">
                     <v-icon>mdi-file-excel-outline</v-icon>
                     Original File</v-btn>
                 <v-divider vertical class="mx-2"></v-divider>
