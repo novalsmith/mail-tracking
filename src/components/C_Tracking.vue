@@ -247,7 +247,7 @@
                             <v-chip class="mx-3" :outlined="uploadStatus.info" color="blue" dark
                                 @click="filterUploadedData('unknown')"> <v-icon
                                     class="mr-1">mdi-information-outline</v-icon>
-                                {{ responseSummaryDataReview.totalUnknown }} Go to Unknown Box</v-chip>
+                                {{ responseSummaryDataReview.totalUnknown }} Duplication (Go to Inbox)</v-chip>
 
                         </div>
                         <v-spacer></v-spacer>
@@ -269,7 +269,7 @@
                         </template>
                         <template v-slot:item.status="{ index, item }">
                             <span v-if="item.status == 'unknown'"><v-icon color="blue">mdi-information-outline</v-icon>
-                                Unknown</span>
+                                Duplication</span>
                             <span v-if="item.status == 'error'"><v-icon color="red">mdi-close-circle-outline</v-icon>
                                 Error</span>
                             <span v-if="item.status == 'success'"><v-icon
@@ -329,10 +329,10 @@
                                         <v-card class="elevation-3">
                                             <v-card-title class="text-h6">
                                                 <v-row>
-                                                    <v-col md="4">
-                                                        <h4>{{ itemDetail.unitFrom }} </h4>
+                                                    <v-col md="7">
+                                                        <h5>{{ itemDetail.unitFrom }} </h5>
                                                     </v-col>
-                                                    <v-col md="8" class="text-end">
+                                                    <v-col md="5" class="text-end">
                                                         <v-chip medium color="default" outlined class="ma-2">
                                                             {{
                                                                 momentJsFormating(itemDetail.createdDate, 1)
@@ -861,6 +861,7 @@ export default {
                 this.isLoadingReview = false;
                 this.isOverlayLoading = false;
             } catch (error) {
+                console.log(error);
                 this.isShowAlertReview = true;
                 this.responseAlertReview.color = 'error';
                 this.responseAlertReview.message = error.response.status == 404 ? error.response.data.message : "You have error, please refresh this page. Detail : " + error.response;
@@ -901,7 +902,7 @@ export default {
                 }
             });
 
-            this.mappingMultipleRecipientParam.inboxData = data.filter((e) => e.status == "success").map((e) => {
+            this.mappingMultipleRecipientParam.inboxData = data.filter((e) => e.status != "error").map((e) => {
                 return {
                     trackingId: e.trackingId,
                     actionDate: newDate,
@@ -910,29 +911,37 @@ export default {
                     to: e.unitToEmployeeId,
                     description: "Surat diUpload oleh " + unitFilteUploader,
                     createdBy: employeeId,
-                    createdDate: newDate
+                    createdDate: newDate,
+                    isDuplication: (e.status == "unknown" ? 1 : 0)
                 }
             });
 
-            this.mappingMultipleRecipientParam.unknownData = data.filter((e) => e.status == "unknown").map((e) => {
-                return {
-                    trackingId: e.trackingId,
-                    actionDate: newDate,
-                    actionType: 'NEW',
-                    from: employeeId,
-                    description: "Surat diUpload oleh " + unitFilteUploader,
-                    createdBy: employeeId,
-                    createdDate: newDate
-                }
-            });
+            // this.mappingMultipleRecipientParam.unknownData = data.filter((e) => e.status == "unknown").map((e) => {
+            //     return {
+            //         trackingId: e.trackingId,
+            //         actionDate: newDate,
+            //         actionType: 'NEW',
+            //         from: employeeId,
+            //         description: "Surat diUpload oleh " + unitFilteUploader,
+            //         createdBy: employeeId,
+            //         createdDate: newDate
+            //     }
+            // });
 
             // push inbox and unknown data into history
             this.mappingMultipleRecipientParam.inboxData.forEach(e => {
+                var menuVal = 'NADINE';
+                var descVal = "";
+                descVal += "Surat diupload oleh Operator dan masuk Inbox";
+                if (e.isDuplication == 1) {
+                    descVal += " dengan status duplikasi surat";
+                    menuVal = 'UNKNOWNBOX';
+                }
                 objectHistory.push({
                     trackingId: e.trackingId,
-                    menu: 'NADINE',
+                    menu: menuVal,
                     type: 'NEW',
-                    description: "Surat diupload oleh Operator dan masuk Inbox",
+                    description: descVal,
                     from: employeeId,
                     to: e.to,
                     createdBy: employeeId,
@@ -940,19 +949,19 @@ export default {
                 });
             });
 
-            this.mappingMultipleRecipientParam.unknownData.forEach(e => {
-                objectHistory.push({
-                    inboxId: this.detailDataRow.inboxId,
-                    trackingId: e.trackingId,
-                    menu: 'UNKNOWNBOX',
-                    type: 'NEW',
-                    description: "Surat diupload oleh Operator dan masuk Unknown",
-                    from: e.from,
-                    to: null,
-                    createdBy: employeeId,
-                    createdDate: newDate
-                });
-            });
+            // this.mappingMultipleRecipientParam.unknownData.forEach(e => {
+            //     objectHistory.push({
+            //         inboxId: this.detailDataRow.inboxId,
+            //         trackingId: e.trackingId,
+            //         menu: 'UNKNOWNBOX',
+            //         type: 'NEW',
+            //         description: "Surat diupload oleh Operator dan masuk Unknown",
+            //         from: e.from,
+            //         to: null,
+            //         createdBy: employeeId,
+            //         createdDate: newDate
+            //     });
+            // });
 
             this.mappingMultipleRecipientParam.historyData = objectHistory;
         },
