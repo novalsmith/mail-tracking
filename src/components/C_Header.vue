@@ -176,7 +176,8 @@ export default {
                     name: "Duplication Box",
                     path: "/unknown",
                     icon: "mdi-phone",
-                    isShow: ((level == 0 || level == 1 || level == 2) ? true : false)
+                    isShow: false
+                    // isShow: ((level == 0 || level == 1 || level == 2) ? true : false)
                 },
                 {
                     name: "Inbox",

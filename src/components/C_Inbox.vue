@@ -131,7 +131,7 @@
             </v-container>
 
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
-                class="mx-3 table-style" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
+                :row-class="getRowClass" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
@@ -483,9 +483,8 @@ export default {
                 { text: 'Isi Ringkasan', value: 'isiRingkasan' },
                 { text: 'Dari', value: 'dari' },
                 { text: 'Kepada', value: 'kepada' },
-                { text: 'Tgl.Tindak lanjut', value: 'tglTindaklanjut' },
-                { text: 'Tindakan', value: 'actionTypeValue' },
-                { text: 'Status', value: 'unitAssignedTo' }
+                { text: 'Status', value: 'unitAssignedTo' },
+                { text: 'isDuplication', value: 'isDuplication' }
 
             ],
             headerprops: {
@@ -912,7 +911,9 @@ export default {
         closeDialogDetail() {
             this.dialogDetail = false;
             this.isEdit = false;
-        }
+        },
+
+
     },
     async created() {
         this.isOverlayLoading = true;
@@ -927,6 +928,28 @@ export default {
         ...mapGetters(['inboxs', 'settings', 'lookups']),
         latterType() {
             return this.$store.state.lookup.lookups['type'];
+        },
+        getRowClass(item, index, field) {
+            // console.log(item);
+            // if (item.isDuplication == 1) {
+            //     // console
+            //     // .log(inboxListData");
+            //     return 'duplicationRow'; // or any other class name for the row background color
+            // } else {
+            //     return 'mx-3 table-style';
+            // }
+
+            var listDatas = this.inboxListData.reduce((classes, item, index) => {
+
+                if (parseInt(item.isDuplication) === 1) {
+                    classes[index] = 'mx-3 duplicationRow table-style';
+                }
+                return classes;
+            }, {});
+
+            // console.log(listDatas[0]);
+            return listDatas[0];
+
         },
         actionFollowUp() {
             var data = this.$store.state.lookup.lookups['action'];
@@ -1031,5 +1054,11 @@ export default {
 
 .show-content {
     display: block !important;
+}
+
+.duplicationRow>>>tbody tr {
+    cursor: pointer;
+    background: #1f4d50 !important;
+    color: white;
 }
 </style>
