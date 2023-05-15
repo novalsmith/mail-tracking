@@ -157,8 +157,8 @@
                     </v-btn>
                 </template>
                 <template v-slot:item.isDuplication="{ item, index }">
-                    <span v-if="item.isDuplication == '1'">YA</span>
-                    <span v-else>Bukan</span>
+                    <span v-if="item.isDuplication == '1'" color="cyan darken-2">Yes</span>
+                    <span v-else color="red">No</span>
                 </template>
             </v-data-table>
         </v-card>
@@ -502,15 +502,15 @@ export default {
             unknownData: [
                 {
                     id: "",
-                    name: "Semua"
+                    name: "All"
                 },
                 {
                     id: "Y",
-                    name: "Ya"
+                    name: "Yes"
                 },
                 {
                     id: "N",
-                    name: "Bukan"
+                    name: "No"
                 }
             ],
             isArsipSurat: false,

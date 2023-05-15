@@ -87,9 +87,18 @@
                                         required></v-text-field>
                                 </v-col>
 
+
                                 <v-col md="4">
-                                    <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
-                                        item-text="name" item-value="id" label="Menu"></v-select>
+                                    <v-row>
+                                        <v-col md="6">
+                                            <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
+                                                item-text="name" item-value="id" label="Menu"></v-select>
+                                        </v-col>
+                                        <v-col md="6">
+                                            <v-select v-model="filter.listUploaderData" dense outlined :items="listUploader"
+                                                item-text="text" item-value="id" label="Uploader"></v-select>
+                                        </v-col>
+                                    </v-row>
                                 </v-col>
 
                             </v-row>
@@ -557,7 +566,8 @@ export default {
                 modalDateTglTerima: null,
                 modalDateTglSurat: null,
                 searchingParams: [],
-                unknownModelData: ""
+                unknownModelData: "",
+                listUploaderData: ""
             },
             files: [],
             alertNotready: false,
@@ -574,6 +584,40 @@ export default {
             content: [],
             userLocalData: [],
             parsed: false,
+            listUploader: [
+                {
+                    id: "DJB",
+                    text: "DJB"
+                },
+                {
+                    id: "SDB",
+                    text: "SDB"
+                },
+                {
+                    id: "DBP",
+                    text: "DBP"
+                },
+                {
+                    id: "DBM",
+                    text: "DBM"
+                },
+                {
+                    id: "DBB",
+                    text: "DBB"
+                },
+                {
+                    id: "DBN",
+                    text: "DBN"
+                },
+                {
+                    id: "DBT",
+                    text: "DBT"
+                },
+                {
+                    id: "DBR",
+                    text: "DBR"
+                }
+            ],
             unknownData: [
                 {
                     id: "",
@@ -690,7 +734,7 @@ export default {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
                 this.isShowAlert = true;
-                this.isOverlayLoading = tfalserue;
+                this.isOverlayLoading = false;
             }
         },
         detailHistory(item) {
