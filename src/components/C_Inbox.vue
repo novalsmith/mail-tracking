@@ -89,7 +89,7 @@
 
                                 <v-col md="4">
                                     <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
-                                        item-text="name" item-value="id" label="Unknown?"></v-select>
+                                        item-text="name" item-value="id" label="Duplication?"></v-select>
                                 </v-col>
 
                             </v-row>
@@ -156,6 +156,14 @@
                         <v-icon class="mx-1">mdi-alert-outline</v-icon>
                     </v-btn>
                 </template>
+
+                <template v-slot:item.isDuplication="{ item, index }">
+
+                    <span v-if="item.isDuplication == '1'">YA</span>
+                    <span v-else>Bukan</span>
+                </template>
+
+
             </v-data-table>
 
         </v-card>
@@ -484,7 +492,7 @@ export default {
                 { text: 'Dari', value: 'dari' },
                 { text: 'Kepada', value: 'kepada' },
                 { text: 'Status', value: 'unitAssignedTo' },
-                { text: 'isDuplication', value: 'isDuplication' }
+                { text: 'Duplication', value: 'isDuplication' }
 
             ],
             headerprops: {
