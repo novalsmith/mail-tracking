@@ -156,16 +156,11 @@
                         <v-icon class="mx-1">mdi-alert-outline</v-icon>
                     </v-btn>
                 </template>
-
                 <template v-slot:item.isDuplication="{ item, index }">
-
                     <span v-if="item.isDuplication == '1'">YA</span>
                     <span v-else>Bukan</span>
                 </template>
-
-
             </v-data-table>
-
         </v-card>
         <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
