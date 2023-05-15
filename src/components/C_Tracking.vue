@@ -581,7 +581,7 @@ export default {
                 },
                 {
                     id: "Y",
-                    name: "Unknown Box"
+                    name: "Duplication"
                 },
                 {
                     id: "N",
