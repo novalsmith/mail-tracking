@@ -28,10 +28,11 @@ class ModelTracking extends Model
             ($searchingParams["dateActionTerimaStart"] ?? ''),
             ($searchingParams["dateActionTerimaEnd"] ?? ''),
             ($searchingParams["dateActionSuratStart"] ?? ''),
-            ($searchingParams["dateActionSuratEnd"] ?? '')
+            ($searchingParams["dateActionSuratEnd"] ?? ''),
+            ($searchingParams["listUploaderData"] ?? '')
         ];
         // Calling from Stored Procedure
-        $procedure = "CALL getNadine(?,?,?,?,?,?,?,?,?,?,?,?)";
+        $procedure = "CALL getNadine(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $builder = $db->query($procedure, $params); 
         $data =  $builder->getResult(); 
         $db->close();

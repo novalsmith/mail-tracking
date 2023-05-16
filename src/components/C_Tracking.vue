@@ -92,7 +92,7 @@
                                     <v-row>
                                         <v-col md="6">
                                             <v-select v-model="filter.unknownModelData" dense outlined :items="unknownData"
-                                                item-text="name" item-value="id" label="Menu"></v-select>
+                                                item-text="name" item-value="id" label="Duplication?"></v-select>
                                         </v-col>
                                         <v-col md="6">
                                             <v-select v-model="filter.listUploaderData" dense outlined :items="listUploader"
@@ -161,10 +161,10 @@
 
                     <!-- <p v-else :class="'blue--text'">Tidak</p> -->
                     <v-chip small v-if="item.isUnknown == 'Y'" color="orange" dark>
-                        Unknown Box
+                        Yes
                     </v-chip>
                     <v-chip small v-else color="cyan darken-2" dark>
-                        Inbox
+                        No
                     </v-chip>
                 </template>
             </v-data-table>
@@ -625,11 +625,11 @@ export default {
                 },
                 {
                     id: "Y",
-                    name: "Duplication"
+                    name: "Yes"
                 },
                 {
                     id: "N",
-                    name: "Inbox"
+                    name: "No"
                 }
             ],
             headers: [
@@ -644,7 +644,7 @@ export default {
                 { text: 'Isi Ringkasan', value: 'isiRingkasan' },
                 { text: 'Keterangan', value: 'keterangan', width: '10%' },
                 { text: 'Uploader', value: 'unitUploader', width: '5%' },
-                { text: 'Menu', value: 'isUnknown', width: '5%' },
+                { text: 'Duplication', value: 'isUnknown', width: '5%' },
 
             ],
             headersReview: [
@@ -824,7 +824,8 @@ export default {
                 dateActionSuratStart: dateActionSuratStart,
                 dateActionSuratEnd: dateActionSuratEnd,
                 note: this.filter.isiRingkasan,
-                isUnknown: this.filter.unknownModelData
+                isUnknown: this.filter.unknownModelData,
+                listUploaderData: this.filter.listUploaderData
             };
             this.filter.searchingParams = remappingParam;
             console.log(this.filter.searchingParams);
