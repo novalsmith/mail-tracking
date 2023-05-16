@@ -314,7 +314,9 @@
                 <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
                     <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
                 </v-overlay>
+
                 <v-toolbar color="cyan darken-2" class="white--text">
+
                     <v-btn icon dark @click="dialogDetail = false">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
@@ -327,6 +329,7 @@
                         <v-col md="7">
                             <div class="my-5">
                                 <h3>Riwayat Surat</h3>
+                             
                                 <v-divider></v-divider>
                             </div>
                             <div>

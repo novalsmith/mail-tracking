@@ -157,7 +157,7 @@
                     </v-btn>
                 </template>
                 <template v-slot:item.isDuplication="{ item, index }">
-                    <v-chip small v-if="item.isDuplication == '1'" color="yellow darken-2" dark>
+                    <v-chip small v-if="item.isDuplication == '1'" color="orange" dark>
                         Yes
                     </v-chip>
                     <v-chip small v-else color=" cyan darken-2" dark>
@@ -171,11 +171,12 @@
                 <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
                     <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
                 </v-overlay>
-                <v-toolbar color="cyan darken-2" class="white--text">
+                <v-toolbar :color="detailDataRow.isDuplication == '1' ? 'orange' : 'cyan darken-2'" class="white--text">
                     <v-btn icon dark @click="closeModal(false)">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Detail Surat</v-toolbar-title>
+                    <v-toolbar-title>Detail Surat <span v-if="detailDataRow.isDuplication == '1'">
+                            (Duplikasi)</span></v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn v-if="isShowEditButton" class="mr-4 white--text" color="orange" @click="isEdit = false">
                         <v-icon>mdi-pencil</v-icon> Edit
@@ -963,11 +964,11 @@ export default {
             if (parseInt(this.listLocalUserData.roleLevel) == 5) {
                 return data.filter((e) => e.code === "ARSIP")
                     .map((e) => { return e });
-            } else if (parseInt(this.listLocalUserData.roleLevel) == 2 || parseInt(this.listLocalUserData.roleLevel) == 1) {
+            } else if (parseInt(this.listLocalUserData.roleLevel) == 1) {
                 return data.filter((e) => e.code != "TERUSKAN")
                     .map((e) => { return e });
             } else {
-                return data.filter((e) => e.code != "ARSIP")
+                return data.filter((e) => e.code != "")
                     .map((e) => { return e });
             }
         },
