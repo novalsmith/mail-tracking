@@ -157,8 +157,12 @@
                     </v-btn>
                 </template>
                 <template v-slot:item.isDuplication="{ item, index }">
-                    <span v-if="item.isDuplication == '1'" color="cyan darken-2">Yes</span>
-                    <span v-else color="red">No</span>
+                    <v-chip small v-if="item.isDuplication == '1'" color="yellow darken-2" dark>
+                        Yes
+                    </v-chip>
+                    <v-chip small v-else color=" cyan darken-2" dark>
+                        No
+                    </v-chip>
                 </template>
             </v-data-table>
         </v-card>
