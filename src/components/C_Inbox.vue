@@ -131,7 +131,7 @@
             </v-container>
 
             <v-data-table item-key="indexNumber" multi-sort :headerProps="headerprops" :headers="headers"
-                :row-class="getRowClass" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
+                class="table-style" :items="!!inboxListData ? inboxListData : []" :loading="isLoading"
                 :loading-text="isLoading ? 'Loading... Please wait' : ''" @click:row="rowClick" :footer-props="{
                     showFirstLastPage: true,
                     firstIcon: 'mdi-arrow-collapse-left',
@@ -144,17 +144,31 @@
                 </template>
                 <template v-slot:item.unitAssignedTo="{ item, index }">
 
-                    <v-btn fab small v-if="item.isExistsInOutbox != null" color="cyan darken-2" dark>
-                        <v-icon class="mx-1">mdi-account-check</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom v-if="item.isExistsInOutbox != null">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn fab small color="cyan darken-2" dark v-bind="attrs" v-on="on">
+                                <v-icon class="mx-1">mdi-account-check</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Assined</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-else-if="item.actionType == 'ARSIP'">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn fab small color="green lighten-1" dark v-bind="attrs" v-on="on">
+                                <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Arsip</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-else>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn fab small color="orange" dark v-bind="attrs" v-on="on">
+                                <v-icon class="mx-1">mdi-alert-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Unassigned</span>
+                    </v-tooltip>
 
-                    <v-btn fab small v-else-if="item.actionType == 'ARSIP'" color="green lighten-1" dark>
-                        <v-icon class="mx-1">mdi-check-circle-outline</v-icon>
-                    </v-btn>
-
-                    <v-btn fab small v-else color="orange" dark>
-                        <v-icon class="mx-1">mdi-alert-outline</v-icon>
-                    </v-btn>
                 </template>
                 <template v-slot:item.isDuplication="{ item, index }">
                     <v-chip small v-if="item.isDuplication == '1'" color="orange" dark>
