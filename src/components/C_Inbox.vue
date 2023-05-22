@@ -106,7 +106,7 @@
 
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Catatan"
+                                    <v-text-field dense outlined clearable v-model="filter.ket" label="Isi Ringkasan"
                                         required></v-text-field>
                                 </v-col>
                             </v-row>
