@@ -196,11 +196,11 @@
                                         prepend-icon="mdi-paperclip"></v-file-input>
                                     <span class="text--secondary">
                                         <v-icon>mdi-information-outline</v-icon>
-                                        Contoh Penamaan File : SDB_2023_01_01.xlsx
+                                        Contoh Penamaan File : SDB_2023_02_01.xlsx
                                         <ul>
                                             <li>Unit : SDB</li>
                                             <li>Tahun : 2023</li>
-                                            <li>Bulan : 01</li>
+                                            <li>Bulan : 02</li>
                                             <li>Tanggal : 01</li>
                                             <li>Format : .xlsx</li>
                                         </ul>
@@ -329,7 +329,7 @@
                         <v-col md="7">
                             <div class="my-5">
                                 <h3>Riwayat Surat</h3>
-                             
+
                                 <v-divider></v-divider>
                             </div>
                             <div>
@@ -1087,7 +1087,7 @@ export default {
                     this.isOverlayLoading = false;
                     this.isShowAlertReview = true;
                     this.responseAlertReview.color = 'orange';
-                    this.responseAlertReview.message = (messageResponse + " " + "Contoh : SDB_2023_01_01.xlsx");
+                    this.responseAlertReview.message = (messageResponse + " " + "Contoh : SDB_2023_02_01.xlsx");
                     return null;
                 } else {
                     let formData = new FormData();
