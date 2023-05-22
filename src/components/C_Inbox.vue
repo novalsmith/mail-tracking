@@ -913,9 +913,9 @@ export default {
             moment.locale('id');
             var newDate = "";
             if (dateType == 1) {
-                newDate = moment(dateValue).format("dddd,Do MMMM YYYY, HH:mm");
+                newDate = moment(dateValue).format("dddd, Do MMMM YYYY, HH:mm");
             } else if (dateType == 2) {
-                newDate = moment(dateValue).format("dddd,Do MMMM YYYY");
+                newDate = moment(dateValue).format("dddd, Do MMMM YYYY");
             }
             return newDate;
         },
