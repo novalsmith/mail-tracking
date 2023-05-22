@@ -150,7 +150,7 @@
                                 <v-icon class="mx-1">mdi-account-check</v-icon>
                             </v-btn>
                         </template>
-                        <span>Assined</span>
+                        <span>Assigned</span>
                     </v-tooltip>
                     <v-tooltip bottom v-else-if="item.actionType == 'ARSIP'">
                         <template v-slot:activator="{ on, attrs }">
