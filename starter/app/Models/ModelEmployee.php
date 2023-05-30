@@ -11,7 +11,7 @@ class ModelEmployee extends Model
 
     function getEmployeeByParent($roleCode,$roleLevel){
         $builder = $this->table("v_employee");
-        $builder->where("parent", $roleCode);
+        $builder->where("level", $roleLevel);
        $data =  $builder->get()->getResult();
        $response = [
         "parent" =>  $data,
