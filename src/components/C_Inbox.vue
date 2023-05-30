@@ -588,7 +588,7 @@ export default {
     methods: {
         detailHistory(item) {
             // Returns true to show content for completed steps, false for others
-            return this.historyListData.subHeader.filter((e) => e.unitFrom === item.unitFrom)
+            return this.historyListData.subHeader.filter((e) => e.unitFrom === item.unitFromCode)
                 .map((e) => { return e });
         },
         async submit() {
