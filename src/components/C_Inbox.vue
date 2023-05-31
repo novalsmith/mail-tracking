@@ -878,7 +878,6 @@ export default {
 
         },
         selectedTypeEvnt() {
-            this.getEmployeeParentChild();
             this.recipient = [];
             if (this.detailInboxModalDialog.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
