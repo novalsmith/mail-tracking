@@ -249,7 +249,7 @@
                                     <div v-if="isReciverShow && !isStaf">
                                         <v-combobox :error-messages="kepadaError" required
                                             @input="$v.detailInboxModalDialog.recipient.$touch()" :disabled="isEdit"
-                                            :items="selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
+                                            :items="detailInboxModalDialog.selectedType == 'TERUSKAN' ? listItemsReciver.teruskan : listItemsReciver.disposisi"
                                             dense outlined v-model="detailInboxModalDialog.recipient" label="Kepada"
                                             multiple chips></v-combobox>
                                     </div>
@@ -878,6 +878,7 @@ export default {
 
         },
         selectedTypeEvnt() {
+            this.getEmployeeParentChild();
             this.recipient = [];
             if (this.detailInboxModalDialog.selectedType != 'ARSIP') {
                 this.isReciverShow = true;

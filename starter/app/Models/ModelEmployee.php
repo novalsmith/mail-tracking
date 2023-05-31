@@ -11,18 +11,18 @@ class ModelEmployee extends Model
 
     function getEmployeeByParent($roleCode,$roleLevel){
         $builder = $this->table("v_employee");
-        $builder->where("level", $roleLevel);
+        $builder->where("parent", $roleCode);
        $data =  $builder->get()->getResult();
        $response = [
         "parent" =>  $data,
-        "level" => $this->getEmployeeByLevel($roleCode)
+        "level" => $this->getEmployeeByLevel($roleLevel)
        ];
         return $response;
     }
 
-    function getEmployeeByLevel($roleCode){ 
+    function getEmployeeByLevel($roleLevel){ 
         $params = [
-            ($roleCode ?? '')
+            ($roleLevel ?? '')
         ];
         // Calling from Stored Procedure
         $procedure = "CALL getInboxActionList(?)";
