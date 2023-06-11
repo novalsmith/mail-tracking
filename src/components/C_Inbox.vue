@@ -832,7 +832,7 @@ export default {
                     });
                     this.detailInboxModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
                     this.detailInboxModalDialog.notes = datarecipient.length > 0 ? datarecipient[0].description : "";
-                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : moment.format('YYYY-MM-DD');
+                    this.detailInboxModalDialog.actionDate = datarecipient.length > 0 ? moment(datarecipient[0].actionDate).format('YYYY-MM-DD') : moment(new Date).format('YYYY-MM-DD');
                     this.detailInboxModalDialog.recipient = listRecipientTmp;
 
                     this.detailInboxOriginalDataModalDialog.selectedType = datarecipient.length > 0 ? datarecipient[0].actionType : "";
@@ -878,6 +878,7 @@ export default {
 
         },
         selectedTypeEvnt() {
+            this.detailInboxModalDialog.recipient = [];
             this.recipient = [];
             if (this.detailInboxModalDialog.selectedType != 'ARSIP') {
                 this.isReciverShow = true;
