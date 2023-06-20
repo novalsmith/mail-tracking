@@ -14,7 +14,8 @@ class Employee extends BaseController
 	}
 	public function index()
 	{
-		$data = $this->model->findAll();
+		$searchingParams = $this->request->getVar('searchingParams');
+		$data = $this->model->getEmployee($searchingParams);
 		return $this->respond($data, 200);
 	}
 	public function employeeByParent()
@@ -24,7 +25,38 @@ class Employee extends BaseController
 		$modelData = new ModelEmployee();
 		$data = $modelData->getEmployeeByParent($roleCode,$roleLevel);
 			return $this->respond($data, 200);
-	}		 
+	}
+	
+	public function historyJabatan()
+	{
+		$employeeId = $this->request->getVar('employeeId');
+		$modelData = new ModelEmployee();
+		$data = $modelData->getHistoryJabatan($employeeId);
+			return $this->respond($data, 200);
+	}
+
+	public function savePosition()
+	{
+		// $dataParam = $this->request->getPost();
+		$dataParam = $this->request->getPost('listData');
+		$isSuccess = false;
+		$listData = json_decode($dataParam); 
+		// $error = "";
+		// if(!empty($listData->inboxData)){
+
+		$modelData = new ModelEmployee();
+		$data = $modelData->savePosition($listData->employeeId,$listData->jabatan,$listData->startDate, $listData->endDate, $listData->status);
+			return $this->respond($data, 200);
+	}
+
+	public function getPostition()
+	{
+		// $employeeId = $this->request->getVar('employeeId');
+		$modelData = new ModelEmployee();
+		$data = $modelData->getPostition();
+			return $this->respond($data, 200);
+	}
+
 	public function create()
 	{
 		$data = $this->request->getPost();
