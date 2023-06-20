@@ -388,6 +388,14 @@ export default {
         },
         async saveJabatan() {
             if (this.modalJabatanFields.dateActionTerima) {
+                if (this.modalJabatanFields.dateActionTerima[1] == undefined || this.modalJabatanFields.dateActionTerima[1] == "") {
+                    this.responseAlert.color = 'orange';
+                    this.responseAlert.message = "End Date tidak booleh kosong";
+                    this.loadingUploadButton = false;
+                    this.isShowAlertDialogDetail = true;
+                    this.dialogJabatan = false;
+                    return;
+                }
                 this.modalJabatanFields.startDate = this.modalJabatanFields.dateActionTerima[0];
                 this.modalJabatanFields.endDate = this.modalJabatanFields.dateActionTerima[1];
             }
@@ -407,13 +415,8 @@ export default {
                 var formdata = new FormData();
 
                 formdata.append("listData", JSON.stringify(param));
-                // var formdata = new FormData();
-                // this.loadingUploadButton = true;
-                // formdata.append("listData", JSON.stringify(params));
-
                 this.isLoadingHistoryJabatan = true;
                 var responseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'employee/savePosition', formdata);
-                // responseData.then(function (res) {
                 var responsStatus = false;
                 if (responseData.data[0].isDuplicate == 0) {
                     responsStatus = true;
@@ -428,10 +431,6 @@ export default {
                 this.isLoadingHistoryJabatan = false;
                 await this.getHistoryJabatan(param.employeeId);
                 this.dialogJabatan = false;
-                // });
-
-
-
             } catch (error) {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
                 this.responseAlert.color = "red";
@@ -444,23 +443,12 @@ export default {
         async getHistoryJabatan(employeeId) {
             try {
                 this.isLoadingHistoryJabatan = true;
-                // console.log(this.filter.searchingParams);
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/history", { params: { employeeId: employeeId } });
-                // var lookupData = JSON.parse(localStorage.getItem('lookups'));
-                // mapping header
-                // var responseLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
-
-                // this.listLevelLookup = responseLookup.data;
-                // console.log(responseLookup);
-                // this.listData = response.data;
                 this.listDataRiwajatJabatan = response.data;
-                // this.$store.dispatch('employee', response.data);
                 this.isLoadingHistoryJabatan = false;
-                // this.isOverlayLoading = false;
             } catch (error) {
                 console.log(error.response);
                 this.isLoadingHistoryJabatan = false;
-                // this.isOverlayLoading = false;
             }
         },
         async getSettings() {
@@ -475,18 +463,12 @@ export default {
 
             this.getHistoryJabatan(row.employeeId);
             this.dialogDetail = true;
-
-            // this.detailDataRow = row;
-            // this.selectedRoleValue = row.level;
-            // this.selectedStatusValue = row.status;
             this.detailJabatanData = row;
             this.isShowAlertDialogDetail = false;
         },
         rowClickHistoryJabatan(row) {
-            // this.modalJabatanFields.employeeId = row.employeeId;
             this.isShowAlertDialogDetail = false;
             console.log("yes");
-            // this.getPosition();
             if (row.employeeId) {
                 this.isEdit = true;
             } else {
@@ -495,10 +477,7 @@ export default {
 
             console.log(row);
             var dates = (row.startDate ? [row.startDate, row.endDate] : []);
-            // dates.push({});
-            // this.clearJabatan();
             this.dialogJabatan = true;
-            // this.roleCodeValueEdit = row.roleCode;
             this.modalJabatanFields = {
                 employeeId: row.employeeId,
                 roleCode: row.roleCode,
@@ -507,7 +486,6 @@ export default {
                 roleCodeValueEdit: row.roleCode,
                 selectedjabatan: this.modalJabatanFields.selectedjabatan
             };
-            // this.modalJabatanFields.selectedjabatan = response.data;
         },
         rowDeleteClick(row) {
             console.log(row);
@@ -521,10 +499,8 @@ export default {
             return rowClass;
         },
         submit() {
-            // this.$v.$touch()
         },
         clear() {
-            // this.$v.$reset() 
             var remappingParam = {
                 employeeIdValue: "",
                 nameValue: "",
