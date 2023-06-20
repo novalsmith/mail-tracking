@@ -45,7 +45,8 @@ class Employee extends BaseController
 		// if(!empty($listData->inboxData)){
 
 		$modelData = new ModelEmployee();
-		$data = $modelData->savePosition($listData->employeeId,$listData->jabatan,$listData->startDate, $listData->endDate, $listData->status);
+		$data = $modelData->savePosition($listData->employeeId,$listData->jabatan,$listData->startDate, $listData->endDate, $listData->status
+		, $listData->isEdit, $listData->roleCodeValueEdit);
 			return $this->respond($data, 200);
 	}
 

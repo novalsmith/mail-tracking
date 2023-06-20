@@ -47,16 +47,18 @@ class ModelEmployee extends Model
         return $data;
     }
 
-    function savePosition($employeeId, $jabatan, $startDate,$endDate,$status){
+    function savePosition($employeeId, $jabatan, $startDate,$endDate,$status,$isEdit,$roleCodeValueEdit){
         $params = [
             ($employeeId ?? ''),
             ($jabatan ?? ''),
             ($startDate ?? null),
             ($endDate ?? null),
-            ($status ?? null)
+            ($status ?? null),
+            ($isEdit ?? null),
+            ($roleCodeValueEdit ?? null)
         ];
         // Calling from Stored Procedure
-        $procedure = "CALL upsertHistoryJabatan(?,?,?,?,?)";
+        $procedure = "CALL upsertHistoryJabatan(?,?,?,?,?,?,?)";
         $builder = $this->db->query($procedure, $params); 
         $data =  $builder->getResult(); 
         
