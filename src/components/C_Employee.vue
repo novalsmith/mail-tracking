@@ -137,7 +137,7 @@
                                                                 @click="rowClickHistoryJabatan">
                                                                 <v-icon>mdi-plus</v-icon> Tambah Jabatan
                                                             </v-btn>
-                                                            <v-btn small color="green lighten-1" dark @click="searching">
+                                                            <v-btn small color="green lighten-1" dark @click="reloadData">
                                                                 <v-icon>mdi-refresh</v-icon> Refresh
                                                             </v-btn>
                                                         </v-col>
@@ -351,7 +351,8 @@ export default {
                 modalDateTglTerima: null,
                 dateActionTerima: [],
                 selectedjabatan: []
-            }
+            },
+            detailJabatanData: []
         }
     },
     methods: {
@@ -463,6 +464,10 @@ export default {
 
             this.$store.dispatch('settings', this.themeColoring);
         },
+        reloadData() {
+
+            this.getHistoryJabatan(this.detailJabatanData.employeeId);
+        },
         rowClick(row) {
             this.getHistoryJabatan(row.employeeId);
             this.dialogDetail = true;
@@ -470,6 +475,7 @@ export default {
             // this.detailDataRow = row;
             // this.selectedRoleValue = row.level;
             // this.selectedStatusValue = row.status;
+            this.detailJabatanData = row;
         },
         rowClickHistoryJabatan(row) {
             if (row.employeeId) {
