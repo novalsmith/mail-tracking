@@ -182,11 +182,7 @@
                                         <v-container>
                                             <v-row>
                                                 <v-col cols="12">
-                                                    <!-- <v-text-field v-model="modalJabatanFields.roleCode" dense outlined
-                                                        clearable label="Jabatan" required></v-text-field> -->
-                                                    <!-- <v-combobox required :items="modalJabatanFields.selectedjabatan" dense
-                                                        outlined item-text="positions" item-value="code" label="Kepada"
-                                                        chips></v-combobox> -->
+
                                                     <v-select required :items="modalJabatanFields.selectedjabatan"
                                                         v-model="modalJabatanFields.roleCode" item-text="positionName"
                                                         item-value="code" dense outlined label="Jabatan"></v-select>
@@ -350,7 +346,8 @@ export default {
                 status: 0,
                 modalDateTglTerima: null,
                 dateActionTerima: [],
-                selectedjabatan: []
+                selectedjabatan: [],
+                roleCodeValueEdit: ""
             },
             detailJabatanData: []
         }
@@ -396,10 +393,12 @@ export default {
             }
             var param = {
                 employeeId: this.modalJabatanFields.employeeId,
-                status: (!isEdit ? 0 : this.modalJabatanFields.status),
+                status: (!this.isEdit ? 0 : this.modalJabatanFields.status),
                 startDate: this.modalJabatanFields.startDate,
                 endDate: this.modalJabatanFields.endDate,
-                jabatan: this.modalJabatanFields.roleCode
+                jabatan: this.modalJabatanFields.roleCode,
+                isEdit: this.isEdit,
+                roleCodeValueEdit: this.roleCodeValueEdit
             };
             console.log(param);
 
@@ -476,8 +475,12 @@ export default {
             // this.selectedRoleValue = row.level;
             // this.selectedStatusValue = row.status;
             this.detailJabatanData = row;
+            this.isShowAlertDialogDetail = false;
         },
         rowClickHistoryJabatan(row) {
+            this.isShowAlertDialogDetail = false;
+            console.log("yes");
+            // this.getPosition();
             if (row.employeeId) {
                 this.isEdit = true;
             } else {
@@ -485,8 +488,20 @@ export default {
             }
 
             console.log(row);
-            this.clearJabatan();
+            var dates = (row.startDate ? [row.startDate, row.endDate] : []);
+            // dates.push({});
+            // this.clearJabatan();
             this.dialogJabatan = true;
+            this.roleCodeValueEdit = row.roleCode;
+            this.modalJabatanFields = {
+                employeeId: row.employeeId,
+                roleCode: row.roleCode,
+                dateActionTerima: dates,
+                status: row.status == 'Aktif' ? true : false,
+                roleCodeValueEdit: row.roleCode,
+                selectedjabatan: this.modalJabatanFields.selectedjabatan
+            };
+            // this.modalJabatanFields.selectedjabatan = response.data;
         },
         rowDeleteClick(row) {
             console.log(row);
