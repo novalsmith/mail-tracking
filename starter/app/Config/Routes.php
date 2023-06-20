@@ -35,6 +35,10 @@ $routes->get('/access', 'Access::index');
 $routes->get('/unit', 'Unit::index');
 $routes->get('/employee', 'Employee::index');
 $routes->get('/employee/parent', 'Employee::employeeByParent');
+$routes->get('/employee/history', 'Employee::historyJabatan');
+$routes->get('/employee/position', 'Employee::getPostition');
+$routes->get('/employee/savePosition', 'Employee::savePosition');
+
 // $routes->get('/tracking', 'Tracking::index');
 // $routes->get('/tracking/(:any)', 'Tracking::show/$1');
 $routes->post('/upload', 'Tracking::importCsvToDb');
