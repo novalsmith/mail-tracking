@@ -392,13 +392,13 @@ export default {
                 this.modalJabatanFields.endDate = this.modalJabatanFields.dateActionTerima[1];
             }
             var param = {
-                employeeId: this.modalJabatanFields.employeeId,
+                employeeId: this.detailJabatanData.employeeId,
                 status: (!this.isEdit ? 0 : this.modalJabatanFields.status),
                 startDate: this.modalJabatanFields.startDate,
                 endDate: this.modalJabatanFields.endDate,
                 jabatan: this.modalJabatanFields.roleCode,
                 isEdit: this.isEdit,
-                roleCodeValueEdit: this.roleCodeValueEdit
+                roleCodeValueEdit: this.detailJabatanData.roleCode
             };
             console.log(param);
 
@@ -410,23 +410,27 @@ export default {
                 // var formdata = new FormData();
                 // this.loadingUploadButton = true;
                 // formdata.append("listData", JSON.stringify(params));
-                var responsStatus = null;
-                this.isLoadingHistoryJabatan = true;
-                var responseData = axios.post(process.env.VUE_APP_SERVICE_URL + 'employee/savePosition', formdata);
-                responseData.then(function (res) {
-                    console.log(res);
-                    if (res.isDuplicate) {
-                        responsStatus = res.isDuplicate;
-                    }
-                });
 
-                this.responseAlert.color = (!responsStatus ? 'cyan darken-2' : 'orange');
-                this.responseAlert.message = (!responsStatus ? "Jabatan berhasil tersimpan" : "Duplikasi data, data sudah ada");
+                this.isLoadingHistoryJabatan = true;
+                var responseData = await axios.post(process.env.VUE_APP_SERVICE_URL + 'employee/savePosition', formdata);
+                // responseData.then(function (res) {
+                var responsStatus = false;
+                if (responseData.data[0].isDuplicate == 0) {
+                    responsStatus = true;
+                } else {
+                    responsStatus = false;
+                }
+
+                this.responseAlert.color = (responsStatus ? 'cyan darken-2' : 'orange');
+                this.responseAlert.message = (responsStatus ? "Jabatan berhasil tersimpan" : "Duplikasi data, data sudah ada");
                 this.loadingUploadButton = false;
                 this.isShowAlertDialogDetail = true;
                 this.isLoadingHistoryJabatan = false;
-                this.getHistoryJabatan(param.employeeId);
+                await this.getHistoryJabatan(param.employeeId);
                 this.dialogJabatan = false;
+                // });
+
+
 
             } catch (error) {
                 this.responseAlert.message = 'Something wrong, please refresh the page to fix this issue. detail : ' + error.message;
@@ -468,9 +472,10 @@ export default {
             this.getHistoryJabatan(this.detailJabatanData.employeeId);
         },
         rowClick(row) {
+
             this.getHistoryJabatan(row.employeeId);
             this.dialogDetail = true;
-            this.modalJabatanFields.employeeId = row.employeeId;
+
             // this.detailDataRow = row;
             // this.selectedRoleValue = row.level;
             // this.selectedStatusValue = row.status;
@@ -478,6 +483,7 @@ export default {
             this.isShowAlertDialogDetail = false;
         },
         rowClickHistoryJabatan(row) {
+            // this.modalJabatanFields.employeeId = row.employeeId;
             this.isShowAlertDialogDetail = false;
             console.log("yes");
             // this.getPosition();
@@ -492,7 +498,7 @@ export default {
             // dates.push({});
             // this.clearJabatan();
             this.dialogJabatan = true;
-            this.roleCodeValueEdit = row.roleCode;
+            // this.roleCodeValueEdit = row.roleCode;
             this.modalJabatanFields = {
                 employeeId: row.employeeId,
                 roleCode: row.roleCode,
