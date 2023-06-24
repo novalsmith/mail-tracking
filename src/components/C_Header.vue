@@ -38,9 +38,19 @@
                         <v-col md="8" class="text-right  pt-0 pb-0">
                             <v-row>
                                 <v-spacer></v-spacer>
-                                <span class="pr-15" v-text="users.name"></span>
+
+                                <!-- <span class="pr-15">Lihat Jabatan</span> -->
+
                                 <div class="text-center d-flex align-center justify-space-around pr-10">
-                                    <v-btn small icon @click="toggleDarkMode">
+                                    <span class="pr-15" v-text="users.name"></span>
+                                    <v-chip class="ma-2" color="primary" dark @click="getHistoryRole"
+                                        v-if="selectedRoleValue != ''">
+                                        Jabatan - {{ selectedRoleValue }}
+                                    </v-chip>
+                                    <v-chip class="ma-2" color="primary" dark @click="getHistoryRole" v-else>
+                                        Jabatan - {{ users.roleCode }}
+                                    </v-chip>
+                                    <v-btn small icon @click="toggleDarkMode" class="mx-5">
                                         <v-icon>
                                             {{
                                                 $vuetify.theme.dark ? 'mdi-white-balance-sunny' :
@@ -48,20 +58,21 @@
                                             }}
                                         </v-icon>
                                     </v-btn>
+                                    <v-menu transition="slide-x-transition" bottom right offset-y>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-btn v-bind="attrs" v-on="on" small icon>
+                                                <v-icon>mdi-cog-outline</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <v-list>
+                                            <v-list-item to="/profile">
+                                                <v-icon class="pr-3">mdi-account-cog-outline</v-icon>Profile</v-list-item>
+                                            <v-list-item to="/logout"> <v-icon class="pr-3">mdi-logout-variant</v-icon>
+                                                Logout</v-list-item>
+                                        </v-list>
+                                    </v-menu>
                                 </div>
-                                <v-menu transition="slide-x-transition" bottom right offset-y>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-bind="attrs" v-on="on" small icon>
-                                            <v-icon>mdi-cog-outline</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item to="/profile">
-                                            <v-icon class="pr-3">mdi-account-cog-outline</v-icon>Profile</v-list-item>
-                                        <v-list-item to="/logout"> <v-icon class="pr-3">mdi-logout-variant</v-icon>
-                                            Logout</v-list-item>
-                                    </v-list>
-                                </v-menu>
+
                             </v-row>
                         </v-col>
                         <v-col md="3">
@@ -90,12 +101,43 @@
                         </v-alert>
                     </div>
                 </div>
+
+                <v-dialog v-model="dialogRole" max-width="400">
+                    <v-card class="mx-auto" max-width="400" tile>
+                        <v-list shaped>
+                            <v-subheader>Jabatan - {{ selectedRoleValue }}</v-subheader>
+                            <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                                <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                            </v-overlay>
+                            <v-list-item-group v-model="selectedItemRole" color="primary">
+                                <v-list-item @change="getRole(item)" v-for="(item, i) in listDataRiwajatRole" :key="i">
+                                    <v-list-item-icon>
+                                        <v-icon>mdi-account</v-icon>
+                                    </v-list-item-icon>
+                                    <v-list-item-content>
+                                        <v-list-item-title v-text="item.roleCode"></v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                        <v-card-actions class="my-5">
+                            <v-btn color="cyan darken-2" dark @click="dialogRole = false">
+                                OK
+                            </v-btn>
+                            <v-btn text class="mr-4 white--text" color="primary" @click="dialogRole = false">
+                                <v-icon>mdi-times</v-icon> Close
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
             </v-container>
         </v-app-bar>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 import { mapState } from "vuex";
 export default {
     name: "Header",
@@ -112,7 +154,13 @@ export default {
                 rounded: true,
                 color: "grey darken-2"
             },
-            users: []
+            users: [],
+            listDataRiwajatRole: [],
+            dialogRole: false,
+            selectedItemRole: "",
+            isOverlayLoading: true,
+            selectedRole: [],
+            selectedRoleValue: ""
         }
     },
     created() {
@@ -130,7 +178,7 @@ export default {
             this.alertSuccessLogin = false;
             localStorage.removeItem('alertSuccessLogin');
         }, 5000);
-
+        // this.getHistoryRole();
 
     },
     methods: {
@@ -156,6 +204,25 @@ export default {
             }
 
             this.$vuetify.theme.dark = this.darkMode;
+        },
+        async getHistoryRole() {
+            try {
+                this.dialogRole = true;
+                console.log(11);
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/history", { params: { employeeId: this.users.employeeId } });
+                this.listDataRiwajatRole = response.data;
+                this.isOverlayLoading = false;
+                // console.log(this.listDataRiwajatRole);
+                // if (this.listDataRiwajatRole && this.listDataRiwajatRole.length > 1) {
+
+                // }
+            } catch (error) {
+                this.isOverlayLoading = false;
+            }
+        },
+        getRole(el) {
+            console.log(el);
+            this.selectedRoleValue = el.roleCode;
         }
     },
     computed: {

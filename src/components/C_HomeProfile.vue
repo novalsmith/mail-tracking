@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { mapState } from "vuex";
 export default {
     name: "Hero",
@@ -18,7 +19,7 @@ export default {
     },
     data() {
         return {
-            color: "grey darken-2"
+            color: "grey darken-2",
         }
     },
     methods: {
@@ -26,12 +27,14 @@ export default {
             try {
                 await axios.get(process.env.VUE_APP_SERVICE_URL + "employee");
             } catch (error) {
-                console.log(error.response);
+                console.log(error);
                 this.isLoading = false;
             }
-        },
+        }
     },
     created() {
+        var listData = JSON.parse(localStorage.getItem('userData'));
+        this.users = listData != undefined && listData.user ? listData.user : [];
         this.getData();
     }
 }
