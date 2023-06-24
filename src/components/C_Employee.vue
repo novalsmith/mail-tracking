@@ -65,9 +65,6 @@
             </v-data-table>
             <v-dialog v-model="dialogDetail" fullscreen hide-overlay transition="dialog-bottom-transition">
                 <v-card>
-                    <!-- <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
-                        <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
-                    </v-overlay> -->
 
                     <v-toolbar color="cyan darken-2" class="white--text">
 
@@ -76,27 +73,9 @@
                         </v-btn>
                         <v-toolbar-title>Detail Employee</v-toolbar-title>
                         <v-spacer></v-spacer>
-
+                        <span>{{ headerEmployeeName }}</span>
                     </v-toolbar>
                     <v-container>
-                        <!-- <v-row>
-                            <v-col md="7">
-                                <div class="my-5">
-                                    <h3>Riwayat Jabatan</h3>
-
-                                    <v-divider></v-divider>
-                                </div>
-                                <div>
-                                    <h1>Employee list</h1>
-                                </div>
-                            </v-col>
-                            <v-col md="5">
-                                <div class="my-5">
-                                    <h3>Employee</h3>
-                                    <v-divider></v-divider>
-                                </div>
-                            </v-col>
-                        </v-row> -->
 
                         <template>
                             <v-card>
@@ -182,10 +161,18 @@
                                         <v-container>
                                             <v-row>
                                                 <v-col cols="12">
-
-                                                    <v-select required :items="modalJabatanFields.selectedjabatan"
+                                                    <template>
+                                                        <v-autocomplete v-model="modalJabatanFields.roleCode"
+                                                            :items="modalJabatanFields.selectedjabatan"
+                                                            label="Select an item" item-text="positionName"
+                                                            item-value="code" :search-input.sync="searchJabatan"
+                                                            :loading="isLoadingSearch" :filter="customFilter"
+                                                            @input="resetSearch">
+                                                        </v-autocomplete>
+                                                    </template>
+                                                    <!-- <v-select required :items="modalJabatanFields.selectedjabatan"
                                                         v-model="modalJabatanFields.roleCode" item-text="positionName"
-                                                        item-value="code" dense outlined label="Jabatan"></v-select>
+                                                        item-value="code" dense outlined label="Jabatan"></v-select> -->
                                                 </v-col>
                                                 <v-col cols="8">
                                                     <v-dialog ref="dialogmodalDateTglTerima"
@@ -349,13 +336,34 @@ export default {
                 selectedjabatan: [],
                 roleCodeValueEdit: ""
             },
-            detailJabatanData: []
+            detailJabatanData: [],
+            selectedItem: null,
+            items: [
+                { id: 1, name: 'Apple' },
+                { id: 2, name: 'Banana' },
+                { id: 3, name: 'Orange' },
+                { id: 4, name: 'Grapes' },
+                { id: 5, name: 'Mango' },
+            ],
+            searchJabatan: '',
+            isLoadingSearch: false,
+            headerEmployeeName: ""
         }
     },
     methods: {
+        customFilter(item, queryText, itemText) {
+            const hasMatch = itemText.toLowerCase().includes(queryText.toLowerCase());
+            return hasMatch;
+        },
+        resetSearch() {
+            this.searchJabatan = '';
+        },
+        clearSearch() {
+            this.modalJabatanFields.roleCode = null;
+            this.searchJabatan = '';
+        },
         async getEmployee() {
             try {
-                // console.log(this.filter.searchingParams);
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee", { params: { searchingParams: this.filter.searchingParams } });
 
 
@@ -364,25 +372,20 @@ export default {
                 var responseLookup = lookupData.filter(val => val.type == "LEVEL").map(result => { return result; });
 
                 this.listLevelLookup = responseLookup.data;
-                // console.log(responseLookup);
                 this.listData = response.data;
-                // this.listDataRiwajatJabatan = response.data;
                 this.$store.dispatch('employee', response.data);
                 this.isLoading = false;
             } catch (error) {
-                console.log(error.response);
                 this.isLoading = false;
             }
         },
         async getPosition() {
             try {
-                // console.log(this.filter.searchingParams);
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/position");
                 // mapping header
                 this.modalJabatanFields.selectedjabatan = response.data;
                 this.isLoading = false;
             } catch (error) {
-                console.log(error.response);
                 this.isLoading = false;
             }
         },
@@ -408,7 +411,6 @@ export default {
                 isEdit: this.isEdit,
                 roleCodeValueEdit: this.detailJabatanData.roleCode
             };
-            console.log(param);
 
             try {
 
@@ -447,7 +449,6 @@ export default {
                 this.listDataRiwajatJabatan = response.data;
                 this.isLoadingHistoryJabatan = false;
             } catch (error) {
-                console.log(error.response);
                 this.isLoadingHistoryJabatan = false;
             }
         },
@@ -465,17 +466,16 @@ export default {
             this.dialogDetail = true;
             this.detailJabatanData = row;
             this.isShowAlertDialogDetail = false;
+            this.headerEmployeeName = row.name + " - " + row.employeeId;
         },
         rowClickHistoryJabatan(row) {
             this.isShowAlertDialogDetail = false;
-            console.log("yes");
             if (row.employeeId) {
                 this.isEdit = true;
             } else {
                 this.isEdit = false;
             }
 
-            console.log(row);
             var dates = (row.startDate ? [row.startDate, row.endDate] : []);
             this.dialogJabatan = true;
             this.modalJabatanFields = {
@@ -488,13 +488,11 @@ export default {
             };
         },
         rowDeleteClick(row) {
-            console.log(row);
         },
         notready() {
             this.alertNotready = true;
         },
         rowClass(item) {
-            console.log(item);
             const rowClass = 'rowClass'
             return rowClass;
         },
@@ -532,7 +530,6 @@ export default {
                 levelValue: this.filter.levelValue
             };
             this.filter.searchingParams = remappingParam;
-            console.log(this.filter.searchingParams);
             await this.getEmployee();
         },
     },

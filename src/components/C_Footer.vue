@@ -16,21 +16,9 @@
           </v-col>
         </v-row>
         <v-divider></v-divider>
-
         <v-list nav dense class="text-uppercase">
-          <!-- <v-btn :small="styleData.small" :rounded="styleData.rounded" v-for="link in renderMenu"
-                                :active-class="('white--text ' + settings.color)" :key="link.name" :to="link.path" text
-                                class="my-4" :outlined="link.outlined" v-show="link.isShow">
-
-                                <span>
-                                    {{ link.name }}
-                                </span>
-                            </v-btn> -->
-
           <div v-for="(link, i) in renderMenu" :key="i">
-
             <v-list-item :to="link.path" :active-class="settings.color + ' white--text'">
-
               <v-list-item-title v-text="link.name" />
             </v-list-item>
           </div>
