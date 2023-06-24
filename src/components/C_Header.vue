@@ -105,7 +105,10 @@
                 <v-dialog v-model="dialogRole" max-width="400">
                     <v-card class="mx-auto" max-width="400" tile>
                         <v-list shaped>
-                            <v-subheader>Jabatan - {{ selectedRoleValue }}</v-subheader>
+                            <h2>
+                                <v-subheader v-if="selectedRoleValue != ''">Jabatan - {{ selectedRoleValue }}</v-subheader>
+                                <v-subheader else>Jabatan - {{ users.roleCode }}</v-subheader>
+                            </h2>
                             <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
                                 <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
                             </v-overlay>
@@ -120,14 +123,14 @@
                                 </v-list-item>
                             </v-list-item-group>
                         </v-list>
-                        <v-card-actions class="my-5">
-                            <v-btn color="cyan darken-2" dark @click="dialogRole = false">
+                        <v-container>
+                            <v-btn color="cyan darken-2 mx-2" dark @click="dialogRole = false">
                                 OK
                             </v-btn>
                             <v-btn text class="mr-4 white--text" color="primary" @click="dialogRole = false">
                                 <v-icon>mdi-times</v-icon> Close
                             </v-btn>
-                        </v-card-actions>
+                        </v-container>
                     </v-card>
                 </v-dialog>
 
@@ -221,7 +224,6 @@ export default {
             }
         },
         getRole(el) {
-            console.log(el);
             this.selectedRoleValue = el.roleCode;
         }
     },
