@@ -105,10 +105,6 @@
                 <v-dialog v-model="dialogRole" max-width="400">
                     <v-card class="mx-auto" max-width="400" tile>
                         <v-list shaped>
-                            <h2>
-                                <v-subheader v-if="selectedRoleValue != ''">Jabatan - {{ selectedRoleValue }}</v-subheader>
-                                <v-subheader else>Jabatan - {{ users.roleCode }}</v-subheader>
-                            </h2>
                             <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
                                 <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
                             </v-overlay>
