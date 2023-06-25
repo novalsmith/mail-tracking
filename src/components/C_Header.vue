@@ -38,9 +38,6 @@
                         <v-col md="8" class="text-right  pt-0 pb-0">
                             <v-row>
                                 <v-spacer></v-spacer>
-
-                                <!-- <span class="pr-15">Lihat Jabatan</span> -->
-
                                 <div class="text-center d-flex align-center justify-space-around pr-10">
                                     <span class="pr-15" v-text="users.name"></span>
                                     <v-chip class="ma-2" color="primary" dark @click="getHistoryRole"
@@ -72,7 +69,6 @@
                                         </v-list>
                                     </v-menu>
                                 </div>
-
                             </v-row>
                         </v-col>
                         <v-col md="3">
