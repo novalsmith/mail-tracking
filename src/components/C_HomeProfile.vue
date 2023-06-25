@@ -1,9 +1,74 @@
 <template>
     <v-row>
         <v-col lg="12">
-            <h1 class="font-weight-medium" :color="color">Welcome to <br> Mail Track Minerba</h1>
-            <p class="description" :color="color">Sebuah tools yang dirancang untuk membantu proses penelusuran
-                (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</p>
+            <h1 class="font-weight-medium" :color="color">Welcome to Mail Track Minerba</h1>
+            <span class="description" :color="color">Sebuah tools yang dirancang untuk membantu proses penelusuran
+                (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</span>
+
+        </v-col>
+        <v-col cols="4">
+            <v-container>
+                <v-card class="my-5">
+                    <v-card-title>Inbox
+                    </v-card-title>
+                    <v-card-text>
+                        <h1>35</h1>
+                    </v-card-text>
+                </v-card>
+            </v-container>
+        </v-col>
+        <v-col cols="4">
+            <v-container>
+                <v-card class="my-5">
+                    <v-card-title>Outbox
+                    </v-card-title>
+                    <v-card-text>
+                        <h1>35</h1>
+                    </v-card-text>
+                </v-card>
+            </v-container>
+        </v-col>
+        <v-col cols="4">
+            <v-container>
+                <v-card class="my-5">
+                    <v-card-title>Nadine
+                    </v-card-title>
+                    <v-card-text>
+                        <h1>300</h1>
+                    </v-card-text>
+                </v-card>
+            </v-container>
+        </v-col>
+
+        <v-col lg="12">
+            <v-container>
+                <v-card class="my-5">
+                    <v-card-title>Lacak Surat
+
+                    </v-card-title>
+                    <v-form>
+                        <v-container>
+                            <v-row>
+
+                                <v-col cols="12">
+                                    <v-text-field v-model="searchValue" dense outlined clearable label="Search"
+                                        required></v-text-field>
+                                </v-col>
+
+                            </v-row>
+                        </v-container>
+                    </v-form>
+                    <v-card-actions>
+                        <v-btn color="cyan darken-2" dark @click="searching">
+                            <v-icon>mdi-magnify</v-icon> Search
+                        </v-btn>
+                        <v-btn text class="mr-4 white--text" color="blue-grey" @click="clear">
+                            <v-icon>mdi-cached</v-icon> Clear
+                        </v-btn>
+                    </v-card-actions>
+
+                </v-card>
+            </v-container>
 
         </v-col>
     </v-row>
@@ -20,6 +85,7 @@ export default {
     data() {
         return {
             color: "grey darken-2",
+            searchValue: ""
         }
     },
     methods: {
