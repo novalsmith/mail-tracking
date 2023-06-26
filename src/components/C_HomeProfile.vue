@@ -6,38 +6,82 @@
                 (tracking) terhadap persuratan di lingkungan internal Direktorat Jenderal Mineral dan Batubara</span>
 
         </v-col>
-        <v-col cols="3">
-            <v-container>
-                <v-card class="my-5">
-                    <v-card-title class="text--disabled">Inbox
-                    </v-card-title>
+        <v-col cols="4">
+            <template>
+                <v-card class="mx-auto">
+                    <v-list-item two-line>
+                        <v-list-item-content>
+                            <v-list-item-title class="text-h5">
+                                Inbox
+                            </v-list-item-title>
+                            <v-list-item-subtitle>Total inbox yang anda miliki</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+
                     <v-card-text>
-                        <h1 class="font-weight-medium">35</h1>
+                        <v-row align="center">
+                            <v-col class="text-h2" cols="8">
+                                50
+                            </v-col>
+                            <v-col cols="4">
+                                <v-icon class="text-h2 text--disabled">mdi-email-outline</v-icon>
+                            </v-col>
+                        </v-row>
                     </v-card-text>
                 </v-card>
-            </v-container>
+            </template>
         </v-col>
-        <v-col cols="3">
-            <v-container>
-                <v-card class="my-5">
-                    <v-card-title class="text--disabled">Outbox
-                    </v-card-title>
+
+        <v-col cols="4">
+            <template>
+                <v-card class="mx-auto">
+                    <v-list-item two-line>
+                        <v-list-item-content>
+                            <v-list-item-title class="text-h5">
+                                Outbox
+                            </v-list-item-title>
+                            <v-list-item-subtitle>Total outbox yang anda miliki</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+
                     <v-card-text>
-                        <h1 class="font-weight-medium">35</h1>
+                        <v-row align="center">
+                            <v-col class="text-h2" cols="8">
+                                20
+                            </v-col>
+                            <v-col cols="4">
+                                <v-icon class="text-h2 text--disabled">mdi-email-fast-outline</v-icon>
+                            </v-col>
+                        </v-row>
                     </v-card-text>
                 </v-card>
-            </v-container>
+            </template>
         </v-col>
-        <v-col cols="3">
-            <v-container>
-                <v-card class="my-5">
-                    <v-card-title class="text--disabled">Nadine
-                    </v-card-title>
+
+        <v-col cols="4">
+            <template>
+                <v-card class="mx-auto">
+                    <v-list-item two-line>
+                        <v-list-item-content>
+                            <v-list-item-title class="text-h5">
+                                Nadine
+                            </v-list-item-title>
+                            <v-list-item-subtitle>Total nadine yang anda miliki</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+
                     <v-card-text>
-                        <h1 class="font-weight-medium">300</h1>
+                        <v-row align="center">
+                            <v-col class="text-h2" cols="8">
+                                300
+                            </v-col>
+                            <v-col cols="4">
+                                <v-icon class="text-h2 text--disabled">mdi-database-check-outline</v-icon>
+                            </v-col>
+                        </v-row>
                     </v-card-text>
                 </v-card>
-            </v-container>
+            </template>
         </v-col>
 
         <v-col lg="12">
@@ -47,7 +91,7 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="2" class="my-3">
-                                    <h1 class="text--disabled font-weight-medium">Lacak Surat</h1>
+                                    <h2 class="text--disabled font-weight-medium">Lacak Surat</h2>
                                 </v-col>
                                 <v-col cols="10" class="my-3">
                                     <v-text-field v-model="search" height="50" dense outlined clearable
