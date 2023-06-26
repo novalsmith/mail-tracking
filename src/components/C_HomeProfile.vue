@@ -447,8 +447,8 @@ export default {
     }
 }
 </script>
- 
-<style>
+
+<style lang="css" scoped>
 .intro-text {
     font-size: 40px;
     font-weight: 600;
@@ -464,12 +464,17 @@ p.description {
 
 }
 
-/* h1 {
-  -webkit-text-stroke: 0.8px #fff;
-} */
+.errorColor {
+    background-color: #FFCDD2 !important;
+}
 
-/* 
-.img-circle {
-    border-radius: 3%;
-} */
+#table>.v-data-footer .v-icon {
+    color: black !important;
+}
+
+.table-style>>>tbody tr:hover {
+    cursor: pointer;
+    background: #0097A7 !important;
+    color: white;
+}
 </style>
