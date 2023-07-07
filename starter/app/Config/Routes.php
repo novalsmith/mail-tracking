@@ -38,27 +38,19 @@ $routes->get('/employee/parent', 'Employee::employeeByParent');
 $routes->get('/employee/history', 'Employee::historyJabatan');
 $routes->get('/employee/position', 'Employee::getPostition');
 $routes->get('/employee/savePosition', 'Employee::savePosition');
-
-// $routes->get('/tracking', 'Tracking::index');
-// $routes->get('/tracking/(:any)', 'Tracking::show/$1');
 $routes->post('/upload', 'Tracking::importCsvToDb');
 $routes->get('/lookup', 'Lookup::index');
 $routes->post('/lookup/detail', 'Lookup::show');
-// $routes->post('/save', 'Tracking::create');
-
-// $routes->get('/inbox/unitid/(:any)', 'Tracking::show/$1');
-
 $routes->presenter('tracking');
 $routes->get('/removefile', 'Tracking::removeUnusedFile');
-// $routes->presenter('inbox'); 
 $routes->get('/inbox', 'Inbox::index'); 
 $routes->get('/inbox/show', 'Inbox::show'); 
 $routes->post('/inbox/create', 'Inbox::create'); 
 $routes->get('/unknown/parent', 'Unknown::parent');
 $routes->presenter('unknown');
 $routes->presenter('outbox');
-
 $routes->presenter('history');
+$routes->get('/countPages', 'Tracking::countPages');
 
 /*
  * --------------------------------------------------------------------

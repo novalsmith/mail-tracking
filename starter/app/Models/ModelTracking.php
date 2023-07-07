@@ -41,6 +41,22 @@ class ModelTracking extends Model
         return $data;
     }
 
+    function getCountTotalPages($employeeId){
+        $db = \Config\Database::connect();
+        $db->reconnect();
+        $params = [
+            ($employeeId ?? '')
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL getTotalCountHome(?)";
+        $builder = $db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        $db->close();
+        $db->initialize();
+
+        return $data;
+    }
+
     function validationUploadTracking()
     {
         $db = \Config\Database::connect();

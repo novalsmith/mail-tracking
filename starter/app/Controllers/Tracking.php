@@ -24,6 +24,13 @@ class Tracking extends BaseController
 		$data = $this->model->getTracking($searchingParams);
 		return $this->respond($data, 200);
 	}
+
+	public function countPages(){
+		$employeeId = $this->request->getVar('employeeId');
+		$data = $this->model->getCountTotalPages($employeeId);
+		return $this->respond($data, 200);
+	}
+
 	public function show($id)
 	{
 		// $role = $this->request->getVar('role');
