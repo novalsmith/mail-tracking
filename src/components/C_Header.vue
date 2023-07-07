@@ -99,13 +99,22 @@
                 </div>
 
                 <v-dialog v-model="dialogRole" max-width="400">
-                    <v-card class="mx-auto" max-width="400" tile>
+                    <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
+                        <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
+                    </v-overlay>
+                    <v-card v-else class="mx-auto" max-width="400" tile>
+
                         <v-list shaped>
-                            <v-overlay v-if="isOverlayLoading" class="align-center justify-center">
-                                <v-progress-circular color="white" indeterminate size="64" width="7"></v-progress-circular>
-                            </v-overlay>
+
                             <v-list-item-group v-model="selectedItemRole" color="primary">
-                                <v-list-item @change="getRole(item)" v-for="(item, i) in listDataRiwajatRole" :key="i">
+                                <v-list-item v-if="listDataRiwajatRole.length == 0">
+
+                                    <v-list-item-content>
+                                        <v-list-item-title>No data</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item v-else @change="getRole(item)" v-for="(item, i) in listDataRiwajatRole"
+                                    :key="i">
                                     <v-list-item-icon>
                                         <v-icon>mdi-account</v-icon>
                                     </v-list-item-icon>
@@ -116,7 +125,7 @@
                             </v-list-item-group>
                         </v-list>
                         <v-container>
-                            <v-btn color="cyan darken-2 mx-2" dark @click="dialogRole = false">
+                            <v-btn color="cyan darken-2 mx-2" @click="dialogRole = false" :disabled="isDisabledJabatan">
                                 OK
                             </v-btn>
                             <v-btn text class="mr-4 white--text" color="primary" @click="dialogRole = false">
@@ -138,6 +147,7 @@ export default {
     name: "Header",
     data() {
         return {
+            isDisabledJabatan: true,
             alertSuccessLogin: false,
             isMobileData: false,
             imageName: "",
@@ -207,16 +217,15 @@ export default {
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/history", { params: { employeeId: this.users.employeeId } });
                 this.listDataRiwajatRole = response.data;
                 this.isOverlayLoading = false;
-                // console.log(this.listDataRiwajatRole);
-                // if (this.listDataRiwajatRole && this.listDataRiwajatRole.length > 1) {
-
-                // }
             } catch (error) {
                 this.isOverlayLoading = false;
             }
         },
         getRole(el) {
             this.selectedRoleValue = el.roleCode;
+            if (this.selectedRoleValue) {
+                this.isDisabledJabatan = false;
+            }
         }
     },
     computed: {

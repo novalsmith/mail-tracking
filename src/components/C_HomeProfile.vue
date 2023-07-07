@@ -21,7 +21,7 @@
                     <v-card-text>
                         <v-row align="center">
                             <v-col class="text-h2" cols="8">
-                                50
+                                {{ listCountData.totalInbox }}
                             </v-col>
                             <v-col cols="4">
                                 <v-icon class="text-h2 text--disabled">mdi-email-outline</v-icon>
@@ -47,7 +47,7 @@
                     <v-card-text>
                         <v-row align="center">
                             <v-col class="text-h2" cols="8">
-                                20
+                                {{ listCountData.totalOutbox }}
                             </v-col>
                             <v-col cols="4">
                                 <v-icon class="text-h2 text--disabled">mdi-email-fast-outline</v-icon>
@@ -73,7 +73,7 @@
                     <v-card-text>
                         <v-row align="center">
                             <v-col class="text-h2" cols="8">
-                                300
+                                {{ listCountData.totalNadine }}
                             </v-col>
                             <v-col cols="4">
                                 <v-icon class="text-h2 text--disabled">mdi-database-check-outline</v-icon>
@@ -332,6 +332,11 @@ export default {
                 { text: 'Duplication', value: 'isUnknown', width: '5%' },
 
             ],
+            listCountData: {
+                totalInbox: 0,
+                totalOutbox: 0,
+                totalNadine: 0,
+            },
             listData: [],
             isLoading: false,
             isOverlayLoading: false,
@@ -401,6 +406,20 @@ export default {
                 this.isOverlayLoading = false;
             }
         },
+        async getCountPage() {
+            try {
+                this.isOverlayLoading = true;
+                this.isLoading = true;
+                var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "countPages", { params: { employeeId: this.users.employeeId } });
+                var listData = !!response ? response.data[0] : [];
+                if (listData) {
+                    this.listCountData.totalInbox = listData.totalInbox;
+                    this.listCountData.totalOutbox = listData.totalOutbox;
+                    this.listCountData.totalNadine = listData.totalNadine;
+                }
+            } catch (error) {
+            }
+        },
         rowClick(row) {
             this.detailDataRow = row;
             this.date = moment(String(row.receiptDate)).format('YYYY-MM-DD');
@@ -440,10 +459,11 @@ export default {
                 .map((e) => { return e });
         },
     },
-    created() {
+    async created() {
         var listData = JSON.parse(localStorage.getItem('userData'));
         this.users = listData != undefined && listData.user ? listData.user : [];
-        this.getData();
+        await this.getData();
+        await this.getCountPage();
     }
 }
 </script>
