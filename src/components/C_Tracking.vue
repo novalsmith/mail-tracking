@@ -828,7 +828,8 @@ export default {
                 dateActionSuratEnd: dateActionSuratEnd,
                 note: this.filter.isiRingkasan,
                 isUnknown: this.filter.unknownModelData,
-                listUploaderData: this.filter.listUploaderData
+                listUploaderData: this.filter.listUploaderData,
+                employeeId: this.userLocalData.employeeId
             };
             this.filter.searchingParams = remappingParam;
             console.log(this.filter.searchingParams);
@@ -1181,9 +1182,9 @@ export default {
         },
     },
     created() {
-        this.getTracking();
         var userData = JSON.parse(localStorage.getItem('userData'));
         this.userLocalData = userData.user;
+        this.searching();
     },
     computed: {
         ...mapGetters(['inboxs', 'settings', 'lookups', 'tracking']),

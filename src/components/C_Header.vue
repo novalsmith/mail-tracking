@@ -40,12 +40,8 @@
                                 <v-spacer></v-spacer>
                                 <div class="text-center d-flex align-center justify-space-around pr-10">
                                     <span class="pr-15" v-text="users.name"></span>
-                                    <v-chip class="ma-2" color="primary" dark @click="getHistoryRole"
-                                        v-if="selectedRoleValue != ''">
+                                    <v-chip class="ma-2" color="primary" dark @click="getHistoryRole(true)">
                                         Jabatan - {{ selectedRoleValue }}
-                                    </v-chip>
-                                    <v-chip class="ma-2" color="primary" dark @click="getHistoryRole" v-else>
-                                        Jabatan - {{ users.roleCode }}
                                     </v-chip>
                                     <v-btn small icon @click="toggleDarkMode" class="mx-5">
                                         <v-icon>
@@ -125,9 +121,6 @@
                             </v-list-item-group>
                         </v-list>
                         <v-container>
-                            <v-btn color="cyan darken-2 mx-2" @click="dialogRole = false" :disabled="isDisabledJabatan">
-                                OK
-                            </v-btn>
                             <v-btn text class="mr-4 white--text" color="primary" @click="dialogRole = false">
                                 <v-icon>mdi-times</v-icon> Close
                             </v-btn>
@@ -168,10 +161,12 @@ export default {
             selectedRoleValue: ""
         }
     },
+    mounted() {
+        this.getHistoryRole(false);
+    },
     created() {
         this.renderImg();
         this.isMobileData = this.$store.state.settings["settings"].isMobileData;
-        console.log(this.$store.state.settings["settings"].isMobileData);
         var listData = JSON.parse(localStorage.getItem('userData'));
         this.users = listData != undefined && listData.user ? listData.user : [];
         const lookupData = {
@@ -210,21 +205,44 @@ export default {
 
             this.$vuetify.theme.dark = this.darkMode;
         },
-        async getHistoryRole() {
+        async getHistoryRole(isClicked) {
             try {
-                this.dialogRole = true;
-                console.log(11);
+                this.dialogRole = isClicked;
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "employee/history", { params: { employeeId: this.users.employeeId } });
                 this.listDataRiwajatRole = response.data;
+                if (this.listDataRiwajatRole.length > 0) {
+                    var datas = this.listDataRiwajatRole.filter((el) => el.status == 'Aktif').map((e) => { return e });
+                    this.selectedRoleValue = (datas[0].roleCode ?? users.roleCode);
+                }
                 this.isOverlayLoading = false;
             } catch (error) {
                 this.isOverlayLoading = false;
             }
         },
-        getRole(el) {
+        async getRole(el) {
             this.selectedRoleValue = el.roleCode;
             if (this.selectedRoleValue) {
                 this.isDisabledJabatan = false;
+
+                try {
+                    var params = {
+                        employeeId: this.users.employeeId,
+                        roleCode: this.selectedRoleValue
+                    };
+                    var formdata = new FormData();
+                    this.loadingUploadButton = true;
+                    formdata.append("listData", JSON.stringify(params));
+
+                    this.isOverlayLoading = true;
+                    await axios.post(process.env.VUE_APP_SERVICE_URL + 'employee/updateRealtimeJabatan', formdata);
+                    await this.getHistoryRole(false);
+                    this.isOverlayLoading = false;
+                    window.location.reload();
+                } catch (error) {
+                    this.isOverlayLoading = false;
+                }
+
+
             }
         }
     },

@@ -65,6 +65,19 @@ class ModelEmployee extends Model
         return $data;
     }
 
+    function updateRealtimeJabatan($employeeId, $roleCode){
+        $params = [
+            ($employeeId ?? ''),
+            ($roleCode ?? '')
+        ];
+        // Calling from Stored Procedure
+        $procedure = "CALL updateRealtimeJabatan(?,?)";
+        $builder = $this->db->query($procedure, $params); 
+        $data =  $builder->getResult(); 
+        
+        return $data;
+    }
+
     function getPostition()
     {
         $db = \Config\Database::connect();

@@ -50,6 +50,16 @@ class Employee extends BaseController
 			return $this->respond($data, 200);
 	}
 
+	public function updateRealtimeJabatan()
+	{
+		$dataParam = $this->request->getPost('listData');
+		$isSuccess = false;
+		$listData = json_decode($dataParam); 
+		$modelData = new ModelEmployee();
+		$data = $modelData->updateRealtimeJabatan($listData->employeeId,$listData->roleCode);
+			return $this->respond($data, 200);
+	}
+
 	public function getPostition()
 	{
 		// $employeeId = $this->request->getVar('employeeId');
