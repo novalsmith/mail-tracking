@@ -38,6 +38,7 @@ $routes->get('/employee/parent', 'Employee::employeeByParent');
 $routes->get('/employee/history', 'Employee::historyJabatan');
 $routes->get('/employee/position', 'Employee::getPostition');
 $routes->get('/employee/savePosition', 'Employee::savePosition');
+$routes->get('/employee/updateRealtimeJabatan', 'Employee::updateRealtimeJabatan');
 $routes->post('/upload', 'Tracking::importCsvToDb');
 $routes->get('/lookup', 'Lookup::index');
 $routes->post('/lookup/detail', 'Lookup::show');
