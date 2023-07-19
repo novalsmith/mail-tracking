@@ -386,6 +386,11 @@ export default {
             try {
                 this.isOverlayLoading = true;
                 this.isLoading = true;
+                var remappingParam = {
+                    employeeId: this.users.employeeId
+                };
+                this.filter.searchingParams = remappingParam;
+
                 var response = await axios.get(process.env.VUE_APP_SERVICE_URL + "tracking", { params: { searchingParams: this.filter.searchingParams } });
                 this.listData = !!response ? response.data : [];
                 const state = {
